@@ -509,14 +509,23 @@ var Manifesto;
         };
         Manifest.prototype.getRangeByPath = function (path) {
             var ranges = this.getRanges();
+            return this.getRangeByPathRecursive(ranges, path);
+        };
+        Manifest.prototype.getRangeByPathRecursive = function (ranges, path) {
             for (var i = 0; i < ranges.length; i++) {
                 var range = ranges[i];
-                if (range.path === path) {
-                    return range;
+                if (range && range.ranges && range.ranges.length > 0) {
+                    var childRange = this.getRangeByPathRecursive(range.ranges, path);
+                    if (childRange) {
+                        return childRange;
+                    }
+                }
+                if (range.path === path){
+                    return range
                 }
             }
             return null;
-        };
+        };  
         Manifest.prototype.getSequenceByIndex = function (sequenceIndex) {
             return this.sequences[sequenceIndex];
         };
