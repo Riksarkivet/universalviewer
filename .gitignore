@@ -5,6 +5,7 @@
 lib
 !src/lib
 !src/extensions/**/lib
+!dist/**/lib
 
 #################
 ## TypeScript
@@ -60,6 +61,7 @@ node_modules
 !src/lib/*.js
 !src/*/*/lib/*.js
 !src/extensions/*/dependencies.js
+!dist/**/*.js
 
 #################
 ## Build
@@ -72,7 +74,8 @@ src/extensions/*/build
 ## Dist
 #################
 
-dist/
+dist/*.tar
+dist/*.zip
 
 #################
 ## Themes

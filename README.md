@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/UniversalViewer/universalviewer.svg?branch=master)](https://travis-ci.org/UniversalViewer/universalviewer) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/UniversalViewer/universalviewer?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+    bower install uv
+
 [Demo](http://universalviewer.azurewebsites.net/)
 
 [Google group](https://groups.google.com/forum/#!forum/universalviewer)
@@ -17,7 +19,7 @@
 
 ## About
 
-The Universal Viewer is an [open source](https://github.com/UniversalViewer/universalviewer/blob/master/LICENSE.txt) project to enable cultural heritage institutions to present their digital artefacts in an [IIIF-compliant](http://iiif.io/) and highly customisable user interface. 
+The Universal Viewer is an [open source](https://github.com/UniversalViewer/universalviewer/blob/master/LICENSE.txt) project to enable cultural heritage institutions to present their digital artifacts in an [IIIF-compliant](http://iiif.io/) and highly customisable user interface. 
 
 Features:
 
@@ -74,19 +76,19 @@ To build the debug version of the viewer, just run (on the command line, in the 
 
 This will compile the [.less](http://lesscss.org) files into .css and [.ts](http://typescriptlang.org) files into .js with source maps to aid in debugging.
 
-### Release Builds
+### Distribution Builds
 
-To build the release version of the viewer, just run (on the command line, in the `universalviewer` folder):
+To build the distribution version of the UV, just run (on the command line, in the `universalviewer` folder):
 
 	grunt build
 
-The built files appear in the `build` folder and are copied to `examples/uv-[build]`.
+A versioned `uv-major.minor.patch` folder along with compressed .zip and .tar files will appear in the `/dist` folder. Use these in your website, or alternatively use:
+ 
+    bower install uv --save
+    
+which will download the distribution folder to `bower_components`.
 
-If you want to create a zip file for distribution (this will appear in the `dist` folder), use:
-
-	grunt dist
-
-Note that the `build` folder is masked with `.gitignore`; it's just for your local use, and won't be checked in to the repository.
+See https://github.com/UniversalViewer/demo-site for examples.
 
 ### Examples
 

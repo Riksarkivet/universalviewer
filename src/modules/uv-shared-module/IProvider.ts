@@ -6,7 +6,10 @@ import ExternalResource = require("./ExternalResource");
 // interacting with the IIIF data model.
 interface IProvider{
     canvasIndex: number;
+    collectionIndex: number;
+    iiifResource: Manifesto.IIIIFResource;
     manifest: Manifesto.IIIIFResource;
+    manifestIndex: number;
     resources: Manifesto.IExternalResource[];
     sequenceIndex: number;
 
@@ -17,6 +20,7 @@ interface IProvider{
     getCanvasIndexByLabel(label: string): number;
     getCanvasIndexParam(): number;
     getCanvasType(canvas?: Manifesto.ICanvas): Manifesto.CanvasType;
+    getCollectionIndex(iiifResource: Manifesto.IIIIFResource): number;
     getCurrentCanvas(): Manifesto.ICanvas;
     getCurrentSequence(): Manifesto.ISequence;
     getFirstPageIndex(): number;
