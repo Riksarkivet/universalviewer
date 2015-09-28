@@ -167,11 +167,18 @@ class BaseProvider implements IProvider{
         return this.manifest.getSequenceByIndex(index);
     }
 
-    getCurrentCanvas(): any {
+    getCanvasRange(canvas: Manifesto.ICanvas): Manifesto.IRange {
+        // get ranges that contain the canvas id. return the last.
+        var ranges: Manifesto.IRange[] = this.manifest.getRanges();
+
+        return ranges.en().last(range => (range.getCanvases().en().any(c => c === canvas.id)));
+    }
+
+    getCurrentCanvas(): Manifesto.ICanvas {
         return this.getCurrentSequence().getCanvasByIndex(this.canvasIndex);
     }
 
-    getCurrentSequence(): any {
+    getCurrentSequence(): Manifesto.ISequence {
         return this.getSequenceByIndex(this.sequenceIndex);
     }
 

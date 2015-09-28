@@ -69,12 +69,15 @@
     },
     "moreInfoRightPanel": {
       "content": {
+        "attribution": "Attribution",
         "collapse": "Collapse More Information",
         "collapseFull": "Collapse Gallery",
+        "description": "Description",
         "expand": "Expand More Information",
         "expandFull": "Expand Gallery",
         "holdingText": "Your module goes here!",
         "less": "less",
+        "license": "License",
         "more": "more",
         "noData": "No data to display",
         "title": "More Information"
@@ -153,11 +156,14 @@
       "content": {
         "collapse": "Collapse Contents",
         "collapseFull": "Collapse Gallery",
+        "date": "date",
         "expand": "Expand Contents",
         "expandFull": "Expand Gallery",
         "index": "Index",
+        "sortBy": "Sort By:",
         "thumbnails": "Thumbnails",
-        "title": "Contents"
+        "title": "Contents",
+        "volume": "volume"
       }
     }
   }
