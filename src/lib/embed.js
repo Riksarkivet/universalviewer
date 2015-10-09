@@ -181,7 +181,7 @@ docReady(function() {
         }
 
         // get the part preceding 'lib/embed.js'
-        var baseUri = (/(.*)lib\/embed.js/).exec(scriptUri)[1];
+        var baseUri = (/(.*)lib\//).exec(scriptUri)[1];
         appUri = baseUri + 'app.html';
         easyXDMUri = baseUri + 'lib/easyXDM.min.js';
         json2Uri = baseUri + 'lib/json2.min.js';
