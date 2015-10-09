@@ -36,6 +36,7 @@ module.exports = function (grunt) {
             build : ['<%= config.dirs.build %>'],
             dist: ['<%= config.dirs.dist %>'],
             examples: ['<%= config.dirs.examples %>/uv-*'],
+            apphtml: ['<%= config.dirs.dist %>/<%= config.dirs.uv %>/app.html'],
             extension: ['./src/extensions/*/build/*']
         },
 
@@ -180,6 +181,19 @@ module.exports = function (grunt) {
                         cwd: '<%= config.dirs.build %>',
                         expand: true,
                         src: ['**'],
+                        dest: '<%= config.dirs.dist %>/<%= config.dirs.uv %>/'
+                    }
+                ]
+            },
+            app_rename: {
+                files: [
+                    {
+                        cwd: '<%= config.dirs.dist %>/<%= config.dirs.uv %>/',
+                        expand: true,
+                        src: ['app.html'],
+                        rename: function (dest, src) {
+                            return dest + 'app_original.html';
+                        },
                         dest: '<%= config.dirs.dist %>/<%= config.dirs.uv %>/'
                     }
                 ]
@@ -456,7 +470,9 @@ module.exports = function (grunt) {
             'replace:examples',
             'clean:examples',
             'copy:examples',
-            'dist'
+            'dist',
+            'copy:app_rename',
+            'clean:apphtml'
         );
     });
 
