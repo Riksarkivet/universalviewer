@@ -134,7 +134,7 @@ class PagingHeaderPanel extends HeaderPanel {
 
         // If page mode is disabled, we don't need to show radio buttons since
         // there is only one option:
-        if (!this.config.options.pageModeEnabled) {
+        if (!this.config.options.pageModeEnabled || this.provider.hasNoPageNumbers) {
             this.$imageModeOption.hide();
             this.$pageModeLabel.hide();
             this.$pageModeOption.hide();
@@ -195,7 +195,7 @@ class PagingHeaderPanel extends HeaderPanel {
     }
 
     isPageModeEnabled(): boolean {
-        return this.config.options.pageModeEnabled && (<ISeadragonExtension>this.extension).getMode().toString() === Mode.page.toString();
+        return this.config.options.pageModeEnabled && !this.provider.hasNoPageNumbers && (<ISeadragonExtension>this.extension).getMode().toString() === Mode.page.toString();
     }
 
     setTitles(): void {

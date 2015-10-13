@@ -61,6 +61,7 @@ interface IProvider{
     config: any;
     domain: string;
     embedDomain: string;
+    hasNoPageNumbers: boolean;
     isHomeDomain: boolean;
     isLightbox: boolean;
     isOnlyInstance: boolean;
