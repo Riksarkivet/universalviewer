@@ -11,10 +11,9 @@ class ExternalResource implements Manifesto.IExternalResource {
     public status: number;
     public tokenService: Manifesto.IService;
 
-    // todo: pass in services associated with this resource if they exist
-    // if the resource returns services in the info.json, those override
-    constructor() {
-
+    constructor(resource: Manifesto.IManifestResource, dataUriFunc: (r: Manifesto.IManifestResource) => string) {
+        this.dataUri = dataUriFunc(resource);
+        this._parseAuthServices(resource);
     }
 
     private _parseAuthServices(resource: any): void {
@@ -38,9 +37,19 @@ class ExternalResource implements Manifesto.IExternalResource {
 
         return new Promise<Manifesto.IExternalResource>((resolve, reject) => {
 
+            // check if dataUri ends with info.json
+            // if not issue a HEAD request.
+
+            var type: string = 'GET';
+
+            // todo: use manifesto.hasServiceDescriptor
+            if (!_.endsWith(that.dataUri, 'info.json')){
+                type = 'HEAD';
+            }
+
             $.ajax(<JQueryAjaxSettings>{
                 url: that.dataUri,
-                type: 'GET',
+                type: type,
                 dataType: 'json',
                 beforeSend: (xhr) => {
                     if (accessToken){
@@ -49,24 +58,37 @@ class ExternalResource implements Manifesto.IExternalResource {
                 }
             }).done((data) => {
 
-                var uri = unescape(data['@id']);
-
-                if (!_.endsWith(uri, '/info.json')){
-                    uri += '/info.json';
-                }
-
-                that.data = data;
-                that._parseAuthServices(that.data);
-
-                // if the request was redirected to a degraded version and there's a login service to get the full quality version
-                // todo: compare the ids, otherwise any redirect is treated as degraded
-                if (uri !== that.dataUri && that.loginService){
-                    that.status = HTTPStatusCode.MOVED_TEMPORARILY;
-                } else {
+                // if it's a resource without an info.json
+                // todo: if resource doesn't have a @profile
+                if (!data){
                     that.status = HTTPStatusCode.OK;
-                }
+                    resolve(that);
+                } else {
+                    var uri = unescape(data['@id']);
 
-                resolve(that);
+                    that.data = data;
+                    that._parseAuthServices(that.data);
+
+                    // remove trailing /info.json
+                    if (_.endsWith(uri, '/info.json')){
+                        uri = uri.substr(0, _.lastIndexOf(uri, '/'));
+                    }
+
+                    var dataUri = that.dataUri;
+
+                    if (_.endsWith(dataUri, '/info.json')){
+                        dataUri = dataUri.substr(0, _.lastIndexOf(dataUri, '/'));
+                    }
+
+                    // if the request was redirected to a degraded version and there's a login service to get the full quality version
+                    if (uri !== dataUri && that.loginService){
+                        that.status = HTTPStatusCode.MOVED_TEMPORARILY;
+                    } else {
+                        that.status = HTTPStatusCode.OK;
+                    }
+
+                    resolve(that);
+                }
 
             }).fail((error) => {
 

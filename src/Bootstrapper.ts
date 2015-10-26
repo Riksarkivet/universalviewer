@@ -31,8 +31,8 @@ class Bootstrapper{
         // empty app div
         $('#app').empty();
 
-        //// add loading class
-        //$('#app').addClass('loading');
+        // add loading class
+        $('#app').addClass('loading');
 
         // remove any existing css
         $('link[type*="text/css"]').remove();
@@ -158,6 +158,11 @@ class Bootstrapper{
         if (!extension){
             var format = canvas.getProperty('format');
             extension = this.extensions[format];
+        }
+
+        // if there still isn't an extension, show an error.
+        if (!extension){
+            alert("No matching UV extension found.");
         }
 
         this.featureDetect(() => {

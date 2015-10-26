@@ -24,7 +24,7 @@ interface IExtension{
     shifted: boolean;
     showMessage(message: string, acceptCallback?: any, buttonText?: string, allowClose?: boolean): void;
     tabbing: boolean;
-    triggerSocket(eventName: string, eventObject: any): void;
+    triggerSocket(eventName: string, eventObject?: any): void;
     viewCanvas(canvasIndex): void;
     viewManifest(manifest: Manifesto.IManifest): void;
     width(): number;

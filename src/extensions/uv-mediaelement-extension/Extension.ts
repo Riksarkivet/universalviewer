@@ -58,14 +58,6 @@ class Extension extends BaseExtension{
         //    this.viewManifest(data);
         //});
 
-        $.subscribe(BaseCommands.DOWNLOAD, (e) => {
-            $.publish(BaseCommands.SHOW_DOWNLOAD_DIALOGUE);
-        });
-
-        $.subscribe(BaseCommands.EMBED, (e) => {
-            $.publish(BaseCommands.SHOW_EMBED_DIALOGUE);
-        });
-
         $.subscribe(BaseCommands.THUMB_SELECTED, (e, canvasIndex: number) => {
             this.viewCanvas(canvasIndex);
         });
@@ -79,6 +71,18 @@ class Extension extends BaseExtension{
             Shell.$centerPanel.show();
             Shell.$rightPanel.show();
             this.resize();
+        });
+
+        $.subscribe(Commands.MEDIA_ENDED, (e) => {
+            this.triggerSocket(Commands.MEDIA_ENDED);
+        });
+
+        $.subscribe(Commands.MEDIA_PAUSED, (e) => {
+            this.triggerSocket(Commands.MEDIA_PAUSED);
+        });
+
+        $.subscribe(Commands.MEDIA_PLAYED, (e) => {
+            this.triggerSocket(Commands.MEDIA_PLAYED);
         });
     }
 

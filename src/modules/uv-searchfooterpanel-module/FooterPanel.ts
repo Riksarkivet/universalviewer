@@ -52,8 +52,8 @@ class FooterPanel extends BaseFooterPanel {
             this.settingsChanged();
         });
 
-        $.subscribe(Commands.SEARCH_RESULTS, (e, terms, results) => {
-            this.displaySearchResults(terms, results);
+        $.subscribe(Commands.SEARCH_RESULTS, (e, obj) => {
+            this.displaySearchResults(obj.terms, obj.results);
         });
 
         $.subscribe(BaseCommands.CREATED, (e) => {
@@ -450,7 +450,7 @@ class FooterPanel extends BaseFooterPanel {
         var lineWidth = this.$line.width();
 
         // find page/width ratio by dividing the line width by the number of pages in the book.
-        if (this.provider.getTotalCanvases() == 1) return 0;
+        if (this.provider.getTotalCanvases() === 1) return 0;
 
         return lineWidth / (this.provider.getTotalCanvases() - 1);
     }

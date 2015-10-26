@@ -57,14 +57,6 @@ class Extension extends BaseExtension{
             this.resize();
         });
 
-        $.subscribe(BaseCommands.DOWNLOAD, (e) => {
-            $.publish(BaseCommands.SHOW_DOWNLOAD_DIALOGUE);
-        });
-
-        $.subscribe(BaseCommands.EMBED, (e) => {
-            $.publish(BaseCommands.SHOW_EMBED_DIALOGUE);
-        });
-
         $.subscribe(BaseCommands.SHOW_OVERLAY, (e, params) => {
             if (this.IsOldIE()) {
                 this.centerPanel.$element.hide();
