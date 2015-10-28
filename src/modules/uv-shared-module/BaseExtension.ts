@@ -13,6 +13,7 @@ import Params = require("../../Params");
 import Shell = require("./Shell");
 import Storage = require("../../modules/uv-shared-module/Storage");
 import StorageItem = require("../../modules/uv-shared-module/StorageItem");
+import Riksarkivet = require("../../modules/uv-shared-module/Riksarkivet");
 
 class BaseExtension implements IExtension {
 
@@ -33,6 +34,7 @@ class BaseExtension implements IExtension {
     shell: Shell;
     shifted: boolean = false;
     tabbing: boolean = false;
+    riksarkivet: Riksarkivet;
 
     constructor(bootstrapper: BootStrapper) {
         this.bootstrapper = bootstrapper;
@@ -401,6 +403,8 @@ class BaseExtension implements IExtension {
                 this.loadDependencies(deps);
             });
         }
+
+        this.riksarkivet = new Riksarkivet();
     }
 
     createModules(): void {
@@ -595,6 +599,12 @@ class BaseExtension implements IExtension {
         }
     }
 
+    SetUrlAfter(searchvalue: string, value: string): void {
+        if (this.provider.isDeepLinkingEnabled()) {
+            Utils.Urls.SetUrlAfter(searchvalue, value, parent.document);
+        }
+    }
+
     viewCanvas(canvasIndex: number): void {
         if (canvasIndex === -1) return;
 
@@ -606,8 +616,11 @@ class BaseExtension implements IExtension {
         this.provider.canvasIndex = canvasIndex;
 
         $.publish(BaseCommands.CANVAS_INDEX_CHANGED, [canvasIndex]);
-
         $.publish(BaseCommands.OPEN_EXTERNAL_RESOURCE);
+
+        var canvas: Manifesto.ICanvas = this.provider.getCanvasByIndex(canvasIndex);
+        var bildid = this.riksarkivet.GetBildIdFromCanvas(canvas);
+        this.SetUrlAfter("/", bildid);
 
         this.setParam(Params.canvasIndex, canvasIndex);
     }
