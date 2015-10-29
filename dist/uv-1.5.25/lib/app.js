@@ -1027,7 +1027,21 @@ define('modules/uv-shared-module/Storage',["require", "exports", "./StorageItem"
     return Storage;
 });
 
-define('modules/uv-shared-module/BaseExtension',["require", "exports", "./BaseCommands", "../../BootstrapParams", "../../modules/uv-dialogues-module/ClickThroughDialogue", "./ExternalResource", "./Information", "./InformationAction", "../../modules/uv-dialogues-module/LoginDialogue", "../../Params", "./Shell", "../../modules/uv-shared-module/Storage"], function (require, exports, BaseCommands, BootstrapParams, ClickThroughDialogue, ExternalResource, Information, InformationAction, LoginDialogue, Params, Shell, Storage) {
+define('modules/uv-shared-module/Riksarkivet',["require", "exports"], function (require, exports) {
+    var Riksarkivet = (function () {
+        function Riksarkivet() {
+        }
+        Riksarkivet.prototype.GetBildIdFromCanvas = function (canvas) {
+            var bildid = canvas.getImages()[0].getResource().getServices()[0].id;
+            bildid = bildid.substr(bildid.indexOf("!") + 1);
+            return bildid;
+        };
+        return Riksarkivet;
+    })();
+    return Riksarkivet;
+});
+
+define('modules/uv-shared-module/BaseExtension',["require", "exports", "./BaseCommands", "../../BootstrapParams", "../../modules/uv-dialogues-module/ClickThroughDialogue", "./ExternalResource", "./Information", "./InformationAction", "../../modules/uv-dialogues-module/LoginDialogue", "../../Params", "./Shell", "../../modules/uv-shared-module/Storage", "../../modules/uv-shared-module/Riksarkivet"], function (require, exports, BaseCommands, BootstrapParams, ClickThroughDialogue, ExternalResource, Information, InformationAction, LoginDialogue, Params, Shell, Storage, Riksarkivet) {
     var BaseExtension = (function () {
         function BaseExtension(bootstrapper) {
             this.shifted = false;
@@ -1330,6 +1344,7 @@ define('modules/uv-shared-module/BaseExtension',["require", "exports", "./BaseCo
                     _this.loadDependencies(deps);
                 });
             }
+            this.riksarkivet = new Riksarkivet();
         };
         BaseExtension.prototype.createModules = function () {
             this.$clickThroughDialogue = $('<div class="overlay clickthrough"></div>');
@@ -1485,6 +1500,11 @@ define('modules/uv-shared-module/BaseExtension',["require", "exports", "./BaseCo
                 Utils.Urls.SetHashParameter(this.provider.bootstrapper.params.paramMap[key], value, parent.document);
             }
         };
+        BaseExtension.prototype.SetUrlAfter = function (searchvalue, value) {
+            if (this.provider.isDeepLinkingEnabled()) {
+                Utils.Urls.SetUrlAfter(searchvalue, value, parent.document);
+            }
+        };
         BaseExtension.prototype.viewCanvas = function (canvasIndex) {
             if (canvasIndex === -1)
                 return;
@@ -1495,6 +1515,9 @@ define('modules/uv-shared-module/BaseExtension',["require", "exports", "./BaseCo
             this.provider.canvasIndex = canvasIndex;
             $.publish(BaseCommands.CANVAS_INDEX_CHANGED, [canvasIndex]);
             $.publish(BaseCommands.OPEN_EXTERNAL_RESOURCE);
+            var canvas = this.provider.getCanvasByIndex(canvasIndex);
+            var bildid = this.riksarkivet.GetBildIdFromCanvas(canvas);
+            this.SetUrlAfter("/", bildid);
             this.setParam(Params.canvasIndex, canvasIndex);
         };
         BaseExtension.prototype.showMessage = function (message, acceptCallback, buttonText, allowClose) {
@@ -20280,11 +20303,10 @@ var Utils;
 // Licensed under MIT open source license http://opensource.org/licenses/MIT
 //
 // Orginal javascript code was by Mauricio Santos
-var __extends = this.__extends || function (d, b) {
+var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 /**
  * @namespace Top level namespace for collections, a TypeScript data structure library.
@@ -23019,7 +23041,11 @@ var Utils;
         }
         Numbers.NumericalInput = function (event) {
             // Allow: backspace, delete, tab and escape
-            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || (event.keyCode == 65 && event.ctrlKey === true) || (event.keyCode >= 35 && event.keyCode <= 39)) {
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 ||
+                // Allow: Ctrl+A
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                // Allow: home, end, left, right
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
                 // let it happen, don't do anything
                 return true;
             }
@@ -23083,7 +23109,31 @@ var Utils;
             if (index != -1) {
                 url = url.substr(0, url.indexOf('#'));
             }
-            doc.location.replace(url + newHash);
+            if (window.top.history.replaceState)
+                window.top.history.replaceState(null, null, url + newHash);
+            else
+                doc.location.replace(url + newHash);
+        };
+        Urls.SetUrlAfter = function (searchvalue, value, doc) {
+            if (!doc)
+                doc = window.document;
+            var url = doc.URL;
+            var searchIndex = url.lastIndexOf(searchvalue);
+            if (searchIndex == -1)
+                return;
+            var startUrl = url.substr(0, searchIndex);
+            var endUrl = url.substr(searchIndex);
+            var indexAfter = endUrl.indexOf("?");
+            if (indexAfter == -1)
+                indexAfter = endUrl.indexOf("&");
+            if (indexAfter == -1)
+                indexAfter = endUrl.indexOf("#");
+            if (indexAfter != -1)
+                endUrl = endUrl.substr(indexAfter);
+            else
+                endUrl = "";
+            if (window.top.history.replaceState)
+                window.top.history.replaceState(null, null, startUrl + searchvalue + value + endUrl);
         };
         Urls.GetQuerystringParameter = function (key, w) {
             if (!w)
@@ -23113,6 +23163,7 @@ var Utils;
                 kvp.shift();
             var i = kvp.length;
             var x;
+            // replace if already present.
             while (i--) {
                 x = kvp[i].split('=');
                 if (x[0] == key) {
