@@ -64,6 +64,26 @@
                 line-height: 24px;
             }
 
+            &.prev-five{
+                background-color: @gray;
+                background-image: url('@{img-path}prev_five.png');
+                background-repeat: no-repeat;
+                margin: 0 0 0 5px;
+                &:hover{
+                    background-color: @gray-dark;
+                }
+            }
+
+            &.next-five{
+                background-color: @gray;
+                background-image: url('@{img-path}next_five.png');
+                background-repeat: no-repeat;
+                margin: 0 5px 0 0;
+                &:hover{
+                    background-color: @gray-dark;
+                }
+            }
+
             &.disabled{
                 opacity: 0.4;
                 filter: alpha(opacity=40);

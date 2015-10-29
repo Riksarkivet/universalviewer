@@ -18,6 +18,8 @@ class PagingHeaderPanel extends HeaderPanel {
     $pageModeOption: JQuery;
     $prevButton: JQuery;
     $prevOptions: JQuery;
+    $nextFiveButton: JQuery;
+    $prevFiveButton: JQuery;
     $search: JQuery;
     $searchButton: JQuery;
     $searchText: JQuery;
@@ -59,33 +61,39 @@ class PagingHeaderPanel extends HeaderPanel {
         this.$prevButton = $('<a class="imageBtn prev" tabindex="16"></a>');
         this.$prevOptions.append(this.$prevButton);
 
+        this.$prevFiveButton = $('<a class="imageBtn prev-five" tabindex="17"></a>');
+        this.$prevOptions.append(this.$prevFiveButton);
+
         this.$modeOptions = $('<div class="mode"></div>');
         this.$centerOptions.append(this.$modeOptions);
 
         this.$imageModeLabel = $('<label for="image">' + this.content.image + '</label>');
         this.$modeOptions.append(this.$imageModeLabel);
-        this.$imageModeOption = $('<input type="radio" id="image" name="mode" tabindex="17"/>');
+        this.$imageModeOption = $('<input type="radio" id="image" name="mode" tabindex="18"/>');
         this.$modeOptions.append(this.$imageModeOption);
 
         this.$pageModeLabel = $('<label for="page"></label>');
         this.$modeOptions.append(this.$pageModeLabel);
-        this.$pageModeOption = $('<input type="radio" id="page" name="mode" tabindex="18"/>');
+        this.$pageModeOption = $('<input type="radio" id="page" name="mode" tabindex="19"/>');
         this.$modeOptions.append(this.$pageModeOption);
 
         this.$search = $('<div class="search"></div>');
         this.$centerOptions.append(this.$search);
 
-        this.$searchText = $('<input class="searchText" maxlength="50" type="text" tabindex="19"/>');
+        this.$searchText = $('<input class="searchText" maxlength="50" type="text" tabindex="20"/>');
         this.$search.append(this.$searchText);
 
         this.$total = $('<span class="total"></span>');
         this.$search.append(this.$total);
 
-        this.$searchButton = $('<a class="go btn btn-primary" tabindex="20">' + this.content.go + '</a>');
+        this.$searchButton = $('<a class="go btn btn-primary" tabindex="21">' + this.content.go + '</a>');
         this.$search.append(this.$searchButton);
 
         this.$nextOptions = $('<div class="nextOptions"></div>');
         this.$centerOptions.append(this.$nextOptions);
+
+        this.$nextFiveButton = $('<a class="imageBtn next-five" tabindex="22"></a>');
+        this.$nextOptions.append(this.$nextFiveButton);
 
         this.$nextButton = $('<a class="imageBtn next" tabindex="1"></a>');
         this.$nextOptions.append(this.$nextButton);
@@ -126,6 +134,14 @@ class PagingHeaderPanel extends HeaderPanel {
 
         this.$prevButton.onPressed(() => {
             $.publish(Commands.PREV);
+        });
+
+        this.$prevFiveButton.onPressed(() => {
+            $.publish(Commands.PREV_FIVE);
+        });
+
+        this.$nextFiveButton.onPressed(() => {
+            $.publish(Commands.NEXT_FIVE);
         });
 
         this.$nextButton.onPressed(() => {
@@ -173,15 +189,42 @@ class PagingHeaderPanel extends HeaderPanel {
             this.$centerOptions.addClass('modeOptionsDisabled');
         }
 
+        if (this.options.searchOptionsEnabled === false) {
+            this.$search.hide();
+            //this.$centerOptions.addClass('searchOptionsDisabled');
+        }
+
+        if (this.options.prevNextFiveOptionsEnabled === false) {
+            this.$prevFiveButton.hide();
+            this.$nextFiveButton.hide();
+        }
+
         if (this.options.helpEnabled === false){
             this.$helpButton.hide();
         }
 
+        //Get visible element in centerOptions with greatest tabIndex
+        var maxTabIndex: number = 1;
+        var $elementWithGreatestTabIndex: JQuery = this.$searchButton;
+        this.$centerOptions.find('*:visible[tabindex]').each(function (idx, el: HTMLElement) {
+            var tIndex = parseInt($(el).attr('tabindex'));
+            if (tIndex > maxTabIndex) {
+                maxTabIndex = tIndex;
+                $elementWithGreatestTabIndex = $(el);
+            }
+        });
         // cycle focus back to start.
-        // todo: design a more generic system that finds the element with the highest tabindex and attaches this listener
-        this.$searchButton.blur(() => {
+        $elementWithGreatestTabIndex.blur(() => {
             if (this.extension.tabbing && !this.extension.shifted){
                 this.$nextButton.focus();
+            }
+        });
+
+        this.$nextButton.blur(() => {
+            if (this.extension.tabbing && this.extension.shifted) {
+                setTimeout(() => {
+                    $elementWithGreatestTabIndex.focus();
+                }, 100);
             }
         });
 
@@ -204,10 +247,14 @@ class PagingHeaderPanel extends HeaderPanel {
             this.$firstButton.prop('title', this.content.firstPage);
             this.$prevButton.prop('title', this.content.previousPage);
             this.$nextButton.prop('title', this.content.nextPage);
+            this.$prevFiveButton.prop('title', this.content.previousFivePages);
+            this.$nextFiveButton.prop('title', this.content.nextFivePages);
             this.$lastButton.prop('title', this.content.lastPage);
         } else {
             this.$firstButton.prop('title', this.content.firstImage);
             this.$prevButton.prop('title', this.content.previousImage);
+            this.$prevFiveButton.prop('title', this.content.previousFivePages);
+            this.$nextFiveButton.prop('title', this.content.nextFivePages);
             this.$nextButton.prop('title', this.content.nextImage);
             this.$lastButton.prop('title', this.content.lastImage);
         }

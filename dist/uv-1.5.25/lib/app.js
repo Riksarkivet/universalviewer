@@ -92,6 +92,7 @@ define('BootstrapParams',["require", "exports", "./Params"], function (require, 
             this.domain = Utils.Urls.GetQuerystringParameter('domain');
             this.embedDomain = Utils.Urls.GetQuerystringParameter('embedDomain');
             this.embedScriptUri = Utils.Urls.GetQuerystringParameter('embedScriptUri');
+            this.hasNoPageNumbers = Utils.Urls.GetQuerystringParameter('hasNoPageNumbers') === 'true';
             this.isHomeDomain = Utils.Urls.GetQuerystringParameter('isHomeDomain') === 'true';
             this.isLightbox = Utils.Urls.GetQuerystringParameter('isLightbox') === 'true';
             this.isOnlyInstance = Utils.Urls.GetQuerystringParameter('isOnlyInstance') === 'true';
@@ -2967,11 +2968,13 @@ define('extensions/uv-seadragon-extension/Commands',["require", "exports"], func
         Commands.LAST = Commands.namespace + 'onLast';
         Commands.MODE_CHANGED = Commands.namespace + 'onModeChanged';
         Commands.NEXT = Commands.namespace + 'onNext';
+        Commands.NEXT_FIVE = Commands.namespace + 'onNextFive';
         Commands.NEXT_SEARCH_RESULT = Commands.namespace + 'onNextSearchResult';
         Commands.OPEN_THUMBS_VIEW = Commands.namespace + 'onOpenThumbsView';
         Commands.OPEN_TREE_VIEW = Commands.namespace + 'onOpenTreeView';
         Commands.PAGE_SEARCH = Commands.namespace + 'onPageSearch';
         Commands.PREV = Commands.namespace + 'onPrev';
+        Commands.PREV_FIVE = Commands.namespace + 'onPrevFive';
         Commands.PREV_SEARCH_RESULT = Commands.namespace + 'onPrevSearchResult';
         Commands.SEADRAGON_ANIMATION = Commands.namespace + 'onAnimation';
         Commands.SEADRAGON_ANIMATION_FINISH = Commands.namespace + 'onAnimationfinish';
@@ -4137,6 +4140,7 @@ define('modules/uv-shared-module/BaseProvider',["require", "exports", "../../Boo
             this.embedScriptUri = this.bootstrapper.params.embedScriptUri;
             this.domain = this.bootstrapper.params.domain;
             this.isLightbox = this.bootstrapper.params.isLightbox;
+            this.hasNoPageNumbers = this.bootstrapper.params.hasNoPageNumbers;
             this.collectionIndex = this.bootstrapper.params.collectionIndex;
             this.manifestIndex = this.bootstrapper.params.manifestIndex;
             this.sequenceIndex = this.bootstrapper.params.sequenceIndex;
@@ -4309,6 +4313,65 @@ define('modules/uv-shared-module/BaseProvider',["require", "exports", "../../Boo
                 return -1;
             }
             return index;
+        };
+        BaseProvider.prototype.getPrevFivePageIndex = function (canvasIndex) {
+            if (typeof (canvasIndex) === 'undefined')
+                canvasIndex = this.canvasIndex;
+            var index;
+            if (this.isPagingSettingEnabled()) {
+                var indices = this.getPagedIndices(canvasIndex);
+                if (this.getViewingDirection().toString() === manifesto.ViewingDirection.rightToLeft().toString()) {
+                    index = this.tryDecrementIndex(indices[0], 5);
+                }
+                else {
+                    index = this.tryDecrementIndex(indices.last(), 5);
+                }
+            }
+            else {
+                index = this.tryDecrementIndex(canvasIndex, 5);
+            }
+            return index;
+        };
+        BaseProvider.prototype.getNextFivePageIndex = function (canvasIndex) {
+            if (typeof (canvasIndex) === 'undefined')
+                canvasIndex = this.canvasIndex;
+            var index;
+            if (this.isPagingSettingEnabled()) {
+                var indices = this.getPagedIndices(canvasIndex);
+                if (this.getViewingDirection().toString() === manifesto.ViewingDirection.rightToLeft().toString()) {
+                    index = this.tryIncrementIndex(indices[0], 5);
+                }
+                else {
+                    index = this.tryIncrementIndex(indices.last(), 5);
+                }
+            }
+            else {
+                index = this.tryIncrementIndex(canvasIndex, 5);
+            }
+            return index;
+        };
+        BaseProvider.prototype.tryDecrementIndex = function (currentIndex, numberToIncrement) {
+            for (var i = 0; i < numberToIncrement; i++) {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                }
+                else {
+                    break;
+                }
+            }
+            return currentIndex;
+        };
+        BaseProvider.prototype.tryIncrementIndex = function (currentIndex, numberToIncrement) {
+            var totalCanvases = this.getTotalCanvases();
+            for (var i = 0; i < numberToIncrement; i++) {
+                if (currentIndex < (totalCanvases - 1)) {
+                    currentIndex++;
+                }
+                else {
+                    break;
+                }
+            }
+            return currentIndex;
         };
         BaseProvider.prototype.getStartCanvasIndex = function () {
             return this.getCurrentSequence().getStartCanvasIndex();
@@ -5659,26 +5722,30 @@ define('modules/uv-pagingheaderpanel-module/PagingHeaderPanel',["require", "expo
             this.$prevOptions.append(this.$firstButton);
             this.$prevButton = $('<a class="imageBtn prev" tabindex="16"></a>');
             this.$prevOptions.append(this.$prevButton);
+            this.$prevFiveButton = $('<a class="imageBtn prev-five" tabindex="17"></a>');
+            this.$prevOptions.append(this.$prevFiveButton);
             this.$modeOptions = $('<div class="mode"></div>');
             this.$centerOptions.append(this.$modeOptions);
             this.$imageModeLabel = $('<label for="image">' + this.content.image + '</label>');
             this.$modeOptions.append(this.$imageModeLabel);
-            this.$imageModeOption = $('<input type="radio" id="image" name="mode" tabindex="17"/>');
+            this.$imageModeOption = $('<input type="radio" id="image" name="mode" tabindex="18"/>');
             this.$modeOptions.append(this.$imageModeOption);
             this.$pageModeLabel = $('<label for="page"></label>');
             this.$modeOptions.append(this.$pageModeLabel);
-            this.$pageModeOption = $('<input type="radio" id="page" name="mode" tabindex="18"/>');
+            this.$pageModeOption = $('<input type="radio" id="page" name="mode" tabindex="19"/>');
             this.$modeOptions.append(this.$pageModeOption);
             this.$search = $('<div class="search"></div>');
             this.$centerOptions.append(this.$search);
-            this.$searchText = $('<input class="searchText" maxlength="50" type="text" tabindex="19"/>');
+            this.$searchText = $('<input class="searchText" maxlength="50" type="text" tabindex="20"/>');
             this.$search.append(this.$searchText);
             this.$total = $('<span class="total"></span>');
             this.$search.append(this.$total);
-            this.$searchButton = $('<a class="go btn btn-primary" tabindex="20">' + this.content.go + '</a>');
+            this.$searchButton = $('<a class="go btn btn-primary" tabindex="21">' + this.content.go + '</a>');
             this.$search.append(this.$searchButton);
             this.$nextOptions = $('<div class="nextOptions"></div>');
             this.$centerOptions.append(this.$nextOptions);
+            this.$nextFiveButton = $('<a class="imageBtn next-five" tabindex="22"></a>');
+            this.$nextOptions.append(this.$nextFiveButton);
             this.$nextButton = $('<a class="imageBtn next" tabindex="1"></a>');
             this.$nextOptions.append(this.$nextButton);
             this.$lastButton = $('<a class="imageBtn last" tabindex="2"></a>');
@@ -5713,12 +5780,18 @@ define('modules/uv-pagingheaderpanel-module/PagingHeaderPanel',["require", "expo
             this.$prevButton.onPressed(function () {
                 $.publish(Commands.PREV);
             });
+            this.$prevFiveButton.onPressed(function () {
+                $.publish(Commands.PREV_FIVE);
+            });
+            this.$nextFiveButton.onPressed(function () {
+                $.publish(Commands.NEXT_FIVE);
+            });
             this.$nextButton.onPressed(function () {
                 $.publish(Commands.NEXT);
             });
             // If page mode is disabled, we don't need to show radio buttons since
             // there is only one option:
-            if (!this.config.options.pageModeEnabled) {
+            if (!this.config.options.pageModeEnabled || this.provider.hasNoPageNumbers) {
                 this.$imageModeOption.hide();
                 this.$pageModeLabel.hide();
                 this.$pageModeOption.hide();
@@ -5751,14 +5824,37 @@ define('modules/uv-pagingheaderpanel-module/PagingHeaderPanel',["require", "expo
                 this.$modeOptions.hide();
                 this.$centerOptions.addClass('modeOptionsDisabled');
             }
+            if (this.options.searchOptionsEnabled === false) {
+                this.$search.hide();
+            }
+            if (this.options.prevNextFiveOptionsEnabled === false) {
+                this.$prevFiveButton.hide();
+                this.$nextFiveButton.hide();
+            }
             if (this.options.helpEnabled === false) {
                 this.$helpButton.hide();
             }
+            //Get visible element in centerOptions with greatest tabIndex
+            var maxTabIndex = 1;
+            var $elementWithGreatestTabIndex = this.$searchButton;
+            this.$centerOptions.find('*:visible[tabindex]').each(function (idx, el) {
+                var tIndex = parseInt($(el).attr('tabindex'));
+                if (tIndex > maxTabIndex) {
+                    maxTabIndex = tIndex;
+                    $elementWithGreatestTabIndex = $(el);
+                }
+            });
             // cycle focus back to start.
-            // todo: design a more generic system that finds the element with the highest tabindex and attaches this listener
-            this.$searchButton.blur(function () {
+            $elementWithGreatestTabIndex.blur(function () {
                 if (_this.extension.tabbing && !_this.extension.shifted) {
                     _this.$nextButton.focus();
+                }
+            });
+            this.$nextButton.blur(function () {
+                if (_this.extension.tabbing && _this.extension.shifted) {
+                    setTimeout(function () {
+                        $elementWithGreatestTabIndex.focus();
+                    }, 100);
                 }
             });
             //this.$nextButton.blur(() => {
@@ -5770,18 +5866,22 @@ define('modules/uv-pagingheaderpanel-module/PagingHeaderPanel',["require", "expo
             //});
         };
         PagingHeaderPanel.prototype.isPageModeEnabled = function () {
-            return this.config.options.pageModeEnabled && this.extension.getMode().toString() === Mode.page.toString();
+            return this.config.options.pageModeEnabled && !this.provider.hasNoPageNumbers && this.extension.getMode().toString() === Mode.page.toString();
         };
         PagingHeaderPanel.prototype.setTitles = function () {
             if (this.isPageModeEnabled()) {
                 this.$firstButton.prop('title', this.content.firstPage);
                 this.$prevButton.prop('title', this.content.previousPage);
                 this.$nextButton.prop('title', this.content.nextPage);
+                this.$prevFiveButton.prop('title', this.content.previousFivePages);
+                this.$nextFiveButton.prop('title', this.content.nextFivePages);
                 this.$lastButton.prop('title', this.content.lastPage);
             }
             else {
                 this.$firstButton.prop('title', this.content.firstImage);
                 this.$prevButton.prop('title', this.content.previousImage);
+                this.$prevFiveButton.prop('title', this.content.previousFivePages);
+                this.$nextFiveButton.prop('title', this.content.nextFivePages);
                 this.$nextButton.prop('title', this.content.nextImage);
                 this.$lastButton.prop('title', this.content.lastImage);
             }
@@ -6520,6 +6620,14 @@ define('extensions/uv-seadragon-extension/Extension',["require", "exports", "../
             $.subscribe(Commands.PREV, function (e) {
                 _this.triggerSocket(Commands.PREV);
                 _this.viewPage(_this.provider.getPrevPageIndex());
+            });
+            $.subscribe(Commands.PREV_FIVE, function (e) {
+                //this.triggerSocket(Commands.PREV_FIVE);
+                _this.viewPage(_this.provider.getPrevFivePageIndex());
+            });
+            $.subscribe(Commands.NEXT_FIVE, function (e) {
+                //this.triggerSocket(Commands.NEXT_FIVE);
+                _this.viewPage(_this.provider.getNextFivePageIndex());
             });
             $.subscribe(Commands.NEXT, function (e) {
                 _this.triggerSocket(Commands.NEXT);
