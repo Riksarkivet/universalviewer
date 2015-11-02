@@ -37,7 +37,11 @@ module.exports = function (grunt) {
             dist: ['<%= config.dirs.dist %>'],
             examples: ['<%= config.dirs.examples %>/uv-*'],
             apphtml: ['<%= config.dirs.dist %>/<%= config.dirs.uv %>/app.html'],
-            extension: ['./src/extensions/*/build/*']
+            extension: ['./src/extensions/*/build/*'],
+            soktjanst: {
+                options: { force: true },
+                src: [ '<%= config.dirs.soktjanst %>/*']
+            }
         },
 
         copy: {
@@ -197,7 +201,18 @@ module.exports = function (grunt) {
                         dest: '<%= config.dirs.dist %>/<%= config.dirs.uv %>/'
                     }
                 ]
-            }
+            },
+            soktjanst: {
+                // copy contents of /build to soktjanst/universalviewer.
+                files: [
+                    {
+                        cwd: '<%= config.dirs.dist %>/<%= config.dirs.uv %>',
+                        expand: true,
+                        src: ['**'],
+                        dest: '<%= config.dirs.soktjanst %>/'
+                    }
+                ]
+            },
         },
 
         sync: {
@@ -470,9 +485,7 @@ module.exports = function (grunt) {
             'replace:examples',
             'clean:examples',
             'copy:examples',
-            'dist',
-            'copy:app_rename',
-            'clean:apphtml'
+            'dist'
         );
     });
 
@@ -500,6 +513,17 @@ module.exports = function (grunt) {
     grunt.registerTask("test", '', function(){
         grunt.task.run(
             'protractor:dev'
+        );
+    });
+
+    grunt.registerTask('build-riksarkivet', '', function () {
+        
+        grunt.task.run(
+            'clean:soktjanst',
+            'build',
+            'copy:app_rename',
+            'clean:apphtml',
+            'copy:soktjanst'
         );
     });
 };
