@@ -37,7 +37,7 @@ module.exports = function (grunt) {
             build : ['<%= config.dirs.build %>'],
             dist: ['<%= config.dirs.dist %>'],
             examples: ['<%= config.dirs.examples %>/uv-*'],
-            apphtml: ['<%= config.dirs.dist %>/<%= config.dirs.uv %>/app.html'],
+            apphtml: ['<%= config.dirs.dist %>/<%= config.dirs.uvVersioned %>/app.html'],
             extension: ['./src/extensions/*/build/*'],
             soktjanst: {
                 options: { force: true },
@@ -193,13 +193,13 @@ module.exports = function (grunt) {
             app_rename: {
                 files: [
                     {
-                        cwd: '<%= config.dirs.dist %>/<%= config.dirs.uv %>/',
+                        cwd: '<%= config.dirs.dist %>/<%= config.dirs.uvVersioned %>',
                         expand: true,
                         src: ['app.html'],
                         rename: function (dest, src) {
                             return dest + 'app_original.html';
                         },
-                        dest: '<%= config.dirs.dist %>/<%= config.dirs.uv %>/'
+                        dest: '<%= config.dirs.dist %>/<%= config.dirs.uvVersioned %>/'
                     }
                 ]
             },
@@ -207,7 +207,7 @@ module.exports = function (grunt) {
                 // copy contents of /build to soktjanst/universalviewer.
                 files: [
                     {
-                        cwd: '<%= config.dirs.dist %>/<%= config.dirs.uv %>',
+                        cwd: '<%= config.dirs.dist %>/<%= config.dirs.uvVersioned %>',
                         expand: true,
                         src: ['**'],
                         dest: '<%= config.dirs.soktjanst %>/'
@@ -519,6 +519,8 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build-riksarkivet', '', function () {
         
+        refresh();
+
         grunt.task.run(
             'clean:soktjanst',
             'build',
