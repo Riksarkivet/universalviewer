@@ -6,7 +6,6 @@ require.config({
         'ext': 'lib/extensions',
         'httpstatuscodes': 'lib/http-status-codes',
         'jquery': 'lib/jquery-1.10.2.min',
-        'jqueryxdomain': 'lib/jquery.xdomainrequest.min',
         'jsviews': 'lib/jsviews.min',
         'l10n': 'lib/l10n',
         'length': 'lib/Length.min',
@@ -17,6 +16,7 @@ require.config({
         'pubsub': 'lib/pubsub',
         'sanitize': 'lib/sanitize',
         'utils': 'lib/utils',
+        'xdomainrequest': 'lib/jquery.xdomainrequest',
         'yepnope': 'lib/yepnope.1.5.4-min',
         'yepnopecss': 'lib/yepnope.css'
     },
@@ -27,9 +27,6 @@ require.config({
         jsviews: {
             deps: ['jquery']
         },
-        jqueryxdomain: {
-            deps: ['jquery']
-        },
         plugins: {
             deps: ['jquery']
         },
@@ -38,6 +35,9 @@ require.config({
         },
         underscore: {
             exports: '_'
+        },
+        xdomainrequest: {
+           deps: ['jquery']
         },
         yepnopecss: {
             deps: ['yepnope']
@@ -59,7 +59,6 @@ require([
     'ext',
     'httpstatuscodes',
     'jquery',
-    'jqueryxdomain',
     'jsviews',
     'l10n',
     'length',
@@ -70,6 +69,7 @@ require([
     'pubsub',
     'sanitize',
     'utils',
+    'xdomainrequest',
     'yepnope',
     'yepnopecss',
     ], (

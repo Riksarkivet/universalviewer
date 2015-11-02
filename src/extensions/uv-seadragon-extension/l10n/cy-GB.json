@@ -3,6 +3,7 @@
     "label": "Cymraeg"
   },
   "content": {
+    "authCORSError": "Eich porwr yn peidio cefnogi CORS, os gwelwch yn dda uwchraddio i weld y cynnwys hwn.",
     "canvasIndexOutOfRange": "Canfas yn rhy fawr i'w arddangos (ceisiwch eto)",
     "degradedResourceMessage": "Os gwelwch yn dda mewngofnodwch i weld yn ansawdd llawn.",
     "degradedResourceLogin": "Mewngofnodi"
@@ -116,7 +117,7 @@
     },
     "seadragonCenterPanel": {
       "content": {
-        "acknowledgements": "Cydnabyddiaethau",
+        "acknowledgements": "Priodoliad",
         "goHome": "Gweld y maint gwreiddiol",
         "imageUnavailable": "Nid oes delwedd ar gael",
         "next": "nesaf",

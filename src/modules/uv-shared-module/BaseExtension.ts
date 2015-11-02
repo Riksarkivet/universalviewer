@@ -7,6 +7,8 @@ import ExternalResource = require("./ExternalResource");
 import IExtension = require("./IExtension");
 import Information = require("./Information");
 import InformationAction = require("./InformationAction");
+import InformationArgs = require("./InformationArgs");
+import InformationType = require("./InformationType");
 import IProvider = require("./IProvider");
 import LoginDialogue = require("../../modules/uv-dialogues-module/LoginDialogue");
 import Params = require("../../Params");
@@ -52,7 +54,7 @@ class BaseExtension implements IExtension {
         this.$element.width(this.embedWidth);
         this.$element.height(this.embedHeight);
 
-        if (!this.provider.isReload && this.inIframe()){
+        if (!this.provider.isReload && Utils.Documents.IsInIFrame()){
             // communication with parent frame (if it exists).
             this.bootstrapper.socket = new easyXDM.Socket({
                 onMessage: (message, origin) => {
@@ -137,9 +139,45 @@ class BaseExtension implements IExtension {
 
                 if (event){
                     e.preventDefault();
-                    $.publish(event)
+                    $.publish(event);
                 }
             });
+
+            $(parent.document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', (e) => {
+                if (e.type === 'webkitfullscreenchange' && !parent.document.webkitIsFullScreen ||
+                    e.type === 'mozfullscreenchange' && !parent.document.mozFullScreen ||
+                    e.type === 'MSFullscreenChange' && parent.document.msFullscreenElement === null) {
+                    if (this.isOverlayActive()){
+                        $.publish(BaseCommands.ESCAPE);
+                    }
+                    $.publish(BaseCommands.ESCAPE);
+                    $.publish(BaseCommands.RESIZE);
+                }
+            });
+
+            //if (parent.document.addEventListener){
+            //    // firefox reserves the escape key when in full screen mode
+            //    parent.document.addEventListener("mozfullscreenchange", () => {
+            //        if (!parent.document.mozFullScreen){
+            //            if (this.isOverlayActive()){
+            //                $.publish(BaseCommands.ESCAPE);
+            //            }
+            //            $.publish(BaseCommands.ESCAPE);
+            //            $.publish(BaseCommands.RESIZE);
+            //        }
+            //    }, false);
+            //
+            //    // IE reserves the escape key when in full screen mode
+            //    parent.document.addEventListener("MSFullscreenChange", () => {
+            //        if (parent.document.msFullscreenElement === null){
+            //            if (this.isOverlayActive()){
+            //                $.publish(BaseCommands.ESCAPE);
+            //            }
+            //            $.publish(BaseCommands.ESCAPE);
+            //            $.publish(BaseCommands.RESIZE);
+            //        }
+            //    }, false);
+            //}
         }
 
         this.$element.append('<a href="/" id="top"></a>');
@@ -365,6 +403,7 @@ class BaseExtension implements IExtension {
             if (!this.isOverlayActive()){
                 $('#top').focus();
                 this.bootstrapper.isFullScreen = !this.bootstrapper.isFullScreen;
+
                 this.triggerSocket(BaseCommands.TOGGLE_FULLSCREEN,
                     {
                         isFullScreen: this.bootstrapper.isFullScreen,
@@ -657,15 +696,6 @@ class BaseExtension implements IExtension {
         this.provider.reload(p);
     }
 
-    inIframe(): boolean {
-        // see http://stackoverflow.com/questions/326069/how-to-identify-if-a-webpage-is-being-loaded-inside-an-iframe-or-directly-into-t
-        try {
-            return window.self !== window.top;
-        } catch (e) {
-            return true;
-        }
-    }
-
     isFullScreen(): boolean {
         return this.bootstrapper.isFullScreen;
     }
@@ -782,29 +812,26 @@ class BaseExtension implements IExtension {
                 resolve(resource);
                 $.publish(BaseCommands.RESOURCE_DEGRADED, [resource]);
             } else {
-                // access denied
-                reject(resource.error.statusText);
+                if (resource.error.status === HTTPStatusCode.UNAUTHORIZED ||
+                    resource.error.status === HTTPStatusCode.INTERNAL_SERVER_ERROR){
+                    // if the browser doesn't support CORS
+                    if (!Modernizr.cors){
+                        var informationArgs: InformationArgs = new InformationArgs(InformationType.AUTH_CORS_ERROR, null);
+                        $.publish(BaseCommands.SHOW_INFORMATION, [informationArgs]);
+                        resolve(resource);
+                    } else {
+                        reject(resource.error.statusText);
+                    }
+                } else {
+                    reject(resource.error.statusText);
+                }
             }
         });
     }
 
     handleDegraded(resource: Manifesto.IExternalResource): void {
-        var actions: InformationAction[] = [];
-
-        var loginAction: InformationAction = new InformationAction();
-
-        loginAction.label = this.provider.config.content.degradedResourceLogin;
-
-        loginAction.action = () => {
-            $.publish(BaseCommands.HIDE_INFORMATION);
-            $.publish(BaseCommands.OPEN_EXTERNAL_RESOURCE, [[resource]]);
-        };
-
-        actions.push(loginAction);
-
-        var information: Information = new Information(this.provider.config.content.degradedResourceMessage, actions);
-
-        $.publish(BaseCommands.SHOW_INFORMATION, [information]);
+        var informationArgs: InformationArgs = new InformationArgs(InformationType.DEGRADED_RESOURCE, resource);
+        $.publish(BaseCommands.SHOW_INFORMATION, [informationArgs]);
     }
 }
 
