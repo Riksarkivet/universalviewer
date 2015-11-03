@@ -204,12 +204,31 @@ module.exports = function (grunt) {
                 ]
             },
             soktjanst: {
-                // copy contents of /build to soktjanst/universalviewer.
+                // copy files that we use from /dest to soktjanst/universalviewer.
                 files: [
                     {
                         cwd: '<%= config.dirs.dist %>/<%= config.dirs.uvVersioned %>',
                         expand: true,
-                        src: ['**'],
+                        filter: 'isFile',
+                        src: [ 
+                            'themes/uv-en-GB-theme/css/uv-seadragon-extension/theme.css',
+                            'themes/uv-en-GB-theme/img/*',
+                            'themes/uv-en-GB-theme/img/uv-pagingheaderpanel-module/*',
+                            'themes/uv-en-GB-theme/img/uv-seadragoncenterpanel-module/*',
+                            'themes/uv-en-GB-theme/img/uv-searchfooterpanel-module/*',
+                            'themes/uv-en-GB-theme/img/uv-shared-module/*',
+                            'themes/uv-en-GB-theme/img/uv-treeviewleftpanel-module/*',
+                            'lib/app.js',
+                            'lib/base64.min.js',
+                            'lib/easyXDM.min.js', 
+                            'lib/easyxdm.swf', 
+                            'lib/embed.js', 
+                            'lib/json2.min.js',
+                            'lib/openseadragon.js',
+                            'lib/require.js', 
+                            'lib/uv-seadragon-extension.en-GB.config.json',
+                            'lib/uv-seadragon-extension-dependencies.js'
+                        ],
                         dest: '<%= config.dirs.soktjanst %>/'
                     }
                 ]
@@ -517,16 +536,27 @@ module.exports = function (grunt) {
         );
     });
 
-    grunt.registerTask('build-riksarkivet', '', function () {
-        
+    grunt.registerTask('build-soktjanst', '', function () {
         refresh();
-
         grunt.task.run(
-            'clean:soktjanst',
             'build',
             'copy:app_rename',
             'clean:apphtml',
             'copy:soktjanst'
+        );
+    });
+
+    grunt.registerTask('copy-soktjanst', '', function () {
+        refresh();
+        grunt.task.run(
+            'copy:soktjanst'
+        );
+    });
+
+    grunt.registerTask('clean-soktjanst', '', function () {
+        refresh();
+        grunt.task.run(
+            'clean:soktjanst'
         );
     });
 };
