@@ -20,6 +20,8 @@ class PagingHeaderPanel extends HeaderPanel {
     $prevOptions: JQuery;
     $nextFiveButton: JQuery;
     $prevFiveButton: JQuery;
+    $dropdownOptions: JQuery;
+    $imageDropdown: JQuery;
     $search: JQuery;
     $searchButton: JQuery;
     $searchText: JQuery;
@@ -83,10 +85,27 @@ class PagingHeaderPanel extends HeaderPanel {
         this.$searchText = $('<input class="searchText" maxlength="50" type="text" tabindex="20"/>');
         this.$search.append(this.$searchText);
 
+        if (this.options.imageDropdownEnabled === true) {
+            this.$dropdownOptions = $('<div class="image-dropdown-options"></div>');
+            this.$centerOptions.append(this.$dropdownOptions);
+            this.$imageDropdown = $('<select class="image-dropdown" name="image-select" tabindex="21" ></select>');
+            this.$dropdownOptions.append(this.$imageDropdown);
+            for (var imageIndex = 0; imageIndex < this.provider.getTotalCanvases(); imageIndex++) {
+                var canvas = this.provider.getCanvasByIndex(imageIndex);
+                var label = canvas.getLabel();
+                this.$imageDropdown.append('<option value=' + (imageIndex) + '>' + label + '</option>')
+            }
+
+            this.$imageDropdown.change(() => {
+                var valdIndex = parseInt(this.$imageDropdown.val());
+                $.publish(Commands.IMAGE_SEARCH, [valdIndex]);
+            });
+        }
+
         this.$total = $('<span class="total"></span>');
         this.$search.append(this.$total);
 
-        this.$searchButton = $('<a class="go btn btn-primary" tabindex="21">' + this.content.go + '</a>');
+        this.$searchButton = $('<a class="go btn btn-primary" tabindex="22">' + this.content.go + '</a>');
         this.$search.append(this.$searchButton);
 
         this.$nextOptions = $('<div class="nextOptions"></div>');
@@ -195,13 +214,13 @@ class PagingHeaderPanel extends HeaderPanel {
             this.$search.hide();
         }
 
-        //Previous och next 5 are hided as default
+        //Previous och next 5 buttons are hidden as default
         if (!(this.options.prevNextFiveButtonsEnabled === true)) {
             this.$prevFiveButton.hide();
             this.$nextFiveButton.hide();
         }
 
-        if (this.options.helpEnabled === false){
+        if (this.options.helpEnabled === false) {
             this.$helpButton.hide();
         }
 
@@ -333,6 +352,10 @@ class PagingHeaderPanel extends HeaderPanel {
 
     canvasIndexChanged(index): void {
         this.setSearchFieldValue(index);
+
+        if (this.options.imageDropdownEnabled === true) {
+            this.$imageDropdown.val(index);
+        }
 
         if (this.provider.isFirstCanvas()){
             this.disableFirstButton();
