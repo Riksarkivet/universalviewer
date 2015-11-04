@@ -234,6 +234,7 @@ module.exports = function (grunt) {
                             'lib/openseadragon.js',
                             'lib/require.js', 
                             'lib/uv-seadragon-extension.en-GB.config.json',
+                            'lib/uv-seadragon-extension.sv-SE.config.json',
                             'lib/uv-seadragon-extension-dependencies.js'
                         ],
                         dest: '<%= config.dirs.soktjanst %>/'

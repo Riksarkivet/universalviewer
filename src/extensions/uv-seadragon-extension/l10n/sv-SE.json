@@ -1,0 +1,177 @@
+﻿{
+  "localisation": {
+    "label": "Svenska"
+  },
+  "options": {
+  },
+  "content": {
+    "authCORSError": "Your browser does not support CORS, please upgrade to view this content.",
+    "canvasIndexOutOfRange": "Canvas index out of range.",
+    "degradedResourceMessage": "Please log in to view at full quality.",
+    "degradedResourceLogin": "log in"
+  },
+  "modules": {
+    "clickThroughDialogue": {
+      "content": {
+        "viewTerms": "Read Full Terms and Conditions"
+      }
+    },
+    "dialogue": {
+      "content": {
+        "close": "Stäng"
+      }
+    },
+    "downloadDialogue": {
+      "content": {
+        "currentViewAsJpg": "Aktuell vy (jpg)",
+        "download": "Ladda ner",
+        "editSettings": "Ändra inställningar",
+        "entireDocument": "Hela dokumentet ({0})",
+        "entireFileAsOriginal": "Hela filen ({0})",
+        "noneAvailable": "Inga nerladdningsinställningar är tillgängliga.",
+        "pagingNote": "Please turn off Two Page View for additional options.",
+        "preview": "Förhandsgranska",
+        "title": "Ladda ner",
+        "wholeImageHighRes": "Hela bilden hög upplösning ({0})",
+        "wholeImageLowResAsJpg": "Hela bilden låg upplösning (jpg)"
+      }
+    },
+    "embedDialogue": {
+      "content": {
+        "customSize": "Egen storlek",
+        "height": "Höjd",
+        "instructions": "För att bädda in komponenten i din webb-sida kopiera och klistra in koden nedanför:",
+        "title": "Bädda in",
+        "width": "Bredd"
+      }
+    },
+    "footerPanel": {
+      "content": {
+        "download": "Ladda ner",
+        "embed": "Inbädda",
+        "exitFullScreen": "Lämna fullskärmsläge",
+        "fullScreen": "Fullskärmsläge"
+      }
+    },
+    "genericDialogue": {
+      "content": {
+        "emptyValue": "please enter a value.",
+        "invalidNumber": "Please enter a valid number.",
+        "noMatches": "No matches were found.",
+        "ok": "OK",
+        "pageNotFound": "This item does not contain a page with the number you entered. Try switching the numbering mode to 'image'.",
+        "refresh": "Refresh"
+      }
+    },
+    "helpDialogue": {
+      "content": {
+        "text": "placeholder text",
+        "title": "Help"
+      }
+    },
+    "loginDialogue": {
+      "content": {
+        "login": "Login"
+      }
+    },
+    "moreInfoRightPanel": {
+      "content": {
+        "attribution": "Attribution",
+        "collapse": "Collapse More Information",
+        "collapseFull": "Collapse Gallery",
+        "description": "Description",
+        "expand": "Expand More Information",
+        "expandFull": "Expand Gallery",
+        "holdingText": "Your module goes here!",
+        "less": "less",
+        "license": "License",
+        "more": "more",
+        "noData": "No data to display",
+        "title": "More Information"
+      }
+    },
+    "pagingHeaderPanel": {
+      "content": {
+        "close": "Stäng",
+        "emptyValue": "Please enter a value",
+        "first": "Första",
+        "firstImage": "Första bilden",
+        "firstPage": "Första sidan",
+        "folio": "Folio",
+        "go": "Gå",
+        "help": "Hjälp",
+        "image": "Bild",
+        "last": "Sista",
+        "lastImage": "Sista bilden",
+        "lastPage": "Sista sidan",
+        "next": "Nästa",
+        "nextImage": "Nästa bild",
+        "nextPage": "Nästa sida",
+        "nextFivePages": "Gå fram 5 sidor",
+        "of": "av {0}",
+        "oneUp": "Single page view",
+        "page": "Sida",
+        "previous": "Föregående",
+        "previousFivePages": "Gå tillbaka 5 sidor",
+        "previousImage": "Föregående bild",
+        "previousPage": "Föregående sida",
+        "settings": "Inställningar",
+        "twoUp": "Two page view"
+      }
+    },
+    "seadragonCenterPanel": {
+      "content": {
+        "acknowledgements": "Acknowledgements",
+        "goHome": "Hem",
+        "imageUnavailable": "Oåtkomlig bild",
+        "next": "Nästa",
+        "previous": "Föregående",
+        "rotateRight": "Rotera höger",
+        "zoomIn": "Zooma in",
+        "zoomOut": "Zooma ut"
+      }
+    },
+    "searchFooterPanel": {
+      "content": {
+        "clearSearch": "Clear Search",
+        "defaultLabel": "-",
+        "displaying": "Displaying {0} {1} of {2}",
+        "enterKeyword": "Enter Keyword",
+        "image": "image",
+        "imageCaps": "Image",
+        "instanceFound": "1 instance of '{0}' found",
+        "instancesFound": "{0} instances of '{1}' found",
+        "nextResult": "Next Result",
+        "page": "page",
+        "pageCaps": "Page",
+        "previousResult": "Previous Result",
+        "resultFoundFor": "result found for",
+        "resultsFoundFor": "results found for",
+        "searchWithin": "Search within this item:"
+      }
+    },
+    "settingsDialogue": {
+      "content": {
+        "locale": "Språk",
+        "pagingEnabled": "Visa dubbla sidor",
+        "preserveViewport": "Behåll Zoomläge",
+        "title": "Inställningar",
+        "website": "<a href='https://github.com/riksarkivet/universalviewer'>mer info</a>"
+      }
+    },
+    "treeViewLeftPanel": {
+      "content": {
+        "collapse": "Minimera innehåll",
+        "collapseFull": "Minimera galleri",
+        "date": "date",
+        "expand": "Öppna innehåll",
+        "expandFull": "Utvidga galleri",
+        "index": "Index",
+        "sortBy": "Sort By:",
+        "thumbnails": "Tumnaglar",
+        "title": "Innehåll",
+        "volume": "volume"
+      }
+    }
+  }
+}
