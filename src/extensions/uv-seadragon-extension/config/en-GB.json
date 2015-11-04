@@ -64,6 +64,7 @@
         "localeToggleEnabled": false,
         "pageModeEnabled": true,
         "pagingToggleEnabled": true,
+        "imageDropdownEnabled":  false,
         "prevNextFiveButtonsEnabled": false
       }
     },
