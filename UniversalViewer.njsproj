@@ -56,6 +56,8 @@
     <Content Include="src\extensions\uv-mediaelement-extension\theme\theme.less" />
     <Content Include="src\extensions\uv-pdf-extension\theme\theme.less" />
     <Content Include="src\extensions\uv-pdf-extension\theme\treeviewleftpanel.less" />
+    <Content Include="src\extensions\uv-seadragon-extension\config\sv-SE.json" />
+    <Content Include="src\extensions\uv-seadragon-extension\l10n\sv-SE.json" />
     <Content Include="src\extensions\uv-seadragon-extension\theme\theme.less" />
     <Content Include="src\modules\uv-dialogues-module\css\styles.less" />
     <Content Include="src\modules\uv-mediaelementcenterpanel-module\css\mediaelementplayer.less" />
