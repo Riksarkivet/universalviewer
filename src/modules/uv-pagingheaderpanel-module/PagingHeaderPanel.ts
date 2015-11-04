@@ -58,11 +58,11 @@ class PagingHeaderPanel extends HeaderPanel {
         this.$firstButton = $('<a class="imageBtn first" tabindex="15"></a>');
         this.$prevOptions.append(this.$firstButton);
 
-        this.$prevButton = $('<a class="imageBtn prev" tabindex="16"></a>');
-        this.$prevOptions.append(this.$prevButton);
-
-        this.$prevFiveButton = $('<a class="imageBtn prev-five" tabindex="17"></a>');
+        this.$prevFiveButton = $('<a class="imageBtn prev-five" tabindex="16"></a>');
         this.$prevOptions.append(this.$prevFiveButton);
+
+        this.$prevButton = $('<a class="imageBtn prev" tabindex="17"></a>');
+        this.$prevOptions.append(this.$prevButton);
 
         this.$modeOptions = $('<div class="mode"></div>');
         this.$centerOptions.append(this.$modeOptions);
@@ -92,13 +92,13 @@ class PagingHeaderPanel extends HeaderPanel {
         this.$nextOptions = $('<div class="nextOptions"></div>');
         this.$centerOptions.append(this.$nextOptions);
 
-        this.$nextFiveButton = $('<a class="imageBtn next-five" tabindex="22"></a>');
-        this.$nextOptions.append(this.$nextFiveButton);
-
         this.$nextButton = $('<a class="imageBtn next" tabindex="1"></a>');
         this.$nextOptions.append(this.$nextButton);
 
-        this.$lastButton = $('<a class="imageBtn last" tabindex="2"></a>');
+        this.$nextFiveButton = $('<a class="imageBtn next-five" tabindex="2"></a>');
+        this.$nextOptions.append(this.$nextFiveButton);
+
+        this.$lastButton = $('<a class="imageBtn last" tabindex="3"></a>');
         this.$nextOptions.append(this.$lastButton);
 
         if (this.isPageModeEnabled()) {
@@ -184,17 +184,19 @@ class PagingHeaderPanel extends HeaderPanel {
             $.publish(Commands.LAST);
         });
 
+        //Mode options are shown as default
         if (this.options.modeOptionsEnabled === false){
             this.$modeOptions.hide();
             this.$centerOptions.addClass('modeOptionsDisabled');
         }
 
+        //Search is shown as default
         if (this.options.searchOptionsEnabled === false) {
             this.$search.hide();
-            //this.$centerOptions.addClass('searchOptionsDisabled');
         }
 
-        if (this.options.prevNextFiveOptionsEnabled === false) {
+        //Previous och next 5 are hided as default
+        if (!(this.options.prevNextFiveButtonsEnabled === true)) {
             this.$prevFiveButton.hide();
             this.$nextFiveButton.hide();
         }
