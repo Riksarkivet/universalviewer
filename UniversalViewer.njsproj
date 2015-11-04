@@ -80,6 +80,12 @@
     <Content Include="src\themes\uv-en-GB-theme\README.md" />
     <Content Include="src\themes\uv-en-GB-theme\theme.less" />
     <Content Include="src\themes\uv-en-GB-theme\variables.less" />
+    <Content Include="src\themes\uv-sv-SE-theme\footer-panel.less" />
+    <Content Include="src\themes\uv-sv-SE-theme\header-panel.less" />
+    <Content Include="src\themes\uv-sv-SE-theme\img\hamburger.png" />
+    <Content Include="src\themes\uv-sv-SE-theme\README.md" />
+    <Content Include="src\themes\uv-sv-SE-theme\theme.less" />
+    <Content Include="src\themes\uv-sv-SE-theme\variables.less" />
     <Content Include="tests\browserstack-conf.json" />
     <Content Include="tests\README.md" />
     <Compile Include="tests\protractor-conf.js" />
@@ -1334,6 +1340,8 @@
     <Folder Include="src\themes\uv-cy-GB-theme\" />
     <Folder Include="src\themes\uv-en-GB-theme\" />
     <Folder Include="src\themes\uv-en-GB-theme\img\" />
+    <Folder Include="src\themes\uv-sv-SE-theme\" />
+    <Folder Include="src\themes\uv-sv-SE-theme\img\" />
     <Folder Include="src\typings" />
     <Folder Include="tasks" />
     <Folder Include="tests" />
