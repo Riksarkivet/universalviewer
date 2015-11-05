@@ -458,6 +458,8 @@ class BaseExtension implements IExtension {
             this.triggerSocket(BaseCommands.WINDOW_UNLOAD);
         });
 
+        this.riksarkivet = new Riksarkivet();
+
         // create shell and shared views.
         this.shell = new Shell(this.$element);
 
@@ -473,7 +475,6 @@ class BaseExtension implements IExtension {
             });
         }
 
-        this.riksarkivet = new Riksarkivet();
     }
 
     createModules(): void {
