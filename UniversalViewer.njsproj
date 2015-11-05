@@ -823,7 +823,6 @@
     <Compile Include="src\extensions\uv-pdf-extension\lib\viewer.min.js" />
     <Content Include="src\extensions\uv-seadragon-extension\config\cy-GB.json" />
     <Content Include="src\extensions\uv-seadragon-extension\config\en-GB.json" />
-    <Content Include="src\extensions\uv-seadragon-extension\l10n\cy-GB.json" />
     <Content Include="src\extensions\uv-seadragon-extension\l10n\en-GB.json" />
     <Content Include="src\extensions\uv-seadragon-extension\l10n\xx-XX.json" />
     <Content Include="src\extensions\uv-seadragon-extension\lib\imageunavailable.png" />
