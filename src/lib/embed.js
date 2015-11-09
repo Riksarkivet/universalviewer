@@ -369,6 +369,9 @@ docReady(function() {
             }
 
             function getRequestFullScreen(elem) {
+
+                if (!isHomeDomain) return false;
+
                 if (elem.requestFullscreen) {
                     return elem.requestFullscreen;
                 } else if (elem.msRequestFullscreen) {
@@ -382,6 +385,9 @@ docReady(function() {
             }
 
             function getExitFullScreen() {
+
+                if (!isHomeDomain) return false;
+
                 if (document.exitFullscreen) {
                     return document.exitFullscreen;
                 } else if (document.msExitFullscreen) {
