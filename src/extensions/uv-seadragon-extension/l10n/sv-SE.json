@@ -5,15 +5,15 @@
   "options": {
   },
   "content": {
-    "authCORSError": "Your browser does not support CORS, please upgrade to view this content.",
-    "canvasIndexOutOfRange": "Canvas index out of range.",
-    "degradedResourceMessage": "Please log in to view at full quality.",
-    "degradedResourceLogin": "log in"
+    "authCORSError": "Din webbläsare stödjer inte CORS, vänligen uppgradera för att se detta innehåll.",
+    "canvasIndexOutOfRange": "Bildnummer utanför intervall.",
+    "degradedResourceMessage": "Logga in för att se bilden i full kvalitet.",
+    "degradedResourceLogin": "logga in"
   },
   "modules": {
     "clickThroughDialogue": {
       "content": {
-        "viewTerms": "Read Full Terms and Conditions"
+        "viewTerms": "Läs villkor"
       }
     },
     "dialogue": {
@@ -29,7 +29,7 @@
         "entireDocument": "Hela dokumentet ({0})",
         "entireFileAsOriginal": "Hela filen ({0})",
         "noneAvailable": "Inga nerladdningsinställningar är tillgängliga.",
-        "pagingNote": "Please turn off Two Page View for additional options.",
+        "pagingNote": "Stäng av dubbelsidig vy för ytterligare alternativ.",
         "preview": "Förhandsgranska",
         "title": "Ladda ner",
         "wholeImageHighRes": "Hela bilden hög upplösning ({0})",
@@ -55,45 +55,45 @@
     },
     "genericDialogue": {
       "content": {
-        "emptyValue": "please enter a value.",
-        "invalidNumber": "Please enter a valid number.",
-        "noMatches": "No matches were found.",
+        "emptyValue": "ange ett värde.",
+        "invalidNumber": "Ange ett giltigt nummer.",
+        "noMatches": "Inga träffar hittades.",
         "ok": "OK",
-        "pageNotFound": "This item does not contain a page with the number you entered. Try switching the numbering mode to 'image'.",
-        "refresh": "Refresh"
+        "pageNotFound": "Detta objekt innehåller inte angivet sidnummer. Prova att ändra numreringstyp till 'bild'.",
+        "refresh": "Uppdatera"
       }
     },
     "helpDialogue": {
       "content": {
         "text": "placeholder text",
-        "title": "Help"
+        "title": "Hjälp"
       }
     },
     "loginDialogue": {
       "content": {
-        "login": "Login"
+        "login": "Logga in"
       }
     },
     "moreInfoRightPanel": {
       "content": {
-        "attribution": "Attribution",
-        "collapse": "Collapse More Information",
-        "collapseFull": "Collapse Gallery",
-        "description": "Description",
-        "expand": "Expand More Information",
-        "expandFull": "Expand Gallery",
+        "attribution": "Erkännande",
+        "collapse": "Minimera mera information",
+        "collapseFull": "Minimera galleri",
+        "description": "Beskrivning",
+        "expand": "Öppna mera information",
+        "expandFull": "Öppna galleri",
         "holdingText": "Your module goes here!",
-        "less": "less",
-        "license": "License",
-        "more": "more",
-        "noData": "No data to display",
-        "title": "More Information"
+        "less": "mindre",
+        "license": "Licens",
+        "more": "mer",
+        "noData": "Ingen information finns att visa",
+        "title": "Mera information"
       }
     },
     "pagingHeaderPanel": {
       "content": {
         "close": "Stäng",
-        "emptyValue": "Please enter a value",
+        "emptyValue": "Ange ett värde",
         "first": "Första",
         "firstImage": "Första bilden",
         "firstPage": "Första sidan",
@@ -109,19 +109,19 @@
         "nextPage": "Nästa sida",
         "nextFivePages": "Gå fram 5 sidor",
         "of": "av {0}",
-        "oneUp": "Single page view",
+        "oneUp": "Enkelsidig vy",
         "page": "Sida",
         "previous": "Föregående",
         "previousFivePages": "Gå tillbaka 5 sidor",
         "previousImage": "Föregående bild",
         "previousPage": "Föregående sida",
         "settings": "Inställningar",
-        "twoUp": "Two page view"
+        "twoUp": "Dubbelsidig vy"
       }
     },
     "seadragonCenterPanel": {
       "content": {
-        "acknowledgements": "Acknowledgements",
+        "acknowledgements": "Tack",
         "goHome": "Hem",
         "imageUnavailable": "Oåtkomlig bild",
         "next": "Nästa",
@@ -133,28 +133,28 @@
     },
     "searchFooterPanel": {
       "content": {
-        "clearSearch": "Clear Search",
+        "clearSearch": "Rensa sökning",
         "defaultLabel": "-",
-        "displaying": "Displaying {0} {1} of {2}",
-        "enterKeyword": "Enter Keyword",
-        "image": "image",
-        "imageCaps": "Image",
-        "instanceFound": "1 instance of '{0}' found",
-        "instancesFound": "{0} instances of '{1}' found",
-        "nextResult": "Next Result",
-        "page": "page",
-        "pageCaps": "Page",
-        "previousResult": "Previous Result",
-        "resultFoundFor": "result found for",
-        "resultsFoundFor": "results found for",
-        "searchWithin": "Search within this item:"
+        "displaying": "Visar {0} {1} av {2}",
+        "enterKeyword": "Skriv in sökord",
+        "image": "bild",
+        "imageCaps": "Bild",
+        "instanceFound": "1 exempel av '{0}' hittad",
+        "instancesFound": "{0} exempel av '{1}' hittades",
+        "nextResult": "Nästa träff",
+        "page": "sida",
+        "pageCaps": "Sida",
+        "previousResult": "Föregående träff",
+        "resultFoundFor": "träff hittad för",
+        "resultsFoundFor": "träffar hittades för",
+        "searchWithin": "Sök inom detta objekt:"
       }
     },
     "settingsDialogue": {
       "content": {
         "locale": "Språk",
-        "pagingEnabled": "Visa dubbla sidor",
-        "preserveViewport": "Behåll Zoomläge",
+        "pagingEnabled": "Visa dubbelsidig vy",
+        "preserveViewport": "Behåll zoomläge",
         "title": "Inställningar",
         "website": "<a href='https://github.com/riksarkivet/universalviewer'>mer info</a>"
       }
@@ -167,7 +167,7 @@
         "expand": "Öppna innehåll",
         "expandFull": "Utvidga galleri",
         "index": "Index",
-        "sortBy": "Sort By:",
+        "sortBy": "Sortera efter",
         "thumbnails": "Tumnaglar",
         "title": "Innehåll",
         "volume": "volume"
