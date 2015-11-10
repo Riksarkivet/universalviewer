@@ -14,6 +14,7 @@ class HeaderPanel extends BaseView {
     $informationBox: JQuery;
     $localeToggleButton: JQuery;
     $options: JQuery;
+    $headerBorder: JQuery;
     $pagingToggleButton: JQuery;
     $rightOptions: JQuery;
     $settingsButton: JQuery;
@@ -43,6 +44,9 @@ class HeaderPanel extends BaseView {
 
         this.$options = $('<div class="options"></div>');
         this.$element.append(this.$options);
+
+        this.$headerBorder = $('<div class="headerBorder"></div>');
+        this.$element.append(this.$headerBorder);
 
         this.$centerOptions = $('<div class="centerOptions"></div>');
         this.$options.append(this.$centerOptions);
