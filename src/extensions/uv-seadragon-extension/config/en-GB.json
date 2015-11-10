@@ -65,7 +65,9 @@
         "pageModeEnabled": true,
         "pagingToggleEnabled": true,
         "imageDropdownEnabled":  false,
-        "prevNextFiveButtonsEnabled": false
+        "prevNextFiveButtonsEnabled": false,
+        "downloadEnabled": false,
+        "fullscreenEnabled": false
       }
     },
     "seadragonCenterPanel":

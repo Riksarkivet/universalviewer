@@ -45,6 +45,14 @@
         "width": "Bredd"
       }
     },
+    "headerPanel": {
+      "content": {
+        "settings": "Inställningar",
+        "download": "Ladda ner",
+        "exitFullScreen": "Lämna fullskärmsläge",
+        "fullScreen": "Fullskärmsläge"
+      }
+    },
     "footerPanel": {
       "content": {
         "download": "Ladda ner",

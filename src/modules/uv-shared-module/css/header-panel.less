@@ -36,11 +36,32 @@
 //                  margin-top: 6px;
 //              }
 
-                .settings{
+                /*.settings{
                     background: url('@{img-path}settings.png');
                     height: 30px;
                     width: 30px;
                     margin-right: 8px;
+                }*/
+
+                a{
+                    float: left;
+                    margin-right: 10px;
+
+                    &.settings{
+                        .icon-left(url('@{img-path}settings.png'), 30px, 27px);
+                    }
+
+                    &.download{
+                        .icon-left(url('@{img-path}download.png'), 30px, 27px);
+                    }
+
+                    &.fullScreen{
+                        .icon-left(url('@{img-path}fullscreen.png'), 30px, 27px);
+                    }
+
+                    &.exitFullscreen{
+                        .icon-left(url('@{img-path}exit_fullscreen.png'), 30px, 27px);
+                    }
                 }
             }
         }

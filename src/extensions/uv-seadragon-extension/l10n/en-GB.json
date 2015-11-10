@@ -45,6 +45,14 @@
         "width": "Width"
       }
     },
+    "headerPanel": {
+      "content": {
+        "settings": "Settings",
+        "download": "Download",
+        "exitFullScreen": "Exit Full Screen",
+        "fullScreen": "Full Screen"
+      }
+    },
     "footerPanel": {
       "content": {
         "download": "Download",
@@ -129,10 +137,8 @@
         "zoomOut": "Zoom Out"
       }
     },
-    "searchFooterPanel":
-    {
-      "content":
-      {
+    "searchFooterPanel": {
+      "content": {
         "clearSearch": "Clear Search",
         "defaultLabel": "-",
         "displaying": "Displaying {0} {1} of {2}",
