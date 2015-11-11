@@ -20,7 +20,8 @@
     {
       "options":
       {
-        "confinedImageSize": 1000
+        "confinedImageSize": 1000,
+        "showInBottomCorner": true
       }
     },
     "embedDialogue":
