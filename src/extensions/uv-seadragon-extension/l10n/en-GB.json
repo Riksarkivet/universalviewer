@@ -107,12 +107,14 @@
         "next": "Next",
         "nextImage": "Next Image",
         "nextPage": "Next Page",
+        "nextFivePages": "Forward five pages",
         "of": "of {0}",
         "oneUp": "Single page view",
         "page": "Page",
         "previous": "Previous",
         "previousImage": "Previous Image",
         "previousPage": "Previous Page",
+        "previousFivePages": "Back five pages",
         "settings": "Settings",
         "twoUp": "Two page view"
       }
