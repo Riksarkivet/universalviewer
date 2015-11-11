@@ -70,14 +70,14 @@ class HeaderPanel extends BaseView {
         this.$localeToggleButton = $('<a class="localeToggle"></a>');
         this.$rightOptions.append(this.$localeToggleButton);
 
-        this.$settingsButton = $('<a class="settings" tabindex="3" title="' + this.content.settings + '">' + this.content.settings + '</a>');
+        this.$downloadButton = $('<a class="download" tabindex="4" title="' + this.content.download + '"></a>');
+        this.$rightOptions.append(this.$downloadButton);
+
+        this.$settingsButton = $('<a class="settings" tabindex="3" title="' + this.content.settings + '"></a>');
         this.$settingsButton.attr('title', this.content.settings);
         this.$rightOptions.append(this.$settingsButton);
-
-        this.$downloadButton = $('<a class="download" tabindex="4" title="' + this.content.download + '">' + this.content.download + '</a>');
-        this.$rightOptions.append(this.$downloadButton);
         
-        this.$fullScreenBtn = $('<a href="#" class="fullScreen" tabindex="5" title="' + this.content.fullScreen + '">' + this.content.fullScreen + '</a>');
+        this.$fullScreenBtn = $('<a href="#" class="fullScreen" tabindex="5" title="' + this.content.fullScreen + '"></a>');
         this.$rightOptions.append(this.$fullScreenBtn);
 
         this.updateDownloadButton();
@@ -255,11 +255,11 @@ class HeaderPanel extends BaseView {
 
         if (this.extension.isFullScreen()) {
             this.$fullScreenBtn.swapClass('fullScreen', 'exitFullscreen');
-            this.$fullScreenBtn.text(this.content.exitFullScreen);
+            //this.$fullScreenBtn.text(this.content.exitFullScreen);
             this.$fullScreenBtn.attr('title', this.content.exitFullScreen);
         } else {
             this.$fullScreenBtn.swapClass('exitFullscreen', 'fullScreen');
-            this.$fullScreenBtn.text(this.content.fullScreen);
+            //this.$fullScreenBtn.text(this.content.fullScreen);
             this.$fullScreenBtn.attr('title', this.content.fullScreen);
         }
     }
