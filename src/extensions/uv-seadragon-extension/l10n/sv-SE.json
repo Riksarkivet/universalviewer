@@ -95,7 +95,9 @@
         "license": "Licens",
         "more": "mer",
         "noData": "Ingen information finns att visa",
-        "title": "Mera information"
+        "title": "Information",
+        "manifestHeader": "Om volymen",
+        "canvasHeader": "Om bilden"
       }
     },
     "pagingHeaderPanel": {
