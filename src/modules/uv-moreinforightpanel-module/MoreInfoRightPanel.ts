@@ -9,6 +9,8 @@ class MoreInfoRightPanel extends RightPanel {
     $canvasItems: JQuery;
     $noData: JQuery;
     moreInfoItemTemplate: JQuery;
+    manifestData: any[];
+    canvasData: any[];
 
     constructor($element: JQuery) {
         super($element);
@@ -49,10 +51,14 @@ class MoreInfoRightPanel extends RightPanel {
         this.$title.text(this.content.title);
         this.$closedTitle.text(this.content.title);
 
+        this.manifestData = this.provider.getMetadata();
+        this.canvasData = [];
+
         $.subscribe(BaseCommands.CANVAS_INDEX_CHANGED, (e, canvasIndex) => {
             var canvas: Manifesto.ICanvas = this.provider.getCanvasByIndex(canvasIndex);
 
-            this.displayCanvasInfo(canvas.getMetadata());
+            this.canvasData = canvas.getMetadata();
+            this.displayInfo();
         });
     }
 
@@ -69,28 +75,47 @@ class MoreInfoRightPanel extends RightPanel {
         // show loading icon.
         this.$main.addClass('loading');
 
-        var data = this.provider.getMetadata();
-        this.displayInfo(data);
+        this.displayInfo();
     }
 
-    displayInfo(data: any): void {
+    displayInfo(): void {
         this.$main.removeClass('loading');
 
-        if (!data){
+        if (this.manifestData.length == 0 && this.canvasData.length == 0){
             this.$noData.show();
             return;
         }
 
         this.$noData.hide();
 
-        this.renderElement(this.$items, data, this.content.manifestHeader);
+        var manifestRenderData = $.extend(true, [], this.manifestData);
+        var canvasRenderData = $.extend(true, [], this.canvasData);
+
+        if (this.config.options.aggregateValues) {
+            this.aggregateValues(manifestRenderData, canvasRenderData);
+        }
+
+        this.renderElement(this.$items, manifestRenderData, this.content.manifestHeader);
+        this.renderElement(this.$canvasItems, canvasRenderData, this.content.canvasHeader);
     }
 
-    displayCanvasInfo(data: any) {
-        if (!data) 
-            return;
+    aggregateValues(fromData: any[], toData: any[]) {
+        var values: string[] = this.config.options.aggregateValues.split(",");
 
-        this.renderElement(this.$canvasItems, data, this.content.canvasHeader);
+        _.each(toData, item => {
+            _.each(values, value => {
+                value = value.trim();
+
+                if (item.label.toLowerCase() == value.toLowerCase()) {
+                    var manifestIndex = _.findIndex(fromData, x => x.label.toLowerCase() == value.toLowerCase());
+
+                    if (manifestIndex != -1) {
+                        var data = fromData.splice(manifestIndex, 1)[0];
+                        item.value = data.value + item.value;
+                    }
+                }
+            });
+        });
     }
 
     renderElement(element: JQuery, data: any, header: string) {
