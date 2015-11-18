@@ -131,6 +131,7 @@ class HeaderPanel extends BaseView {
             var title = this.extension.provider.getTitle();
             var ra: RiksarkivetPrint = new RiksarkivetPrint();
             ra.printImage(imageUri, title, canvas);
+        });
 
         this.$downloadButton.on('click', (e) => {
             e.preventDefault();
