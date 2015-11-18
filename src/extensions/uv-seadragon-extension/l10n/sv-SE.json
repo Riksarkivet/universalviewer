@@ -45,14 +45,6 @@
         "width": "Bredd"
       }
     },
-    "headerPanel": {
-      "content": {
-        "settings": "Inställningar",
-        "download": "Ladda ner",
-        "exitFullScreen": "Lämna fullskärmsläge",
-        "fullScreen": "Fullskärmsläge"
-      }
-    },
     "footerPanel": {
       "content": {
         "download": "Ladda ner",
@@ -95,9 +87,7 @@
         "license": "Licens",
         "more": "mer",
         "noData": "Ingen information finns att visa",
-        "title": "Information",
-        "manifestHeader": "Om volymen",
-        "canvasHeader": "Om bilden"
+        "title": "Mera information"
       }
     },
     "pagingHeaderPanel": {
