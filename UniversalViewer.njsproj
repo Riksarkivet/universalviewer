@@ -24,6 +24,7 @@
     <Content Include="bower.json" />
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <TypeScriptCompile Include="src\modules\uv-shared-module\RiksarkivetPrint.ts" />
     <TypeScriptCompile Include="src\modules\uv-shared-module\Riksarkivet.ts" />
     <TypeScriptCompile Include="VersionTemplate.ts" />
     <Compile Include="config.js" />
@@ -69,6 +70,7 @@
     <Content Include="src\modules\uv-pdfcenterpanel-module\css\viewer.less" />
     <Content Include="src\modules\uv-seadragoncenterpanel-module\css\styles.less" />
     <Content Include="src\modules\uv-searchfooterpanel-module\css\styles.less" />
+    <Content Include="src\modules\uv-shared-module\css\header-panel.less" />
     <Content Include="src\modules\uv-shared-module\css\styles.less" />
     <Content Include="src\modules\uv-treeviewleftpanel-module\css\styles.less" />
     <Content Include="src\themes\uv-cy-GB-theme\footer-panel.less" />

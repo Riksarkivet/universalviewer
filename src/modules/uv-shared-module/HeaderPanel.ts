@@ -6,6 +6,9 @@ import InformationAction = require("../uv-shared-module/InformationAction");
 import InformationArgs = require("../uv-shared-module/InformationArgs");
 import InformationFactory = require("../uv-shared-module/InformationFactory");
 import SettingsDialogue = require("../uv-dialogues-module/SettingsDialogue");
+import RiksarkivetPrint = require("../../modules/uv-shared-module/RiksarkivetPrint");
+import ISeadragonExtension = require("../../Extensions/uv-seadragon-extension/ISeadragonExtension");
+import ISeadragonProvider = require("../../Extensions/uv-seadragon-extension/ISeadragonProvider");
 
 class HeaderPanel extends BaseView {
 
@@ -58,7 +61,11 @@ class HeaderPanel extends BaseView {
 
         this.$localeToggleButton = $('<a class="localeToggle"></a>');
         this.$rightOptions.append(this.$localeToggleButton);
-
+ 
+        var $printButton = $('<a class="imageBtn print" tabindex="3"></a>');
+        $printButton.attr('title', 'skriv ut sidan'); //handle different languages
+        this.$rightOptions.append($printButton);
+ 
         this.$settingsButton = $('<a class="imageBtn settings" tabindex="3"></a>');
         this.$settingsButton.attr('title', this.content.settings);
         this.$rightOptions.append(this.$settingsButton);
@@ -94,6 +101,16 @@ class HeaderPanel extends BaseView {
 
         this.$settingsButton.onPressed(() => {
             $.publish(BaseCommands.SHOW_SETTINGS_DIALOGUE);
+        });
+
+        $printButton.onPressed(() => {
+            var canvas = this.provider.getCurrentCanvas();
+            var viewer = (<ISeadragonExtension>this.extension).getViewer();
+            var imageUri = (<ISeadragonProvider>this.provider).getCroppedImageUri(canvas, viewer, true);
+            var title = this.extension.provider.getTitle();
+            //window.print();
+            var ra: RiksarkivetPrint = new RiksarkivetPrint();
+            ra.printImage(imageUri, title, canvas);
         });
 
         if (this.options.localeToggleEnabled === false){
