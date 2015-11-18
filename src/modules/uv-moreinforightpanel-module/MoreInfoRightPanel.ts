@@ -1,8 +1,12 @@
+import BaseCommands = require("../uv-shared-module/BaseCommands");
 import RightPanel = require("../uv-shared-module/RightPanel");
 
 class MoreInfoRightPanel extends RightPanel {
 
+    limitType = "lines";
+    limit = 4;
     $items: JQuery;
+    $canvasItems: JQuery;
     $noData: JQuery;
     moreInfoItemTemplate: JQuery;
 
@@ -16,6 +20,15 @@ class MoreInfoRightPanel extends RightPanel {
 
         super.create();
 
+        if (this.config.options.textLimitType) {
+            this.limitType = this.config.options.textLimitType;
+        }
+        if (this.limitType === "lines") {
+            this.limit = this.config.options.textLimit ? this.config.options.textLimit : 4;
+        } else if (this.limitType === "chars") {
+            this.limit = this.config.options.textLimit ? this.config.options.textLimit : 130;
+        }
+
         this.moreInfoItemTemplate = $('<div class="item">\
                                            <div class="header"></div>\
                                            <div class="text"></div>\
@@ -23,6 +36,9 @@ class MoreInfoRightPanel extends RightPanel {
 
         this.$items = $('<div class="items"></div>');
         this.$main.append(this.$items);
+
+        this.$canvasItems = $('<div class="items"></div>');
+        this.$main.append(this.$canvasItems);
 
         this.$noData = $('<div class="noData">' + this.content.noData + '</div>');
         this.$main.append(this.$noData);
@@ -32,6 +48,12 @@ class MoreInfoRightPanel extends RightPanel {
 
         this.$title.text(this.content.title);
         this.$closedTitle.text(this.content.title);
+
+        $.subscribe(BaseCommands.CANVAS_INDEX_CHANGED, (e, canvasIndex) => {
+            var canvas: Manifesto.ICanvas = this.provider.getCanvasByIndex(canvasIndex);
+
+            this.displayCanvasInfo(canvas.getMetadata());
+        });
     }
 
     toggleFinish(): void {
@@ -61,26 +83,40 @@ class MoreInfoRightPanel extends RightPanel {
 
         this.$noData.hide();
 
-        var limitType = "lines";
-        if (this.config.options.textLimitType) {
-            limitType = this.config.options.textLimitType;
-        }
-        var limit;
-        if (limitType === "lines") {
-            limit = this.config.options.textLimit ? this.config.options.textLimit : 4;
-        } else if (limitType === "chars") {
-            limit = this.config.options.textLimit ? this.config.options.textLimit : 130;
-        }
+        this.renderElement(this.$items, data, this.content.manifestHeader);
+    }
 
-        _.each(data, (item: any) => {
-            var built = this.buildItem(item);
-            this.$items.append(built);
-            if (limitType === "lines") {
-                built.find('.text').toggleExpandTextByLines(limit, this.content.less, this.content.more);
-            } else if (limitType === "chars") {
-                built.find('.text').ellipsisHtmlFixed(limit, null);
-            }
-        });
+    displayCanvasInfo(data: any) {
+        if (!data) 
+            return;
+
+        this.renderElement(this.$canvasItems, data, this.content.canvasHeader);
+    }
+
+    renderElement(element: JQuery, data: any, header: string) {
+        element.empty();
+
+        if (data.length !== 0) {
+            if (header)
+                element.append(this.buildHeader(header));
+
+            _.each(data, (item: any) => {
+                var built = this.buildItem(item);
+                element.append(built);
+                if (this.limitType === "lines") {
+                    built.find('.text').toggleExpandTextByLines(this.limit, this.content.less, this.content.more);
+                } else if (this.limitType === "chars") {
+                    built.find('.text').ellipsisHtmlFixed(this.limit, null);
+                }
+            });
+        }
+    }
+
+    buildHeader(label: string): JQuery {
+        var $header = $('<div class="header"></div>');
+        $header.html(this.provider.sanitize(label));
+
+        return $header;
     }
 
     buildItem(item: any): any {

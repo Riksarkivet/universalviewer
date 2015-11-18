@@ -20,7 +20,8 @@
     {
       "options":
       {
-        "confinedImageSize": 1000
+        "confinedImageSize": 1000,
+        "showInBottomCorner": true
       }
     },
     "embedDialogue":
@@ -65,7 +66,9 @@
         "pageModeEnabled": true,
         "pagingToggleEnabled": true,
         "imageDropdownEnabled":  false,
-        "prevNextFiveButtonsEnabled": false
+        "prevNextFiveButtonsEnabled": false,
+        "downloadEnabled": false,
+        "fullscreenEnabled": false
       }
     },
     "seadragonCenterPanel":
