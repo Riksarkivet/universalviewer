@@ -14,9 +14,12 @@ class HeaderPanel extends BaseView {
     $informationBox: JQuery;
     $localeToggleButton: JQuery;
     $options: JQuery;
+    $headerBorder: JQuery;
     $pagingToggleButton: JQuery;
     $rightOptions: JQuery;
     $settingsButton: JQuery;
+    $downloadButton: JQuery;
+    $fullScreenBtn: JQuery;
     information: Information;
 
     constructor($element: JQuery) {
@@ -31,6 +34,7 @@ class HeaderPanel extends BaseView {
 
         $.subscribe(BaseCommands.SETTINGS_CHANGED, () => {
             this.updatePagingToggle();
+            this.updateDownloadButton();
         });
 
         $.subscribe(BaseCommands.SHOW_INFORMATION, (e, args: InformationArgs) => {
@@ -41,8 +45,15 @@ class HeaderPanel extends BaseView {
             this.hideInformation();
         });
 
+        $.subscribe(BaseCommands.TOGGLE_FULLSCREEN, () => {
+            this.updateFullScreenButton();
+        });
+
         this.$options = $('<div class="options"></div>');
         this.$element.append(this.$options);
+
+        this.$headerBorder = $('<div class="headerBorder"></div>');
+        this.$element.append(this.$headerBorder);
 
         this.$centerOptions = $('<div class="centerOptions"></div>');
         this.$options.append(this.$centerOptions);
@@ -59,9 +70,19 @@ class HeaderPanel extends BaseView {
         this.$localeToggleButton = $('<a class="localeToggle"></a>');
         this.$rightOptions.append(this.$localeToggleButton);
 
-        this.$settingsButton = $('<a class="imageBtn settings" tabindex="3"></a>');
+        this.$downloadButton = $('<a class="download" tabindex="4" title="' + this.content.download + '"></a>');
+        this.$rightOptions.append(this.$downloadButton);
+
+        this.$settingsButton = $('<a class="settings" tabindex="3" title="' + this.content.settings + '"></a>');
         this.$settingsButton.attr('title', this.content.settings);
         this.$rightOptions.append(this.$settingsButton);
+        
+        this.$fullScreenBtn = $('<a href="#" class="fullScreen" tabindex="5" title="' + this.content.fullScreen + '"></a>');
+        this.$rightOptions.append(this.$fullScreenBtn);
+
+        this.updateDownloadButton();
+        this.updateFullScreenButton();
+        
 
         this.$informationBox = $('<div class="informationBox"> \
                                     <div class="message"></div> \
@@ -89,11 +110,21 @@ class HeaderPanel extends BaseView {
         });
 
         this.$localeToggleButton.on('click', () => {
-            this.provider.changeLocale(this.$localeToggleButton.data('locale'));
+            this.provider.changeLocale(String(this.$localeToggleButton.data('locale')));
         });
 
         this.$settingsButton.onPressed(() => {
             $.publish(BaseCommands.SHOW_SETTINGS_DIALOGUE);
+        });
+
+        this.$downloadButton.on('click', (e) => {
+            e.preventDefault();
+            $.publish(BaseCommands.SHOW_DOWNLOAD_DIALOGUE);
+        });
+
+        this.$fullScreenBtn.on('click', (e) => {
+            e.preventDefault();
+            $.publish(BaseCommands.TOGGLE_FULLSCREEN);
         });
 
         if (this.options.localeToggleEnabled === false){
@@ -210,6 +241,36 @@ class HeaderPanel extends BaseView {
         } else {
             if (this.pagingToggleIsVisible()) this.$pagingToggleButton.show();
             if (this.localeToggleIsVisible()) this.$localeToggleButton.show();
+        }
+    }
+
+    updateFullScreenButton(): void {
+        if (!Utils.Bools.GetBool(this.options.fullscreenEnabled, true)) {
+            this.$fullScreenBtn.hide();
+        }
+
+        if (this.provider.isLightbox) {
+            this.$fullScreenBtn.addClass('lightbox');
+        }
+
+        if (this.extension.isFullScreen()) {
+            this.$fullScreenBtn.swapClass('fullScreen', 'exitFullscreen');
+            //this.$fullScreenBtn.text(this.content.exitFullScreen);
+            this.$fullScreenBtn.attr('title', this.content.exitFullScreen);
+        } else {
+            this.$fullScreenBtn.swapClass('exitFullscreen', 'fullScreen');
+            //this.$fullScreenBtn.text(this.content.fullScreen);
+            this.$fullScreenBtn.attr('title', this.content.fullScreen);
+        }
+    }
+
+    updateDownloadButton() {
+        var configEnabled = Utils.Bools.GetBool(this.options.downloadEnabled, true);
+
+        if (configEnabled) {
+            this.$downloadButton.show();
+        } else {
+            this.$downloadButton.hide();
         }
     }
 }

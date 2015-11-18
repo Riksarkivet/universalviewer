@@ -84,10 +84,14 @@ class DownloadDialogue extends Dialogue {
     }
 
     resize(): void {
-
-        this.$element.css({
-            'top': this.extension.height() - this.$element.outerHeight(true)
-        });
+        if (Utils.Bools.GetBool(this.options.showInBottomCorner, true)) {
+            this.$element.css({
+                'top': this.extension.height() - this.$element.outerHeight(true)
+            });
+        }
+        else {
+            super.resize();
+        }
     }
 }
 
