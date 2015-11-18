@@ -592,7 +592,7 @@ class SeadragonCenterPanel extends CenterPanel {
         }
 
         if (this.$title.css("position") === "absolute")
-            this.$title.width(this.$viewer.width() - parseInt(this.$title.css("left"), 10));
+            this.$title.width(this.$viewer.width() - parseInt(this.$title.css("left"), 10) - parseInt(this.$title.css("padding-left"), 10) - parseInt(this.$title.css("padding-right"), 10));
 
         this.$title.ellipsisFill(this.title);
 
