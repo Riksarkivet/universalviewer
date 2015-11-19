@@ -128,6 +128,8 @@ class HeaderPanel extends BaseView {
             var canvas = this.provider.getCurrentCanvas();
             var viewer = (<ISeadragonExtension>this.extension).getViewer();
             var imageUri = (<ISeadragonProvider>this.provider).getCroppedImageUri(canvas, viewer, true);
+            var imageUriTmp = imageUri.substring(0, imageUri.indexOf('/0/default.jpg'));
+            imageUri = imageUri.substring(0, imageUriTmp.lastIndexOf('/')) + '/full/0/default.jpg';
             var title = this.extension.provider.getTitle();
             var ra: RiksarkivetPrint = new RiksarkivetPrint();
             ra.printImage(imageUri, title, canvas);
