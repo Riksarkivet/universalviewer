@@ -4,6 +4,9 @@ class RiksarkivetPrint {
     printSourceTextIdWithHash: string;
     printImageId: string;
     printImageIdWithHash: string;
+    printSourceLeftMarginsInPixels: number;
+    printSourceTopMarginsInPixels: number;
+    printSourceBottomMarginsInPixels: number;
     printSourceTextHeightInPixels: number;
     printSourceText: string;
     imageUri: string;
@@ -15,6 +18,9 @@ class RiksarkivetPrint {
         this.printSourceTextIdWithHash = '#' + this.printSourceTextId;
         this.printImageId = "printImage";
         this.printImageIdWithHash = '#' + this.printImageId;
+        this.printSourceLeftMarginsInPixels = 30;
+        this.printSourceTopMarginsInPixels = 20;
+        this.printSourceBottomMarginsInPixels = 20;
         this.printSourceTextHeightInPixels = 20;
     }
 
@@ -28,10 +34,10 @@ class RiksarkivetPrint {
         var img = new Image();
         //The callback function is declared as an ordinary js-function in order to access the image element with "this". The current object is accessed with "that".
         img.onload = function () {
-            var imageWidth = this.width;
-            var imageHeight = this.height + that.printSourceTextHeightInPixels;
+            var imageWidth = this.width + that.printSourceLeftMarginsInPixels;
+            var imageHeight = this.height + that.printSourceTextHeightInPixels + that.printSourceTopMarginsInPixels + that.printSourceBottomMarginsInPixels;
             var containerDivHeight = imageHeight + that.printSourceTextHeightInPixels;
-            var whRatio = parseFloat(imageWidth) / parseFloat(containerDivHeight);
+            var whRatio = parseFloat(imageWidth) / parseFloat(imageHeight);
             var widthPercentageLandscape = that.calculateWidthPercentageForLandscape(whRatio);
             var widthPercentagePortrait = that.calculateWidthPercentageForPortrait(whRatio);
             that.printIframe(widthPercentageLandscape, widthPercentagePortrait)
@@ -51,17 +57,21 @@ class RiksarkivetPrint {
     private getPrintStyles(widthPercentageLandscape, widthPercentagePortrait) {
         var fullWidthLandscape = 100;
         var fullWidthPortrait = 100;
-        var sourceTextLandscapeStyle = this.printSourceTextIdWithHash + ' { width: ' + fullWidthLandscape + '%; height: ' + this.printSourceTextHeightInPixels + 'px;} ';
-        var sourceTextPortraitStyle = this.printSourceTextIdWithHash + ' { width: ' + fullWidthPortrait + '%; height: ' + this.printSourceTextHeightInPixels + 'px;} ';
-        var imageLandscapeStyle = this.printImageIdWithHash + ' { width: ' + widthPercentageLandscape + '%;  vertical-align: top; } ';
-        var imagePortraitStyle = this.printImageIdWithHash + ' { width: ' + widthPercentagePortrait + '%;  vertical-align: top; } ';
+        var sourceTextLandscapeStyle = this.printSourceTextIdWithHash + ' { width: ' + fullWidthLandscape + '%; height: ' + this.printSourceTextHeightInPixels + 'px; margin-left: 30px;} ';
+        var sourceTextPortraitStyle = this.printSourceTextIdWithHash + ' { width: ' + fullWidthPortrait + '%; height: ' + this.printSourceTextHeightInPixels + 'px; margin-left: 30px;} ';
+        var imageLandscapeStyle = this.printImageIdWithHash + ' { width: ' + widthPercentageLandscape + '%; vertical-align: top; margin-top: 20px; margin-left: 30px; margin-bottom: 20px; }';
+        var imagePortraitStyle = this.printImageIdWithHash + ' { width: ' + widthPercentagePortrait + '%; vertical-align: top; margin-top: 20px; margin-left: 30px; margin-bottom: 20px; }';
         var hideUVContainer = this.UVContainerIdWithHash + ' { display:none; } ';
         var landscapeStyle = sourceTextLandscapeStyle + imageLandscapeStyle + hideUVContainer;
         var portraitStyle = sourceTextPortraitStyle + imagePortraitStyle + hideUVContainer;
 
         var styleArray = new Array();
-        styleArray.push('<style type="text/css">@media print and (orientation:landscape) { ' + landscapeStyle + ' }</style>');
-        styleArray.push('<style type="text/css">@media print and (orientation:portrait) { ' + portraitStyle + ' }</style>');
+        if (Math.floor(widthPercentageLandscape * 297) >= Math.floor(widthPercentagePortrait) * 210)
+            styleArray.push('<style type="text/css">@media print { ' + landscapeStyle + ' } @page { margin: 0; }</style>');
+        else
+            styleArray.push('<style type="text/css">@media print { ' + portraitStyle + ' } @page { margin: 0; }</style>');
+        //styleArray.push('<style type="text/css">@media print and (orientation:landscape) { ' + landscapeStyle + ' }</style>');
+        //styleArray.push('<style type="text/css">@media print and (orientation:portrait) { ' + portraitStyle + ' }</style>');
 
         return styleArray.join("");
 
@@ -111,6 +121,8 @@ class RiksarkivetPrint {
             .css("height", "auto")
             .css("position", "absolute")
             .css("left", "-9999px")
+            .css("margin-left", "20px")
+            .css("margin-bottom", "20px")
             .appendTo($("body:first"))
         ;
         var objFrame = window.frames[strFrameName];
@@ -141,7 +153,7 @@ class RiksarkivetPrint {
     private calculateWidthPercentageForLandscape(WHRatio): number {
         //The height/width ratio for A4 is 297/210 but it has to be adjusted in landscape mode for some reason.
         //We use 1.5. If you increase this value the page will be shrinked even more.
-        var breakpointRatio = 1.5;
+        var breakpointRatio = 297 / 210;
         var ratioFactor = WHRatio / breakpointRatio;
         var defaultWidthPercentage = 40;
         var fullPercentage = 100;
@@ -153,10 +165,10 @@ class RiksarkivetPrint {
         }
 
         if (WHRatio < breakpointRatio) {
-            widthPercentage = Math.floor(ratioFactor * fullPercentage);
+            widthPercentage = Math.floor(ratioFactor * fullPercentage) - 8;
         }
         else {
-            widthPercentage = fullPercentage;
+            widthPercentage = fullPercentage - 8;
         }
 
         return widthPercentage
@@ -178,10 +190,10 @@ class RiksarkivetPrint {
         }
 
         if (WHRatio < breakpointRatio) {
-            widthPercentage = Math.floor(ratioFactor * fullPercentage);
+            widthPercentage = Math.floor(ratioFactor * fullPercentage) - 8;
         }
         else {
-            widthPercentage = fullPercentage;
+            widthPercentage = fullPercentage - 8;
         }
 
         return widthPercentage
