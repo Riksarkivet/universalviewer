@@ -181,7 +181,7 @@ docReady(function() {
         }
 
         // get the part preceding 'lib/embed.js'
-        var baseUri = (/(.*)lib\/embed.js/).exec(scriptUri)[1];
+        var baseUri = (/(.*)lib\//).exec(scriptUri)[1];
         appUri = baseUri + 'app.html';
         easyXDMUri = baseUri + 'lib/easyXDM.min.js';
         json2Uri = baseUri + 'lib/json2.min.js';
@@ -206,12 +206,15 @@ docReady(function() {
         }
 
         function app(element, isHomeDomain, isOnlyInstance) {
-            var socket, $app, $img, $appFrame, manifestUri, collectionIndex, manifestIndex, sequenceIndex, canvasIndex, defaultToFullScreen, isLightbox, zoom, rotation, config, jsonp, locale, isFullScreen, dimensions, top, left, lastScroll, reload;
+            var socket, $app, $img, $appFrame, manifestUri, collectionIndex, manifestIndex, sequenceIndex, canvasIndex, defaultToFullScreen, isLightbox, zoom, rotation, config, jsonp, locale, isFullScreen, dimensions, top, left, lastScroll, reload, hasNoPageNumbers;
 
             $app = $(element);
 
             // Default to fullscreen
             defaultToFullScreen = $app.attr('data-fullscreen') === 'true';
+
+            // If PageNumbers are missing
+            hasNoPageNumbers = $app.attr('data-haspagenumbers') === 'false';
 
             // Lightbox behaviour
             isLightbox = $app.attr('data-lightbox') === 'true';
@@ -468,7 +471,8 @@ docReady(function() {
                     "&embedDomain=" + document.domain +
                     "&domain=" + domain +
                     "&isLightbox=" + isLightbox +
-                    "&locale=" + locale;
+                    "&locale=" + locale + 
+                    "&hasNoPageNumbers=" + hasNoPageNumbers;
 
                 if (reload) uri += "&reload=true";
                 if (config) uri += "&config=" + config;

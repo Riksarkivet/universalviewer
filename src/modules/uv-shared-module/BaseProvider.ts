@@ -16,6 +16,7 @@ class BaseProvider implements IProvider{
     domain: string;
     embedDomain: string;
     embedScriptUri: string;
+    hasNoPageNumbers: boolean;
     iiifResource: Manifesto.IIIIFResource;
     isHomeDomain: boolean;
     isLightbox: boolean;
@@ -56,6 +57,7 @@ class BaseProvider implements IProvider{
         this.embedScriptUri = this.bootstrapper.params.embedScriptUri;
         this.domain = this.bootstrapper.params.domain;
         this.isLightbox = this.bootstrapper.params.isLightbox;
+        this.hasNoPageNumbers = this.bootstrapper.params.hasNoPageNumbers;
 
         this.collectionIndex = this.bootstrapper.params.collectionIndex;
         this.manifestIndex = this.bootstrapper.params.manifestIndex;
@@ -279,6 +281,73 @@ class BaseProvider implements IProvider{
         }
 
         return index;
+    }
+
+    getPrevFivePageIndex(canvasIndex?: number): number {
+        if (typeof (canvasIndex) === 'undefined') canvasIndex = this.canvasIndex;
+
+        var index;
+
+        if (this.isPagingSettingEnabled()) {
+            var indices = this.getPagedIndices(canvasIndex);
+
+            if (this.getViewingDirection().toString() === manifesto.ViewingDirection.rightToLeft().toString()) {
+                index = this.tryDecrementIndex(indices[0], 5);
+            } else {
+                index = this.tryDecrementIndex(indices.last(), 5);
+            }
+
+        } else {
+            index = this.tryDecrementIndex(canvasIndex, 5);
+        }
+
+        return index;
+    }
+
+    getNextFivePageIndex(canvasIndex?: number): number {
+        if (typeof (canvasIndex) === 'undefined') canvasIndex = this.canvasIndex;
+
+        var index;
+
+        if (this.isPagingSettingEnabled()) {
+            var indices = this.getPagedIndices(canvasIndex);
+
+            if (this.getViewingDirection().toString() === manifesto.ViewingDirection.rightToLeft().toString()) {
+                index = this.tryIncrementIndex(indices[0], 5);
+            } else {
+                index = this.tryIncrementIndex(indices.last(), 5);
+            }
+
+        } else {
+            index = this.tryIncrementIndex(canvasIndex, 5);
+        }
+
+        return index;
+    }
+
+    tryDecrementIndex(currentIndex: number, numberToIncrement: number): number {
+        for (var i = 0; i < numberToIncrement; i++) {
+            if (currentIndex > 0) {
+                currentIndex--;
+            }
+            else {
+                break;
+            }
+        }
+        return currentIndex;
+    }
+
+    tryIncrementIndex(currentIndex: number, numberToIncrement: number): number {
+        var totalCanvases = this.getTotalCanvases();
+        for (var i = 0; i < numberToIncrement; i++) {
+            if (currentIndex < (totalCanvases -1)) {
+                currentIndex++;
+            }
+            else {
+                break;
+            }
+        }
+        return currentIndex;
     }
 
     getStartCanvasIndex(): number {

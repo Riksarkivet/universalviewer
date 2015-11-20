@@ -99,6 +99,16 @@ class Extension extends BaseExtension {
             this.viewPage(this.provider.getPrevPageIndex());
         });
 
+        $.subscribe(Commands.PREV_FIVE, (e) => {
+            //this.triggerSocket(Commands.PREV_FIVE);
+            this.viewPage(this.provider.getPrevFivePageIndex());
+        });
+
+        $.subscribe(Commands.NEXT_FIVE, (e) => {
+            //this.triggerSocket(Commands.NEXT_FIVE);
+            this.viewPage(this.provider.getNextFivePageIndex());
+        });
+
         $.subscribe(Commands.NEXT, (e) => {
             this.triggerSocket(Commands.NEXT);
             this.viewPage(this.provider.getNextPageIndex());

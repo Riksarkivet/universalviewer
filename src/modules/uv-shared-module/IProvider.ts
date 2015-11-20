@@ -36,6 +36,8 @@ interface IProvider{
     getNextPageIndex(index?: number): number;
     getPagedIndices(index?: number): number[];
     getPrevPageIndex(index?: number): number;
+    getPrevFivePageIndex(index?: number): number;
+    getNextFivePageIndex(index?: number): number;
     getRangeByPath(path: string): Manifesto.IRange;
     getSeeAlso(): any;
     getSequenceIndexParam(): number;
@@ -61,6 +63,7 @@ interface IProvider{
     config: any;
     domain: string;
     embedDomain: string;
+    hasNoPageNumbers: boolean;
     isHomeDomain: boolean;
     isLightbox: boolean;
     isOnlyInstance: boolean;

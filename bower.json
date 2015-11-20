@@ -22,11 +22,12 @@
     "http-status-codes": "edsilv/http-status-codes#~0.0.2",
     "jquery-plugins": "edsilv/jquery-plugins#~0.0.14",
     "lodash-compat": "~3.10.0",
-    "manifesto": "universalviewer/manifesto#dev",
+    "manifesto": "riksarkivet/manifesto#master",
     "r.js": "~2.1.18",
-    "utils": "edsilv/utils#~0.0.28",
+    "utils": "riksarkivet/utils#~0.0.27",
     "uv-cy-GB-theme": "universalviewer/uv-cy-GB-theme",
     "uv-en-GB-theme": "universalviewer/uv-en-GB-theme",
+    "uv-sv-SE-theme": "riksarkivet/uv-sv-SE-theme",
     "exjs": "~0.3.0"
   }
 }

@@ -37,7 +37,12 @@ module.exports = function (grunt) {
             build : ['<%= config.dirs.build %>'],
             dist: ['<%= config.dirs.dist %>'],
             examples: ['<%= config.dirs.examples %>/uv-*'],
-            extension: ['./src/extensions/*/build/*']
+            apphtml: ['<%= config.dirs.build %>/app.html'],
+            extension: ['./src/extensions/*/build/*'],
+            soktjanst: {
+                options: { force: true },
+                src: [ '<%= config.dirs.soktjanst %>/*']
+            }
         },
 
         copy: {
@@ -184,7 +189,58 @@ module.exports = function (grunt) {
                         dest: '<%= config.dirs.dist %>/<%= config.dirs.uvVersioned %>/'
                     }
                 ]
-            }
+            },
+            //app_rename: {
+            //    files: [
+            //        {
+            //            cwd: '<%= config.dirs.build %>',
+            //            expand: true,
+            //            src: ['app.html'],
+            //            rename: function (dest, src) {
+            //                return dest + 'app_original.html';
+            //            },
+            //            dest: '<%= config.dirs.build %>/'
+            //        }
+            //    ]
+            //},
+            soktjanst: {
+                // copy files that we use from /dest to soktjanst/universalviewer.
+                files: [
+                    {
+                        cwd: '<%= config.dirs.build %>',
+                        expand: true,
+                        filter: 'isFile',
+                        src: [ 
+                            'themes/uv-sv-SE-theme/img/*',
+                            'themes/uv-sv-SE-theme/img/uv-pagingheaderpanel-module/*',
+                            'themes/uv-sv-SE-theme/img/uv-seadragoncenterpanel-module/*',
+                            'themes/uv-sv-SE-theme/img/uv-searchfooterpanel-module/*',
+                            'themes/uv-sv-SE-theme/img/uv-shared-module/*',
+                            'themes/uv-sv-SE-theme/img/uv-treeviewleftpanel-module/*',
+                            'themes/uv-sv-SE-theme/css/uv-seadragon-extension/theme.css',
+                            'themes/uv-en-GB-theme/img/*',
+                            'themes/uv-en-GB-theme/img/uv-pagingheaderpanel-module/*',
+                            'themes/uv-en-GB-theme/img/uv-seadragoncenterpanel-module/*',
+                            'themes/uv-en-GB-theme/img/uv-searchfooterpanel-module/*',
+                            'themes/uv-en-GB-theme/img/uv-shared-module/*',
+                            'themes/uv-en-GB-theme/img/uv-treeviewleftpanel-module/*',
+                            'themes/uv-en-GB-theme/css/uv-seadragon-extension/theme.css',
+                            'lib/app.js',
+                            'lib/base64.min.js',
+                            'lib/easyXDM.min.js', 
+                            'lib/easyxdm.swf', 
+                            'lib/embed.js', 
+                            'lib/json2.min.js',
+                            'lib/openseadragon.js',
+                            'lib/require.js', 
+                            'lib/uv-seadragon-extension.en-GB.config.json',
+                            'lib/uv-seadragon-extension.sv-SE.config.json',
+                            'lib/uv-seadragon-extension-dependencies.js'
+                        ],
+                        dest: '<%= config.dirs.soktjanst %>/'
+                    }
+                ]
+            },
         },
 
         sync: {
@@ -486,6 +542,45 @@ module.exports = function (grunt) {
     grunt.registerTask("test", '', function(){
         grunt.task.run(
             'protractor:dev'
+        );
+    });
+
+    grunt.registerTask('build-soktjanst', '', function () {
+
+        refresh();
+        grunt.task.run(
+            'typescript:dist',
+            'clean:extension',
+            'configure:apply',
+            'clean:build',
+            'copy:schema',
+            'copy:build',
+            'exec:build',
+            'replace:html',
+            'replace:js',
+            'theme:create',
+            'theme:dist',
+            'replace:moduleimages',
+            'replace:themeimages',
+
+            //'build',
+            //'copy:app_rename',
+            'clean:apphtml',
+            'copy:soktjanst'
+        );
+    });
+
+    grunt.registerTask('copy-soktjanst', '', function () {
+        refresh();
+        grunt.task.run(
+            'copy:soktjanst'
+        );
+    });
+
+    grunt.registerTask('clean-soktjanst', '', function () {
+        refresh();
+        grunt.task.run(
+            'clean:soktjanst'
         );
     });
 };

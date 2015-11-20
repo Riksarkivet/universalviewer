@@ -22,7 +22,8 @@
     {
       "options":
       {
-        "confinedImageSize": 1000
+        "confinedImageSize": 1000,
+        "showInBottomCorner": true
       }
     },
     "embedDialogue":
@@ -57,7 +58,8 @@
         "panelExpandedWidth": 255,
         "panelOpen": false,
         "textLimit": 4,
-        "textLimitType": "lines"
+        "textLimitType": "lines",
+        "aggregateValues": ""
       }
     },
     "pagingHeaderPanel":
@@ -66,7 +68,11 @@
       {
         "localeToggleEnabled": false,
         "pageModeEnabled": true,
-        "pagingToggleEnabled": true
+        "pagingToggleEnabled": true,
+        "imageDropdownEnabled":  false,
+        "prevNextFiveButtonsEnabled": false,
+        "downloadEnabled": false,
+        "fullscreenEnabled": false
       }
     },
     "seadragonCenterPanel":

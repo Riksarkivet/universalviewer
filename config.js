@@ -12,7 +12,8 @@ var Config = (function () {
             lib: './src/lib',
             modules: './src/modules',
             themes: './src/themes',
-            typings: './src/typings'
+            typings: './src/typings',
+            soktjanst: '../../svn/Projects/Riksarkivet/Sok/Web.Applications.NAD/universalviewer'
         };
         this.typescript = {
             dev: {

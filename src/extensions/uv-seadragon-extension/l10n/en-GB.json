@@ -45,6 +45,14 @@
         "width": "Width"
       }
     },
+    "headerPanel": {
+      "content": {
+        "settings": "Settings",
+        "download": "Download",
+        "exitFullScreen": "Exit Full Screen",
+        "fullScreen": "Full Screen"
+      }
+    },
     "footerPanel": {
       "content": {
         "bookmark": "Add to bookmarks",
@@ -88,7 +96,9 @@
         "license": "License",
         "more": "more",
         "noData": "No data to display",
-        "title": "More Information"
+        "title": "More Information",
+        "manifestHeader": "About the book",
+        "canvasHeader": "About the image"
       }
     },
     "pagingHeaderPanel": {
@@ -108,12 +118,14 @@
         "next": "Next",
         "nextImage": "Next Image",
         "nextPage": "Next Page",
+        "nextFivePages": "Forward five pages",
         "of": "of {0}",
         "oneUp": "Single page view",
         "page": "Page",
         "previous": "Previous",
         "previousImage": "Previous Image",
         "previousPage": "Previous Page",
+        "previousFivePages": "Back five pages",
         "settings": "Settings",
         "twoUp": "Two page view"
       }
@@ -130,10 +142,8 @@
         "zoomOut": "Zoom Out"
       }
     },
-    "searchFooterPanel":
-    {
-      "content":
-      {
+    "searchFooterPanel": {
+      "content": {
         "clearSearch": "Clear Search",
         "defaultLabel": "-",
         "displaying": "Displaying {0} {1} of {2}",

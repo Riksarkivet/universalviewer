@@ -13,6 +13,7 @@ import IProvider = require("./IProvider");
 import LoginDialogue = require("../../modules/uv-dialogues-module/LoginDialogue");
 import Params = require("../../Params");
 import Shell = require("./Shell");
+import Riksarkivet = require("../../modules/uv-shared-module/Riksarkivet");
 
 class BaseExtension implements IExtension {
 
@@ -33,6 +34,7 @@ class BaseExtension implements IExtension {
     shell: Shell;
     shifted: boolean = false;
     tabbing: boolean = false;
+    riksarkivet: Riksarkivet;
 
     constructor(bootstrapper: BootStrapper) {
         this.bootstrapper = bootstrapper;
@@ -138,7 +140,7 @@ class BaseExtension implements IExtension {
                     $.publish(event);
                 }
             });
-            
+
             $(document).keydown((e) => {
                 //Prevent home, end, page up and page down from scrolling the window.
                 if (e.keyCode === 33 || e.keyCode === 34 || e.keyCode === 35 || e.keyCode === 36)
@@ -436,6 +438,8 @@ class BaseExtension implements IExtension {
             this.triggerSocket(BaseCommands.WINDOW_UNLOAD);
         });
 
+        this.riksarkivet = new Riksarkivet();
+
         // create shell and shared views.
         this.shell = new Shell(this.$element);
 
@@ -450,6 +454,7 @@ class BaseExtension implements IExtension {
                 this.loadDependencies(deps);
             });
         }
+
     }
 
     createModules(): void {
@@ -644,6 +649,12 @@ class BaseExtension implements IExtension {
         }
     }
 
+    SetUrlAfter(searchvalue: string, value: string): void {
+        if (this.provider.isDeepLinkingEnabled()) {
+            Utils.Urls.SetUrlAfter(searchvalue, value, parent.document);
+        }
+    }
+
     viewCanvas(canvasIndex: number): void {
         if (canvasIndex === -1) return;
 
@@ -655,8 +666,11 @@ class BaseExtension implements IExtension {
         this.provider.canvasIndex = canvasIndex;
 
         $.publish(BaseCommands.CANVAS_INDEX_CHANGED, [canvasIndex]);
-
         $.publish(BaseCommands.OPEN_EXTERNAL_RESOURCE);
+
+        var canvas: Manifesto.ICanvas = this.provider.getCanvasByIndex(canvasIndex);
+        var bildid = this.riksarkivet.GetBildIdFromCanvas(canvas);
+        this.SetUrlAfter("/", bildid);
 
         this.setParam(Params.canvasIndex, canvasIndex);
     }

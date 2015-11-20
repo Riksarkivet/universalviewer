@@ -18,6 +18,10 @@ class PagingHeaderPanel extends HeaderPanel {
     $pageModeOption: JQuery;
     $prevButton: JQuery;
     $prevOptions: JQuery;
+    $nextFiveButton: JQuery;
+    $prevFiveButton: JQuery;
+    $dropdownOptions: JQuery;
+    $imageDropdown: JQuery;
     $search: JQuery;
     $searchButton: JQuery;
     $searchText: JQuery;
@@ -56,7 +60,10 @@ class PagingHeaderPanel extends HeaderPanel {
         this.$firstButton = $('<a class="imageBtn first" tabindex="15"></a>');
         this.$prevOptions.append(this.$firstButton);
 
-        this.$prevButton = $('<a class="imageBtn prev" tabindex="16"></a>');
+        this.$prevFiveButton = $('<a class="imageBtn prev-five" tabindex="16"></a>');
+        this.$prevOptions.append(this.$prevFiveButton);
+
+        this.$prevButton = $('<a class="imageBtn prev" tabindex="17"></a>');
         this.$prevOptions.append(this.$prevButton);
 
         this.$modeOptions = $('<div class="mode"></div>');
@@ -64,24 +71,41 @@ class PagingHeaderPanel extends HeaderPanel {
 
         this.$imageModeLabel = $('<label for="image">' + this.content.image + '</label>');
         this.$modeOptions.append(this.$imageModeLabel);
-        this.$imageModeOption = $('<input type="radio" id="image" name="mode" tabindex="17"/>');
+        this.$imageModeOption = $('<input type="radio" id="image" name="mode" tabindex="18"/>');
         this.$modeOptions.append(this.$imageModeOption);
 
         this.$pageModeLabel = $('<label for="page"></label>');
         this.$modeOptions.append(this.$pageModeLabel);
-        this.$pageModeOption = $('<input type="radio" id="page" name="mode" tabindex="18"/>');
+        this.$pageModeOption = $('<input type="radio" id="page" name="mode" tabindex="19"/>');
         this.$modeOptions.append(this.$pageModeOption);
 
         this.$search = $('<div class="search"></div>');
         this.$centerOptions.append(this.$search);
 
-        this.$searchText = $('<input class="searchText" maxlength="50" type="text" tabindex="19"/>');
+        this.$searchText = $('<input class="searchText" maxlength="50" type="text" tabindex="20"/>');
         this.$search.append(this.$searchText);
+
+        if (this.options.imageDropdownEnabled === true) {
+            this.$dropdownOptions = $('<div class="image-dropdown-options"></div>');
+            this.$centerOptions.append(this.$dropdownOptions);
+            this.$imageDropdown = $('<select class="image-dropdown" name="image-select" tabindex="21" ></select>');
+            this.$dropdownOptions.append(this.$imageDropdown);
+            for (var imageIndex = 0; imageIndex < this.provider.getTotalCanvases(); imageIndex++) {
+                var canvas = this.provider.getCanvasByIndex(imageIndex);
+                var label = canvas.getLabel();
+                this.$imageDropdown.append('<option value=' + (imageIndex) + '>' + label + '</option>')
+            }
+
+            this.$imageDropdown.change(() => {
+                var valdIndex = parseInt(this.$imageDropdown.val());
+                $.publish(Commands.IMAGE_SEARCH, [valdIndex]);
+            });
+        }
 
         this.$total = $('<span class="total"></span>');
         this.$search.append(this.$total);
 
-        this.$searchButton = $('<a class="go btn btn-primary" tabindex="20">' + this.content.go + '</a>');
+        this.$searchButton = $('<a class="go btn btn-primary" tabindex="22">' + this.content.go + '</a>');
         this.$search.append(this.$searchButton);
 
         this.$nextOptions = $('<div class="nextOptions"></div>');
@@ -90,7 +114,10 @@ class PagingHeaderPanel extends HeaderPanel {
         this.$nextButton = $('<a class="imageBtn next" tabindex="1"></a>');
         this.$nextOptions.append(this.$nextButton);
 
-        this.$lastButton = $('<a class="imageBtn last" tabindex="2"></a>');
+        this.$nextFiveButton = $('<a class="imageBtn next-five" tabindex="2"></a>');
+        this.$nextOptions.append(this.$nextFiveButton);
+
+        this.$lastButton = $('<a class="imageBtn last" tabindex="3"></a>');
         this.$nextOptions.append(this.$lastButton);
 
         if (this.isPageModeEnabled()) {
@@ -128,13 +155,21 @@ class PagingHeaderPanel extends HeaderPanel {
             $.publish(Commands.PREV);
         });
 
+        this.$prevFiveButton.onPressed(() => {
+            $.publish(Commands.PREV_FIVE);
+        });
+
+        this.$nextFiveButton.onPressed(() => {
+            $.publish(Commands.NEXT_FIVE);
+        });
+
         this.$nextButton.onPressed(() => {
             $.publish(Commands.NEXT);
         });
 
         // If page mode is disabled, we don't need to show radio buttons since
         // there is only one option:
-        if (!this.config.options.pageModeEnabled) {
+        if (!this.config.options.pageModeEnabled || this.provider.hasNoPageNumbers) {
             this.$imageModeOption.hide();
             this.$pageModeLabel.hide();
             this.$pageModeOption.hide();
@@ -168,20 +203,49 @@ class PagingHeaderPanel extends HeaderPanel {
             $.publish(Commands.LAST);
         });
 
+        //Mode options are shown as default
         if (this.options.modeOptionsEnabled === false){
             this.$modeOptions.hide();
             this.$centerOptions.addClass('modeOptionsDisabled');
         }
 
-        if (this.options.helpEnabled === false){
+        //Search is shown as default
+        if (this.options.searchOptionsEnabled === false) {
+            this.$search.hide();
+        }
+
+        //Previous och next 5 buttons are hidden as default
+        if (!(this.options.prevNextFiveButtonsEnabled === true)) {
+            this.$prevFiveButton.hide();
+            this.$nextFiveButton.hide();
+        }
+
+        if (this.options.helpEnabled === false) {
             this.$helpButton.hide();
         }
 
+        //Get visible element in centerOptions with greatest tabIndex
+        var maxTabIndex: number = 1;
+        var $elementWithGreatestTabIndex: JQuery = this.$searchButton;
+        this.$centerOptions.find('*:visible[tabindex]').each(function (idx, el: HTMLElement) {
+            var tIndex = parseInt($(el).attr('tabindex'));
+            if (tIndex > maxTabIndex) {
+                maxTabIndex = tIndex;
+                $elementWithGreatestTabIndex = $(el);
+            }
+        });
         // cycle focus back to start.
-        // todo: design a more generic system that finds the element with the highest tabindex and attaches this listener
-        this.$searchButton.blur(() => {
+        $elementWithGreatestTabIndex.blur(() => {
             if (this.extension.tabbing && !this.extension.shifted){
                 this.$nextButton.focus();
+            }
+        });
+
+        this.$nextButton.blur(() => {
+            if (this.extension.tabbing && this.extension.shifted) {
+                setTimeout(() => {
+                    $elementWithGreatestTabIndex.focus();
+                }, 100);
             }
         });
 
@@ -195,7 +259,7 @@ class PagingHeaderPanel extends HeaderPanel {
     }
 
     isPageModeEnabled(): boolean {
-        return this.config.options.pageModeEnabled && (<ISeadragonExtension>this.extension).getMode().toString() === Mode.page.toString();
+        return this.config.options.pageModeEnabled && !this.provider.hasNoPageNumbers && (<ISeadragonExtension>this.extension).getMode().toString() === Mode.page.toString();
     }
 
     setTitles(): void {
@@ -204,10 +268,14 @@ class PagingHeaderPanel extends HeaderPanel {
             this.$firstButton.prop('title', this.content.firstPage);
             this.$prevButton.prop('title', this.content.previousPage);
             this.$nextButton.prop('title', this.content.nextPage);
+            this.$prevFiveButton.prop('title', this.content.previousFivePages);
+            this.$nextFiveButton.prop('title', this.content.nextFivePages);
             this.$lastButton.prop('title', this.content.lastPage);
         } else {
             this.$firstButton.prop('title', this.content.firstImage);
             this.$prevButton.prop('title', this.content.previousImage);
+            this.$prevFiveButton.prop('title', this.content.previousFivePages);
+            this.$nextFiveButton.prop('title', this.content.nextFivePages);
             this.$nextButton.prop('title', this.content.nextImage);
             this.$lastButton.prop('title', this.content.lastImage);
         }
@@ -284,6 +352,10 @@ class PagingHeaderPanel extends HeaderPanel {
 
     canvasIndexChanged(index): void {
         this.setSearchFieldValue(index);
+
+        if (this.options.imageDropdownEnabled === true) {
+            this.$imageDropdown.val(index);
+        }
 
         if (this.provider.isFirstCanvas()){
             this.disableFirstButton();
