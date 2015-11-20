@@ -50,7 +50,7 @@ class SeadragonCenterPanel extends CenterPanel {
         this.$content.append(this.$viewer);
 
         $.subscribe(BaseCommands.OPEN_EXTERNAL_RESOURCE, (e, resources: Manifesto.IExternalResource[]) => {
-            // todo: OPEN_MEDIA should be able to waitFor RESIZE
+            // todo: OPEN_EXTERNAL_RESOURCE should be able to waitFor RESIZE
             // https://facebook.github.io/flux/docs/dispatcher.html
             if (!this.isCreated) {
                 setTimeout(() => {
@@ -99,7 +99,7 @@ class SeadragonCenterPanel extends CenterPanel {
             showNavigationControl: true,
             showNavigator: this.config.options.showNavigator == null ? true : this.config.options.showNavigator,
             showRotationControl: true,
-            showHomeControl: true,
+            showHomeControl: this.config.options.showHomeControl || false,
             showFullPageControl: false,
             defaultZoomLevel: this.config.options.defaultZoomLevel || 0,
             controlsFadeDelay: this.config.options.controlsFadeDelay || 250,
