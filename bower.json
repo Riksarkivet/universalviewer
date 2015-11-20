@@ -24,7 +24,7 @@
     "lodash-compat": "~3.10.0",
     "manifesto": "riksarkivet/manifesto#master",
     "r.js": "~2.1.18",
-    "utils": "riksarkivet/utils#~0.0.27",
+    "utils": "riksarkivet/utils#master",
     "uv-cy-GB-theme": "universalviewer/uv-cy-GB-theme",
     "uv-en-GB-theme": "universalviewer/uv-en-GB-theme",
     "uv-sv-SE-theme": "riksarkivet/uv-sv-SE-theme",
