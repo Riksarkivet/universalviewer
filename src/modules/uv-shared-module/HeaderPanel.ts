@@ -6,6 +6,9 @@ import InformationAction = require("../uv-shared-module/InformationAction");
 import InformationArgs = require("../uv-shared-module/InformationArgs");
 import InformationFactory = require("../uv-shared-module/InformationFactory");
 import SettingsDialogue = require("../uv-dialogues-module/SettingsDialogue");
+import RiksarkivetPrint = require("../../modules/uv-shared-module/RiksarkivetPrint");
+import ISeadragonExtension = require("../../Extensions/uv-seadragon-extension/ISeadragonExtension");
+import ISeadragonProvider = require("../../Extensions/uv-seadragon-extension/ISeadragonProvider");
 
 class HeaderPanel extends BaseView {
 
@@ -70,14 +73,17 @@ class HeaderPanel extends BaseView {
         this.$localeToggleButton = $('<a class="localeToggle"></a>');
         this.$rightOptions.append(this.$localeToggleButton);
 
+        var $printButton = $('<a class="print" tabindex="3" title="' + this.content.print + '"></a>');
+        this.$rightOptions.append($printButton);
+
         this.$downloadButton = $('<a class="download" tabindex="4" title="' + this.content.download + '"></a>');
         this.$rightOptions.append(this.$downloadButton);
 
-        this.$settingsButton = $('<a class="settings" tabindex="3" title="' + this.content.settings + '"></a>');
+        this.$settingsButton = $('<a class="settings" tabindex="5" title="' + this.content.settings + '"></a>');
         this.$settingsButton.attr('title', this.content.settings);
         this.$rightOptions.append(this.$settingsButton);
         
-        this.$fullScreenBtn = $('<a href="#" class="fullScreen" tabindex="5" title="' + this.content.fullScreen + '"></a>');
+        this.$fullScreenBtn = $('<a href="#" class="fullScreen" tabindex="6" title="' + this.content.fullScreen + '"></a>');
         this.$rightOptions.append(this.$fullScreenBtn);
 
         this.updateDownloadButton();
@@ -116,6 +122,17 @@ class HeaderPanel extends BaseView {
         this.$settingsButton.onPressed(() => {
             $.publish(BaseCommands.SHOW_SETTINGS_DIALOGUE);
         });
+
+        $printButton.onPressed(() => {
+            var canvas = this.provider.getCurrentCanvas();
+            var viewer = (<ISeadragonExtension>this.extension).getViewer();
+            var imageUri = (<ISeadragonProvider>this.provider).getCroppedImageUri(canvas, viewer, true);
+            var imageUriTmp = imageUri.substring(0, imageUri.indexOf('/0/default.jpg'));
+            imageUri = imageUri.substring(0, imageUriTmp.lastIndexOf('/')) + '/full/0/default.jpg';
+            var title = this.extension.provider.getTitle();
+            var ra: RiksarkivetPrint = new RiksarkivetPrint();
+            ra.printImage(imageUri, title, canvas);
+            });        
 
         this.$downloadButton.on('click', (e) => {
             e.preventDefault();

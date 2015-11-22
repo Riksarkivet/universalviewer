@@ -50,7 +50,8 @@
         "settings": "Settings",
         "download": "Download",
         "exitFullScreen": "Exit Full Screen",
-        "fullScreen": "Full Screen"
+        "fullScreen": "Full Screen",
+        "print": "Print page"
       }
     },
     "footerPanel": {
