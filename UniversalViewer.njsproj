@@ -25,6 +25,7 @@
     <Content Include="package.json" />
     <Content Include="README.md" />
     <TypeScriptCompile Include="src\modules\uv-shared-module\Riksarkivet.ts" />
+    <TypeScriptCompile Include="src\modules\uv-shared-module\RiksarkivetPrint.ts" />
     <TypeScriptCompile Include="VersionTemplate.ts" />
     <Compile Include="config.js" />
     <Compile Include="Gruntfile.js" />
