@@ -108,7 +108,7 @@ class RiksarkivetPrint {
             });
 
         var img_div = $('<div id="' + printContainerId + '" class="' + printContainerClassName + '" >');
-        img_div.append('<div id="' + printSourceTextId + '"><h5>' + this.printSourceText + '<h5></div>')
+        img_div.append('<div id="' + printSourceTextId + '"><h5>' + this.printSourceText + '</h5></div>')
         img_div.append(img);
 
         return img_div;
@@ -207,33 +207,6 @@ class RiksarkivetPrint {
         return widthPercentage
 
     }
-
-    public getHtmlContent2(imageUri: string, title: string) {
-
-        var printContainerId = 'invisibleImageDiv';
-        var printContainerIdWithHash = '#' + printContainerId;
-        var printContainerClassName = 'invisible-screen';
-        var printSourceTextId = 'printSourceText';
-        var printImageId = "printImage";
-
-        if ($(printContainerIdWithHash).length > 0) {
-            $(printContainerIdWithHash).remove();
-        }
-
-        var img = $('<img id="' + printImageId + '" />').attr('src', imageUri)
-            .on('load', function () {
-                if (!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0) {
-                    alert('broken image!');
-                }
-            });
-
-        var img_div = $('<div id="' + printContainerId + '" class="' + printContainerClassName + '" >');
-        img_div.append('<div id="' + printSourceTextId + '"><h5>' + title + '<h5></div>')
-        img_div.append(img);
-
-        return img_div;
-    };
-
 }
 
 export = RiksarkivetPrint;
