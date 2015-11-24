@@ -98,7 +98,7 @@ class SeadragonCenterPanel extends CenterPanel {
             id: "viewer",
             ajaxWithCredentials: false,
             showNavigationControl: true,
-            showNavigator: this.config.options.showNavigator == null ? true : this.config.options.showNavigator,
+            showNavigator: this.provider.config.options.showNavigator == null ? true : this.provider.config.options.showNavigator,
             navigationControlAnchor: (this.config.options.showNavigationToTheRight || false) ? 2 : 1,
             showRotationControl: true,
             showHomeControl: this.config.options.showHomeControl || false,
