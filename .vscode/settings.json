@@ -1,0 +1,15 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+	"files.exclude": {
+        "build": true,
+        "lib": true,
+        "node_modules": true,
+        "examples": true,
+        "**/*.sln": true,
+        "**/*.njsproj": true,
+        "**/.vs": true,
+        "**/.git": true,
+        "**/*.js.map": true,
+        "**/*.js": {"when": "$(basename).ts"}
+    }
+}
