@@ -86,10 +86,10 @@
     "moreInfoRightPanel": {
       "content": {
         "attribution": "Erkännande",
-        "collapse": "Minimera mera information",
+        "collapse": "Minimera information",
         "collapseFull": "Minimera galleri",
         "description": "Beskrivning",
-        "expand": "Öppna mera information",
+        "expand": "Öppna information",
         "expandFull": "Öppna galleri",
         "holdingText": "Your module goes here!",
         "less": "mindre",
