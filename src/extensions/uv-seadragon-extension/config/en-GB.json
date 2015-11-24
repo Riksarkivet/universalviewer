@@ -94,7 +94,8 @@
         "showHomeControl": false,
         "showNavigator": true,
         "trimAttributionCount": 150,
-        "visibilityRatio": 0.5
+        "visibilityRatio": 0.5,
+        "showNavigationToTheRight": false
       }
     },
     "searchFooterPanel":

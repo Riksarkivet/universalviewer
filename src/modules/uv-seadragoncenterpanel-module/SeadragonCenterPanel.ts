@@ -9,6 +9,7 @@ import Params = require("../../Params");
 import SearchResult = require("../../extensions/uv-seadragon-extension/SearchResult");
 import SearchResultRect = require("../../extensions/uv-seadragon-extension/SearchResultRect");
 
+
 class SeadragonCenterPanel extends CenterPanel {
 
     controlsVisible: boolean = false;
@@ -98,6 +99,7 @@ class SeadragonCenterPanel extends CenterPanel {
             ajaxWithCredentials: false,
             showNavigationControl: true,
             showNavigator: this.config.options.showNavigator == null ? true : this.config.options.showNavigator,
+            navigationControlAnchor: (this.config.options.showNavigationToTheRight || false) ? 2 : 1,
             showRotationControl: true,
             showHomeControl: this.config.options.showHomeControl || false,
             showFullPageControl: false,
@@ -591,8 +593,13 @@ class SeadragonCenterPanel extends CenterPanel {
             this.fitToBounds(this.currentBounds);
         }
 
-        if (this.$title.css("position") === "absolute")
-            this.$title.width(this.$viewer.width() - parseInt(this.$title.css("left"), 10) - parseInt(this.$title.css("padding-left"), 10) - parseInt(this.$title.css("padding-right"), 10));
+        if (this.$title.css("position") === "absolute") {
+            this.$title.width(this.$viewer.width()
+                - 120
+                - parseInt(this.$title.css("left"), 10) 
+                - parseInt(this.$title.css("padding-left"), 10) 
+                - parseInt(this.$title.css("padding-right"), 10));
+        }
 
         this.$title.ellipsisFill(this.title);
 
