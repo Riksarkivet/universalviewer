@@ -57,14 +57,10 @@ class RiksarkivetPrint {
     private getPrintStyles(widthPercentageLandscape, widthPercentagePortrait) {
         var fullWidthLandscape = 100;
         var fullWidthPortrait = 100;
-        var sourceTextLandscapeStyle = this.printSourceTextIdWithHash + ' { width: ' + fullWidthLandscape + '%; height: ' + this.printSourceTextHeightInPixels + 'px; align:top; margin-left: ' + this.printSourceLeftMarginsInPixels + 'px;} ';
-        var sourceTextPortraitStyle = this.printSourceTextIdWithHash + ' { width: ' + fullWidthPortrait + '%; height: ' + this.printSourceTextHeightInPixels + 'px; align:top; margin-left: ' + this.printSourceLeftMarginsInPixels + 'px;} ';
+        var sourceTextLandscapeStyle = this.printSourceTextIdWithHash + ' { width: ' + fullWidthLandscape + '%; height: ' + this.printSourceTextHeightInPixels + 'px; align:top; margin-left: ' + this.printSourceLeftMarginsInPixels + 'px; margin-right: 20px } ';
+        var sourceTextPortraitStyle = this.printSourceTextIdWithHash + ' { width: ' + fullWidthPortrait + '%; height: ' + this.printSourceTextHeightInPixels + 'px; align:top; margin-left: ' + this.printSourceLeftMarginsInPixels + 'px; margin-right: 20px } ';
         var imageLandscapeStyle = this.printImageIdWithHash + ' { width: ' + widthPercentageLandscape + '%; vertical-align: top; margin-top: 20px; margin-left: ' + this.printSourceLeftMarginsInPixels + 'px; }';
         var imagePortraitStyle = this.printImageIdWithHash + ' { width: ' + widthPercentagePortrait + '%; vertical-align: top; margin-top: 20px; margin-left: ' + this.printSourceLeftMarginsInPixels + 'px; }';
-        //var sourceTextLandscapeStyle = this.printSourceTextIdWithHash + ' { width: ' + fullWidthLandscape + '%; height: ' + this.printSourceTextHeightInPixels + 'px; } ';
-        //var sourceTextPortraitStyle = this.printSourceTextIdWithHash + ' { width: ' + fullWidthPortrait + '%; height: ' + this.printSourceTextHeightInPixels + 'px; } ';
-        //var imageLandscapeStyle = this.printImageIdWithHash + ' { width: ' + widthPercentageLandscape + '%; vertical-align: top; }';
-        //var imagePortraitStyle = this.printImageIdWithHash + ' { width: ' + widthPercentagePortrait + '%; vertical-align: top;  }';
         var hideUVContainer = this.UVContainerIdWithHash + ' { display:none; } ';
         var landscapeStyle = sourceTextLandscapeStyle + imageLandscapeStyle + hideUVContainer;
         var portraitStyle = sourceTextPortraitStyle + imagePortraitStyle + hideUVContainer;
