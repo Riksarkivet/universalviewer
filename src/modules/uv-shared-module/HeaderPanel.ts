@@ -73,15 +73,15 @@ class HeaderPanel extends BaseView {
         this.$localeToggleButton = $('<a class="localeToggle"></a>');
         this.$rightOptions.append(this.$localeToggleButton);
 
-        var $printButton = $('<a class="print" tabindex="3" title="' + this.content.print + '"></a>');
-        this.$rightOptions.append($printButton);
-
-        this.$downloadButton = $('<a class="download" tabindex="4" title="' + this.content.download + '"></a>');
-        this.$rightOptions.append(this.$downloadButton);
-
         this.$settingsButton = $('<a class="settings" tabindex="5" title="' + this.content.settings + '"></a>');
         this.$settingsButton.attr('title', this.content.settings);
         this.$rightOptions.append(this.$settingsButton);
+
+        this.$downloadButton = $('<a class="download" tabindex="4" title="' + this.content.download + '"></a>');
+        this.$rightOptions.append(this.$downloadButton);
+        
+        var $printButton = $('<a class="print" tabindex="3" title="' + this.content.print + '"></a>');
+        this.$rightOptions.append($printButton);
         
         this.$fullScreenBtn = $('<a href="#" class="fullScreen" tabindex="6" title="' + this.content.fullScreen + '"></a>');
         this.$rightOptions.append(this.$fullScreenBtn);
