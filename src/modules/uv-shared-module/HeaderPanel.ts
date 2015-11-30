@@ -22,6 +22,7 @@ class HeaderPanel extends BaseView {
     $rightOptions: JQuery;
     $settingsButton: JQuery;
     $downloadButton: JQuery;
+    $printButton: JQuery;
     $fullScreenBtn: JQuery;
     $linkOldImageViewer: JQuery;
     information: Information;
@@ -38,7 +39,8 @@ class HeaderPanel extends BaseView {
 
         $.subscribe(BaseCommands.SETTINGS_CHANGED, () => {
             this.updatePagingToggle();
-            this.updateDownloadButton();
+            this.updateButton(this.$downloadButton, "downloadEnabled");
+            this.updateButton(this.$printButton, "printEnabled");
         });
 
         $.subscribe(BaseCommands.SHOW_INFORMATION, (e, args: InformationArgs) => {
@@ -100,13 +102,14 @@ class HeaderPanel extends BaseView {
         this.$downloadButton = $('<a class="download" tabindex="4" title="' + this.content.download + '"></a>');
         this.$rightOptions.append(this.$downloadButton);
         
-        var $printButton = $('<a class="print" tabindex="5" title="' + this.content.print + '"></a>');
-        this.$rightOptions.append($printButton);
+        this.$printButton = $('<a class="print" tabindex="5" title="' + this.content.print + '"></a>');
+        this.$rightOptions.append(this.$printButton);
         
         this.$fullScreenBtn = $('<a href="#" class="fullScreen" tabindex="6" title="' + this.content.fullScreen + '"></a>');
         this.$rightOptions.append(this.$fullScreenBtn);
 
-        this.updateDownloadButton();
+        this.updateButton(this.$downloadButton, "downloadEnabled");
+        this.updateButton(this.$printButton, "printEnabled");
         this.updateFullScreenButton();
         
 
@@ -141,7 +144,7 @@ class HeaderPanel extends BaseView {
             $.publish(BaseCommands.SHOW_SETTINGS_DIALOGUE);
         });
 
-        $printButton.onPressed(() => {
+        this.$printButton.onPressed(() => {
             var canvas = this.provider.getCurrentCanvas();
             var viewer = (<ISeadragonExtension>this.extension).getViewer();
             var imageUri = (<ISeadragonProvider>this.provider).getCroppedImageUri(canvas, viewer, true);
@@ -298,16 +301,17 @@ class HeaderPanel extends BaseView {
             this.$fullScreenBtn.attr('title', this.content.fullScreen);
         }
     }
-
-    updateDownloadButton() {
-        var configEnabled = Utils.Bools.GetBool(this.options.downloadEnabled, true);
+    
+    updateButton($button, buttonEnabled) {
+        var configEnabled = Utils.Bools.GetBool(this.options[buttonEnabled], true);
 
         if (configEnabled) {
-            this.$downloadButton.show();
+           $button.show();
         } else {
-            this.$downloadButton.hide();
+            $button.hide();
         }
-    }
+    }    
+
 }
 
 export = HeaderPanel;

@@ -74,6 +74,7 @@
         "imageDropdownEnabled":  false,
         "prevNextFiveButtonsEnabled": false,
         "downloadEnabled": false,
+        "printEnabled": false,
         "fullscreenEnabled": false
       }
     },
