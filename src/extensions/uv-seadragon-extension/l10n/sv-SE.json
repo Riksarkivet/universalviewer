@@ -51,7 +51,8 @@
         "download": "Ladda ner",
         "exitFullScreen": "Lämna fullskärmsläge",
         "fullScreen": "Fullskärmsläge",
-        "print": "Skriv ut"
+        "print": "Skriv ut",
+        "backOldImageViewer": "Gamla bildvisningen"
       }
     },
     "footerPanel": {

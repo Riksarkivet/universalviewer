@@ -23,6 +23,7 @@ class HeaderPanel extends BaseView {
     $settingsButton: JQuery;
     $downloadButton: JQuery;
     $fullScreenBtn: JQuery;
+    $linkOldImageViewer: JQuery;
     information: Information;
 
     constructor($element: JQuery) {
@@ -73,14 +74,33 @@ class HeaderPanel extends BaseView {
         this.$localeToggleButton = $('<a class="localeToggle"></a>');
         this.$rightOptions.append(this.$localeToggleButton);
 
-        this.$settingsButton = $('<a class="settings" tabindex="5" title="' + this.content.settings + '"></a>');
+        //Temporary code for Beta viewer
+        var url = parent.document.URL;
+
+        if (url.indexOf("?") > -1) {
+            url = url.substr(0, url.indexOf("?"));
+        }
+        var checkMobile = false;
+        if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/webOS/i) || navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/Windows Phone/i)) {
+            checkMobile = true;
+        }
+        else {
+            checkMobile = false;
+        }
+        if (!checkMobile) {
+            this.$linkOldImageViewer = $('<a class="linkOldImageViewer" tabindex="2" title="' + this.content.backOldImageViewer + '" href="' + url + '?viewer=DjVu">' + this.content.backOldImageViewer + '</a>');
+            this.$rightOptions.append(this.$linkOldImageViewer);
+        }
+        //END Temporary code for Beta viewer
+
+        this.$settingsButton = $('<a class="settings" tabindex="3" title="' + this.content.settings + '"></a>');
         this.$settingsButton.attr('title', this.content.settings);
         this.$rightOptions.append(this.$settingsButton);
 
         this.$downloadButton = $('<a class="download" tabindex="4" title="' + this.content.download + '"></a>');
         this.$rightOptions.append(this.$downloadButton);
         
-        var $printButton = $('<a class="print" tabindex="3" title="' + this.content.print + '"></a>');
+        var $printButton = $('<a class="print" tabindex="5" title="' + this.content.print + '"></a>');
         this.$rightOptions.append($printButton);
         
         this.$fullScreenBtn = $('<a href="#" class="fullScreen" tabindex="6" title="' + this.content.fullScreen + '"></a>');
