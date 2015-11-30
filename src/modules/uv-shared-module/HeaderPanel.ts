@@ -80,8 +80,17 @@ class HeaderPanel extends BaseView {
         if (url.indexOf("?") > -1) {
             url = url.substr(0, url.indexOf("?"));
         }
-        this.$linkOldImageViewer = $('<a class="linkOldImageViewer" tabindex="2" title="' + this.content.backOldImageViewer + '" href="' + url + '?viewer=DjVu">' + this.content.backOldImageViewer + '</a>');
-        this.$rightOptions.append(this.$linkOldImageViewer);
+        var checkMobile = false;
+        if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/webOS/i) || navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/Windows Phone/i)) {
+            checkMobile = true;
+        }
+        else {
+            checkMobile = false;
+        }
+        if (!checkMobile) {
+            this.$linkOldImageViewer = $('<a class="linkOldImageViewer" tabindex="2" title="' + this.content.backOldImageViewer + '" href="' + url + '?viewer=DjVu">' + this.content.backOldImageViewer + '</a>');
+            this.$rightOptions.append(this.$linkOldImageViewer);
+        }
         //END Temporary code for Beta viewer
 
         this.$settingsButton = $('<a class="settings" tabindex="3" title="' + this.content.settings + '"></a>');
