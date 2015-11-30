@@ -51,7 +51,8 @@
         "download": "Download",
         "exitFullScreen": "Exit Full Screen",
         "fullScreen": "Full Screen",
-        "print": "Print page"
+        "print": "Print page",
+        "backOldImageViewer": "Old Image Viewer"
       }
     },
     "footerPanel": {
