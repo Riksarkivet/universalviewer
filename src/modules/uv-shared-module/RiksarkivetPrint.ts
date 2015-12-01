@@ -28,7 +28,7 @@ class RiksarkivetPrint {
         var that = this;
 
         var bildid = this.getBildIdFromCanvas(canvas);
-        this.printSourceText = title + ' - ' + bildid;
+        this.printSourceText = title + ' - ' + bildid + ' (Riksarkivet)';
         this.imageUri = imageUri;
 
         var img = new Image();
