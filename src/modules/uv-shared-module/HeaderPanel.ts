@@ -305,9 +305,9 @@ class HeaderPanel extends BaseView {
     
     updateOldImageViewerLink(): void {
         if (this.extension.isFullScreen()) {
-            this.$linkOldImageViewer.addClass('hidden');
+            this.$linkOldImageViewer.hide();
         } else {
-            this.$linkOldImageViewer.removeClass('hidden');
+            this.$linkOldImageViewer.show();
         }
     }
 
