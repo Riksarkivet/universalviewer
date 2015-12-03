@@ -321,7 +321,6 @@ class SeadragonCenterPanel extends CenterPanel {
 
         // check for initial zoom/rotation params.
         if (this.isFirstLoad){
-
             this.initialRotation = this.extension.getParam(Params.rotation);
 
             if (this.initialRotation){
@@ -334,6 +333,12 @@ class SeadragonCenterPanel extends CenterPanel {
                 this.initialBounds = this.deserialiseBounds(this.initialBounds);
                 this.currentBounds = this.initialBounds;
                 this.fitToBounds(this.currentBounds);
+            }
+
+            if (window.matchMedia("(max-width: 1024px)").matches) {
+                var settings: ISettings = this.provider.getSettings();
+                settings.navigatorEnabled = false;
+                this.provider.updateSettings(settings);
             }
         } else {
             // it's not the first load
