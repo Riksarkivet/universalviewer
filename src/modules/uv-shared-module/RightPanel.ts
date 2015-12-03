@@ -15,6 +15,9 @@ class RightPanel extends BaseExpandPanel {
     init(): void{
         super.init();
 
+        if (window.matchMedia("(max-width: 768px)").matches) 
+            return;
+
         if (this.options.panelOpen) {
             this.toggle(true);
         }
