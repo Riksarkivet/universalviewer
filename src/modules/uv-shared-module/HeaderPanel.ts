@@ -53,6 +53,7 @@ class HeaderPanel extends BaseView {
 
         $.subscribe(BaseCommands.TOGGLE_FULLSCREEN, () => {
             this.updateFullScreenButton();
+            this.updateOldImageViewerLink();
         });
 
         this.$options = $('<div class="options"></div>');
@@ -302,6 +303,14 @@ class HeaderPanel extends BaseView {
         }
     }
     
+    updateOldImageViewerLink(): void {
+        if (this.extension.isFullScreen()) {
+            this.$linkOldImageViewer.addClass('hidden');
+        } else {
+            this.$linkOldImageViewer.removeClass('hidden');
+        }
+    }
+
     updateButton($button, buttonEnabled) {
         var configEnabled = Utils.Bools.GetBool(this.options[buttonEnabled], true);
 
