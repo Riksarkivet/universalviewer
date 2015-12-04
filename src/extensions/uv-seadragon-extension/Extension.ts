@@ -93,6 +93,7 @@ class Extension extends BaseExtension {
         $.subscribe(Commands.FIRST, (e) => {
             this.triggerSocket(Commands.FIRST);
             this.viewPage(this.provider.getFirstPageIndex());
+            this.triggerTrackEvent(Commands.FIRST);
         });
 
         $.subscribe(Commands.GALLERY_THUMB_SELECTED, (e) => {
@@ -106,11 +107,13 @@ class Extension extends BaseExtension {
         $.subscribe(Commands.IMAGE_SEARCH, (e, index: number) => {
             this.triggerSocket(Commands.IMAGE_SEARCH, index);
             this.viewPage(index);
+            this.triggerTrackEvent(Commands.IMAGE_SEARCH);
         });
 
         $.subscribe(Commands.LAST, (e) => {
             this.triggerSocket(Commands.LAST);
             this.viewPage(this.provider.getLastPageIndex());
+            this.triggerTrackEvent(Commands.LAST);
         });
 
         $.subscribe(BaseCommands.LEFT_ARROW, (e) => {
@@ -146,11 +149,13 @@ class Extension extends BaseExtension {
         $.subscribe(Commands.NEXT, (e) => {
             this.triggerSocket(Commands.NEXT);
             this.viewPage(this.provider.getNextPageIndex());
+            this.triggerTrackEvent(Commands.NEXT);
         });
 
         $.subscribe(Commands.NEXT_FIVE, (e) => {
             //this.triggerSocket(Commands.NEXT_FIVE);
             this.viewPage(this.provider.getNextFivePageIndex());
+            this.triggerTrackEvent(Commands.NEXT_FIVE);
         });
 
         $.subscribe(Commands.NEXT_SEARCH_RESULT, () => {
@@ -186,11 +191,13 @@ class Extension extends BaseExtension {
         $.subscribe(Commands.PREV, (e) => {
             this.triggerSocket(Commands.PREV);
             this.viewPage(this.provider.getPrevPageIndex());
+            this.triggerTrackEvent(Commands.PREV);
         });
         
         $.subscribe(Commands.PREV_FIVE, (e) => {
             //this.triggerSocket(Commands.PREV_FIVE);
             this.viewPage(this.provider.getPrevFivePageIndex());
+            this.triggerTrackEvent(Commands.PREV_FIVE);
         });
 
         $.subscribe(Commands.PREV_SEARCH_RESULT, () => {
@@ -287,6 +294,11 @@ class Extension extends BaseExtension {
             this.triggerSocket(Commands.VIEW_PAGE, index);
             this.viewPage(index);
         });
+    }
+    
+    private triggerTrackEvent(category)
+    {
+        this.triggerSocket('uv.onTrackEvent', {category: category, action:"", label:"", value:""});
     }
 
     createModules(): void{
