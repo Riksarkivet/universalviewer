@@ -49,7 +49,7 @@ class SettingsDialogue extends BaseSettingsDialogue {
         this.$preserveViewport.append(this.$preserveViewportLabel);
 
         this.$navigatorEnabledCheckbox.change(() => {
-            var settings: ISettings = this.getSettings();
+            var settings: ISettings = {};
 
             if(this.$navigatorEnabledCheckbox.is(":checked")) {
                 settings.navigatorEnabled = true;
