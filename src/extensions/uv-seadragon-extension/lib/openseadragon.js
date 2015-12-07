@@ -1,6 +1,6 @@
-//! OpenSeadragon 2.1.0
-//! Built on 2015-11-12
-//! Git commit: v2.1.0-3-b2c17b5
+//! openseadragon 2.1.0
+//! Built on 2015-12-07
+//! Git commit: v2.1.0-21-92be395-dirty
 //! http://openseadragon.github.io
 //! License: http://openseadragon.github.io/license/
 
@@ -89,7 +89,7 @@
 
 
 /**
- * @version  OpenSeadragon 2.1.0
+ * @version  openseadragon 2.1.0
  *
  * @file
  * <h2><strong>OpenSeadragon - Javascript Deep Zooming</strong></h2>
@@ -254,6 +254,11 @@
   *     ratio. This can be set to Infinity to allow 'infinite' zooming into the
   *     image though it is less effective visually if the HTML5 Canvas is not
   *     availble on the viewing device.
+  *
+  * @property {Number} [smoothTileEdgesMinZoom=1.1]
+  *     A zoom percentage ( where 1 is 100% ) of the highest resolution level.
+  *     When zoomed in beyond this value alternative compositing will be used to
+  *     smooth out the edges between tiles. This will have a performance impact.
   *
   * @property {Boolean} [autoResize=true]
   *     Set to false to prevent polling for viewer size changes. Useful for providing custom resize behavior.
@@ -1028,6 +1033,7 @@ if (typeof define === 'function' && define.amd) {
             immediateRender:        false,
             minZoomImageRatio:      0.9, //-> closer to 0 allows zoom out to infinity
             maxZoomPixelRatio:      1.1, //-> higher allows 'over zoom' into pixels
+            smoothTileEdgesMinZoom: 1.1, //-> higher than maxZoomPixelRatio disables it
             pixelsPerWheelLine:     40,
             autoResize:             true,
             preserveImageSizeOnResize: false, // requires autoResize=true
@@ -4390,6 +4396,14 @@ $.EventSource.prototype = /** @lends OpenSeadragon.EventSource.prototype */{
                 eventParams = getCaptureEventParams( tracker, $.MouseTracker.havePointerEvents ? 'pointerevent' : pointerType );
                 // We emulate mouse capture by hanging listeners on the document object.
                 //    (Note we listen on the capture phase so the captured handlers will get called first)
+                if (isInIframe() && canAccessEvents(window.top)) {
+                    $.addEvent(
+                        window.top,
+                        eventParams.upName,
+                        eventParams.upHandler,
+                        true
+                    );
+                }
                 $.addEvent(
                     $.MouseTracker.captureElement,
                     eventParams.upName,
@@ -4425,6 +4439,14 @@ $.EventSource.prototype = /** @lends OpenSeadragon.EventSource.prototype */{
                 eventParams = getCaptureEventParams( tracker, $.MouseTracker.havePointerEvents ? 'pointerevent' : pointerType );
                 // We emulate mouse capture by hanging listeners on the document object.
                 //    (Note we listen on the capture phase so the captured handlers will get called first)
+                if (isInIframe() && canAccessEvents(window.top)) {
+                    $.removeEvent(
+                        window.top,
+                        eventParams.upName,
+                        eventParams.upHandler,
+                        true
+                    );
+                }
                 $.removeEvent(
                     $.MouseTracker.captureElement,
                     eventParams.moveName,
@@ -6271,6 +6293,34 @@ $.EventSource.prototype = /** @lends OpenSeadragon.EventSource.prototype */{
             } );
         }
     }
+    
+    /**
+     * @function
+     * @private
+     * @inner
+     * @returns {Boolean} True if inside an iframe, otherwise false.
+     */
+    function isInIframe () {
+        try {
+            return window.self !== window.top;
+        } catch (e) {
+            return true;
+        }
+    }
+    
+    /**
+     * @function
+     * @private
+     * @inner
+     * @returns {Boolean} True if the target has access rights to events, otherwise false.
+     */
+    function canAccessEvents (target) {
+        try {
+            return target.addEventListener && target.removeEventListener;
+        } catch (e) {
+            return false;
+        }
+    }
 
 } ( OpenSeadragon ) );
 
@@ -8052,6 +8102,7 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
                     blendTime: _this.blendTime,
                     alwaysBlend: _this.alwaysBlend,
                     minPixelRatio: _this.minPixelRatio,
+                    smoothTileEdgesMinZoom: _this.smoothTileEdgesMinZoom,
                     crossOriginPolicy: _this.crossOriginPolicy,
                     debugMode: _this.debugMode
                 });
@@ -13838,6 +13889,21 @@ $.Rect.prototype = /** @lends OpenSeadragon.Rect.prototype */{
     },
 
     /**
+    * Translate/move this Rect by a vector and return new Rect.
+    * @function
+    * @param {OpenSeadragon.Point} delta The translation vector.
+    * @returns {OpenSeadragon.Rect} A new rect with altered position
+    */
+    translate: function( delta ) {
+        return new OpenSeadragon.Rect(
+            this.x + delta.x,
+            this.y + delta.y,
+            this.width,
+            this.height
+        );
+    },
+
+    /**
      * Returns the smallest rectangle that will contain this and the given rectangle.
      * @param {OpenSeadragon.Rect} rect
      * @return {OpenSeadragon.Rect} The new rectangle.
@@ -14364,7 +14430,7 @@ function loadPanels( strip, viewerSize, scroll ) {
                 animationTime:          0
             } );
 
-            miniViewer.displayRegion           = $.makeNeutralElement( "textarea" );
+            miniViewer.displayRegion           = $.makeNeutralElement( "div" );
             miniViewer.displayRegion.id        = element.id + '-displayregion';
             miniViewer.displayRegion.className = 'displayregion';
 
@@ -15278,11 +15344,13 @@ $.Tile.prototype = /** @lends OpenSeadragon.Tile.prototype */{
      * @param {Function} drawingHandler - Method for firing the drawing event.
      * drawingHandler({context, tile, rendered})
      * where <code>rendered</code> is the context with the pre-drawn image.
+     * @param {Number} [scale=1] - Apply a scale to position and size
+     * @param {OpenSeadragon.Point} [translate] - A translation vector
      */
-    drawCanvas: function( context, drawingHandler ) {
+    drawCanvas: function( context, drawingHandler, scale, translate ) {
 
-        var position = this.position,
-            size     = this.size,
+        var position = this.position.times($.pixelDensityRatio),
+            size     = this.size.times($.pixelDensityRatio),
             rendered;
 
         if (!this.context2D && !this.cacheImageRecord) {
@@ -15316,10 +15384,10 @@ $.Tile.prototype = /** @lends OpenSeadragon.Tile.prototype */{
             //clearing only the inside of the rectangle occupied
             //by the png prevents edge flikering
             context.clearRect(
-                (position.x * $.pixelDensityRatio)+1,
-                (position.y * $.pixelDensityRatio)+1,
-                (size.x * $.pixelDensityRatio)-2,
-                (size.y * $.pixelDensityRatio)-2
+                position.x + 1,
+                position.y + 1,
+                size.x - 2,
+                size.y - 2
             );
 
         }
@@ -15328,19 +15396,68 @@ $.Tile.prototype = /** @lends OpenSeadragon.Tile.prototype */{
         // changes as we are rendering the image
         drawingHandler({context: context, tile: this, rendered: rendered});
 
+        if (typeof scale === 'number' && scale !== 1) {
+            // draw tile at a different scale
+            position = position.times(scale);
+            size = size.times(scale);
+        }
+
+        if (translate instanceof $.Point) {
+            // shift tile position slightly
+            position = position.plus(translate);
+        }
+
         context.drawImage(
             rendered.canvas,
             0,
             0,
             rendered.canvas.width,
             rendered.canvas.height,
-            position.x * $.pixelDensityRatio,
-            position.y * $.pixelDensityRatio,
-            size.x * $.pixelDensityRatio,
-            size.y * $.pixelDensityRatio
+            position.x,
+            position.y,
+            size.x,
+            size.y
         );
 
         context.restore();
+    },
+
+    /**
+     * Get the ratio between current and original size.
+     * @function
+     * @return {Float}
+     */
+    getScaleForEdgeSmoothing: function() {
+        if (!this.cacheImageRecord) {
+            $.console.warn(
+                '[Tile.drawCanvas] attempting to get tile scale %s when tile\'s not cached',
+                this.toString());
+            return 1;
+        }
+
+        var rendered = this.cacheImageRecord.getRenderedContext();
+        return rendered.canvas.width / this.size.times($.pixelDensityRatio).x;
+    },
+
+    /**
+     * Get a translation vector that when applied to the tile position produces integer coordinates.
+     * Needed to avoid swimming and twitching.
+     * @function
+     * @param {Number} [scale=1] - Scale to be applied to position.
+     * @return {OpenSeadragon.Point}
+     */
+    getTranslationForEdgeSmoothing: function(scale) {
+        // The translation vector must have positive values, otherwise the image goes a bit off
+        // the sketch canvas to the top and left and we must use negative coordinates to repaint it
+        // to the main canvas. And FF does not like it. It crashes the viewer.
+        return new $.Point(1, 1).minus(
+            this.position
+                .times($.pixelDensityRatio)
+                .times(scale || 1)
+                .apply(function(x) {
+                    return x % 1;
+                })
+        );
     },
 
     /**
@@ -15975,21 +16092,24 @@ $.Drawer.prototype = /** @lends OpenSeadragon.Drawer.prototype */{
      * drawingHandler({context, tile, rendered})
      * @param {Boolean} useSketch - Whether to use the sketch canvas or not.
      * where <code>rendered</code> is the context with the pre-drawn image.
+     * @param {Float} [scale=1] - Apply a scale to tile position and size. Defaults to 1.
+     * @param {OpenSeadragon.Point} [translate] A translation vector to offset tile position
      */
-    drawTile: function( tile, drawingHandler, useSketch ) {
+    drawTile: function( tile, drawingHandler, useSketch, scale, translate ) {
         $.console.assert(tile, '[Drawer.drawTile] tile is required');
         $.console.assert(drawingHandler, '[Drawer.drawTile] drawingHandler is required');
 
         if ( this.useCanvas ) {
             var context = this._getContext( useSketch );
+            scale = scale || 1;
             // TODO do this in a more performant way
             // specifically, don't save,rotate,restore every time we draw a tile
             if( this.viewport.degrees !== 0 ) {
                 this._offsetForRotation( tile, this.viewport.degrees, useSketch );
-                tile.drawCanvas( context, drawingHandler );
+                tile.drawCanvas( context, drawingHandler, scale, translate );
                 this._restoreRotationChanges( tile, useSketch );
             } else {
-                tile.drawCanvas( context, drawingHandler );
+                tile.drawCanvas( context, drawingHandler, scale, translate );
             }
         } else {
             tile.drawHTML( this.canvas );
@@ -16056,16 +16176,33 @@ $.Drawer.prototype = /** @lends OpenSeadragon.Drawer.prototype */{
     /**
      * Blends the sketch canvas in the main canvas.
      * @param {Float} opacity The opacity of the blending.
+     * @param {Float} [scale=1] The scale at which tiles were drawn on the sketch. Default is 1.
+     *   Use scale to draw at a lower scale and then enlarge onto the main canvas.
+     * @param OpenSeadragon.Point} [translate] A translation vector that was used to draw the tiles
      * @returns {undefined}
      */
-    blendSketch: function(opacity) {
+    blendSketch: function(opacity, scale, translate) {
         if (!this.useCanvas || !this.sketchCanvas) {
             return;
         }
+        scale = scale || 1;
+        var position = translate instanceof $.Point ?
+            translate :
+            new $.Point(0, 0);
 
         this.context.save();
         this.context.globalAlpha = opacity;
-        this.context.drawImage(this.sketchCanvas, 0, 0);
+        this.context.drawImage(
+            this.sketchCanvas,
+            position.x,
+            position.y,
+            this.sketchCanvas.width * scale,
+            this.sketchCanvas.height * scale,
+            0,
+            0,
+            this.canvas.width,
+            this.canvas.height
+        );
         this.context.restore();
     },
 
@@ -17546,6 +17683,7 @@ $.Viewport.prototype = /** @lends OpenSeadragon.Viewport.prototype */{
  * @param {Number} [options.blendTime] - See {@link OpenSeadragon.Options}.
  * @param {Boolean} [options.alwaysBlend] - See {@link OpenSeadragon.Options}.
  * @param {Number} [options.minPixelRatio] - See {@link OpenSeadragon.Options}.
+ * @param {Number} [options.smoothTileEdgesMinZoom] - See {@link OpenSeadragon.Options}.
  * @param {Number} [options.opacity=1] - Opacity the tiled image should be drawn at.
  * @param {Boolean} [options.debugMode] - See {@link OpenSeadragon.Options}.
  * @param {String|CanvasGradient|CanvasPattern|Function} [options.placeholderFillStyle] - See {@link OpenSeadragon.Options}.
@@ -17615,19 +17753,20 @@ $.TiledImage = function( options ) {
         _hasOpaqueTile: false,  // Do we have even one fully opaque tile?
 
         //configurable settings
-        springStiffness:      $.DEFAULT_SETTINGS.springStiffness,
-        animationTime:        $.DEFAULT_SETTINGS.animationTime,
-        minZoomImageRatio:    $.DEFAULT_SETTINGS.minZoomImageRatio,
-        wrapHorizontal:       $.DEFAULT_SETTINGS.wrapHorizontal,
-        wrapVertical:         $.DEFAULT_SETTINGS.wrapVertical,
-        immediateRender:      $.DEFAULT_SETTINGS.immediateRender,
-        blendTime:            $.DEFAULT_SETTINGS.blendTime,
-        alwaysBlend:          $.DEFAULT_SETTINGS.alwaysBlend,
-        minPixelRatio:        $.DEFAULT_SETTINGS.minPixelRatio,
-        debugMode:            $.DEFAULT_SETTINGS.debugMode,
-        crossOriginPolicy:    $.DEFAULT_SETTINGS.crossOriginPolicy,
-        placeholderFillStyle: $.DEFAULT_SETTINGS.placeholderFillStyle,
-        opacity:              $.DEFAULT_SETTINGS.opacity
+        springStiffness:        $.DEFAULT_SETTINGS.springStiffness,
+        animationTime:          $.DEFAULT_SETTINGS.animationTime,
+        minZoomImageRatio:      $.DEFAULT_SETTINGS.minZoomImageRatio,
+        wrapHorizontal:         $.DEFAULT_SETTINGS.wrapHorizontal,
+        wrapVertical:           $.DEFAULT_SETTINGS.wrapVertical,
+        immediateRender:        $.DEFAULT_SETTINGS.immediateRender,
+        blendTime:              $.DEFAULT_SETTINGS.blendTime,
+        alwaysBlend:            $.DEFAULT_SETTINGS.alwaysBlend,
+        minPixelRatio:          $.DEFAULT_SETTINGS.minPixelRatio,
+        smoothTileEdgesMinZoom: $.DEFAULT_SETTINGS.smoothTileEdgesMinZoom,
+        debugMode:              $.DEFAULT_SETTINGS.debugMode,
+        crossOriginPolicy:      $.DEFAULT_SETTINGS.crossOriginPolicy,
+        placeholderFillStyle:   $.DEFAULT_SETTINGS.placeholderFillStyle,
+        opacity:                $.DEFAULT_SETTINGS.opacity
 
     }, options );
 
@@ -18787,13 +18926,26 @@ function compareTiles( previousBest, tile ) {
 
 function drawTiles( tiledImage, lastDrawn ) {
     var i,
-        tile;
+        tile = lastDrawn[0];
 
     if ( tiledImage.opacity <= 0 ) {
         drawDebugInfo( tiledImage, lastDrawn );
         return;
     }
     var useSketch = tiledImage.opacity < 1;
+    var sketchScale;
+    var sketchTranslate;
+
+    var zoom = tiledImage.viewport.getZoom(true);
+    var imageZoom = tiledImage.viewportToImageZoom(zoom);
+    if ( imageZoom > tiledImage.smoothTileEdgesMinZoom && tile) {
+        // When zoomed in a lot (>100%) the tile edges are visible.
+        // So we have to composite them at ~100% and scale them up together.
+        useSketch = true;
+        sketchScale = tile.getScaleForEdgeSmoothing();
+        sketchTranslate = tile.getTranslationForEdgeSmoothing(sketchScale);
+    }
+
     if ( useSketch ) {
         tiledImage._drawer._clear( true );
     }
@@ -18804,6 +18956,12 @@ function drawTiles( tiledImage, lastDrawn ) {
 
         var box = tiledImage.imageToViewportRectangle(tiledImage._clip, true);
         var clipRect = tiledImage._drawer.viewportToDrawerRectangle(box);
+        if (sketchScale) {
+            clipRect = clipRect.times(sketchScale);
+        }
+        if (sketchTranslate) {
+            clipRect = clipRect.translate(sketchTranslate);
+        }
         tiledImage._drawer.setClip(clipRect, useSketch);
 
         usedClip = true;
@@ -18811,6 +18969,12 @@ function drawTiles( tiledImage, lastDrawn ) {
 
     if ( tiledImage.placeholderFillStyle && tiledImage._hasOpaqueTile === false ) {
         var placeholderRect = tiledImage._drawer.viewportToDrawerRectangle(tiledImage.getBounds(true));
+        if (sketchScale) {
+            placeholderRect = placeholderRect.times(sketchScale);
+        }
+        if (sketchTranslate) {
+            placeholderRect = placeholderRect.translate(sketchTranslate);
+        }
 
         var fillStyle = null;
         if ( typeof tiledImage.placeholderFillStyle === "function" ) {
@@ -18825,7 +18989,7 @@ function drawTiles( tiledImage, lastDrawn ) {
 
     for ( i = lastDrawn.length - 1; i >= 0; i-- ) {
         tile = lastDrawn[ i ];
-        tiledImage._drawer.drawTile( tile, tiledImage._drawingHandler, useSketch );
+        tiledImage._drawer.drawTile( tile, tiledImage._drawingHandler, useSketch, sketchScale, sketchTranslate );
         tile.beingDrawn = true;
 
         if( tiledImage.viewer ){
@@ -18852,7 +19016,7 @@ function drawTiles( tiledImage, lastDrawn ) {
     }
 
     if ( useSketch ) {
-        tiledImage._drawer.blendSketch( tiledImage.opacity );
+        tiledImage._drawer.blendSketch( tiledImage.opacity, sketchScale, sketchTranslate );
     }
     drawDebugInfo( tiledImage, lastDrawn );
 }
