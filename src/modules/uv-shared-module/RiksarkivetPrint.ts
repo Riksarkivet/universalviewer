@@ -57,8 +57,8 @@ class RiksarkivetPrint {
     private getPrintStyles(widthPercentageLandscape, widthPercentagePortrait) {
         var fullWidthLandscape = 100;
         var fullWidthPortrait = 100;
-        var sourceTextLandscapeStyle = this.printSourceTextIdWithHash + ' { width: ' + fullWidthLandscape + '%; height: ' + this.printSourceTextHeightInPixels + 'px; align:top; margin-left: ' + this.printSourceLeftMarginsInPixels + 'px; margin-right: 20px } ';
-        var sourceTextPortraitStyle = this.printSourceTextIdWithHash + ' { width: ' + fullWidthPortrait + '%; height: ' + this.printSourceTextHeightInPixels + 'px; align:top; margin-left: ' + this.printSourceLeftMarginsInPixels + 'px; margin-right: 20px } ';
+        var sourceTextLandscapeStyle = this.printSourceTextIdWithHash + ' { width: ' + fullWidthLandscape + '%; height: ' + this.printSourceTextHeightInPixels + 'px; vertical-align:top; margin-left: ' + this.printSourceLeftMarginsInPixels + 'px; max-width: 90% } ';
+        var sourceTextPortraitStyle = this.printSourceTextIdWithHash + ' { width: ' + fullWidthPortrait + '%; height: ' + this.printSourceTextHeightInPixels + 'px; vertical-align:top; margin-left: ' + this.printSourceLeftMarginsInPixels + 'px; max-width: 90% } ';
         var imageLandscapeStyle = this.printImageIdWithHash + ' { width: ' + widthPercentageLandscape + '%; vertical-align: top; margin-top: 20px; margin-left: ' + this.printSourceLeftMarginsInPixels + 'px; }';
         var imagePortraitStyle = this.printImageIdWithHash + ' { width: ' + widthPercentagePortrait + '%; vertical-align: top; margin-top: 20px; margin-left: ' + this.printSourceLeftMarginsInPixels + 'px; }';
         var hideUVContainer = this.UVContainerIdWithHash + ' { display:none; } ';
@@ -68,12 +68,12 @@ class RiksarkivetPrint {
         var styleArray = new Array();
 
         var ua = window.navigator.userAgent;
-        if (ua.indexOf("MSIE ") > 0 || ua.indexOf("rv:11") > 0 || ua.indexOf("Edge") > 0) { var pageStyle = '@page { margin: 5mm; size: auto; }'; }
-        else {  var pageStyle = '@page { margin: 0mm; size: auto; }'; }
+        if (ua.indexOf("MSIE ") > 0 || ua.indexOf("rv:11") > 0 || ua.indexOf("Edge") > 0) { var pageStyle = ' @page { margin: 5mm; size: auto; } '; }
+        else {  var pageStyle = ' @page { margin: 0mm; } '; }
         if (Math.floor(widthPercentageLandscape * 297) >= Math.floor(widthPercentagePortrait) * 210)
-            styleArray.push('<style type="text/css">@media print { ' + landscapeStyle + ' } ' + pageStyle + '</style>');
+            styleArray.push('<style type="text/css">@media print { ' + landscapeStyle + pageStyle + ' } </style>');
         else
-            styleArray.push('<style type="text/css">@media print { ' + portraitStyle + ' } ' + pageStyle + '</style>');
+            styleArray.push('<style type="text/css">@media print { ' + portraitStyle + pageStyle + ' } </style>');
 
         //styleArray.push('<style type="text/css">@media print and (orientation:landscape) { ' + landscapeStyle + ' }</style>');
         //styleArray.push('<style type="text/css">@media print and (orientation:portrait) { ' + portraitStyle + ' }</style>');
