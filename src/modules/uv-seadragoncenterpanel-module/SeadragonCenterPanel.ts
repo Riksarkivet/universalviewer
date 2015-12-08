@@ -335,7 +335,7 @@ class SeadragonCenterPanel extends CenterPanel {
                 this.fitToBounds(this.currentBounds);
             }
 
-            if (window.matchMedia("(max-width: 1024px)").matches) {
+            if (window.matchMedia && window.matchMedia("(max-width: 1024px)").matches) {
                 var settings: ISettings = this.provider.getSettings();
                 settings.navigatorEnabled = false;
                 this.provider.updateSettings(settings);
