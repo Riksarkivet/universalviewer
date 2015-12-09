@@ -57,13 +57,13 @@ class PagingHeaderPanel extends HeaderPanel {
         this.$prevOptions = $('<div class="prevOptions"></div>');
         this.$centerOptions.append(this.$prevOptions);
 
-        this.$firstButton = $('<a class="imageBtn first" tabindex="15"></a>');
+        this.$firstButton = $('<a class="imageBtn first" tabindex="15"><span /></a>');
         this.$prevOptions.append(this.$firstButton);
 
-        this.$prevFiveButton = $('<a class="imageBtn prev-five" tabindex="16"></a>');
+        this.$prevFiveButton = $('<a class="imageBtn prev-five" tabindex="16"><span /></a>');
         this.$prevOptions.append(this.$prevFiveButton);
 
-        this.$prevButton = $('<a class="imageBtn prev" tabindex="17"></a>');
+        this.$prevButton = $('<a class="imageBtn prev" tabindex="17"><span /></a>');
         this.$prevOptions.append(this.$prevButton);
 
         this.$modeOptions = $('<div class="mode"></div>');
@@ -111,13 +111,13 @@ class PagingHeaderPanel extends HeaderPanel {
         this.$nextOptions = $('<div class="nextOptions"></div>');
         this.$centerOptions.append(this.$nextOptions);
 
-        this.$nextButton = $('<a class="imageBtn next" tabindex="1"></a>');
+        this.$nextButton = $('<a class="imageBtn next" tabindex="1"><span /></a>');
         this.$nextOptions.append(this.$nextButton);
 
-        this.$nextFiveButton = $('<a class="imageBtn next-five" tabindex="2"></a>');
+        this.$nextFiveButton = $('<a class="imageBtn next-five" tabindex="2"><span /></a>');
         this.$nextOptions.append(this.$nextFiveButton);
 
-        this.$lastButton = $('<a class="imageBtn last" tabindex="3"></a>');
+        this.$lastButton = $('<a class="imageBtn last" tabindex="3"><span /></a>');
         this.$nextOptions.append(this.$lastButton);
 
         if (this.isPageModeEnabled()) {

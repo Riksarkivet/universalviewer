@@ -98,17 +98,17 @@ class HeaderPanel extends BaseView {
         }
         //END Temporary code for Beta viewer
 
-        this.$settingsButton = $('<a class="settings" tabindex="3" title="' + this.content.settings + '"></a>');
+        this.$settingsButton = $('<a class="settings" tabindex="3" title="' + this.content.settings + '"><span /></a>');
         this.$settingsButton.attr('title', this.content.settings);
         this.$rightOptions.append(this.$settingsButton);
 
-        this.$downloadButton = $('<a class="download" tabindex="4" title="' + this.content.download + '"></a>');
+        this.$downloadButton = $('<a class="download" tabindex="4" title="' + this.content.download + '"><span /></a>');
         this.$rightOptions.append(this.$downloadButton);
         
-        this.$printButton = $('<a class="print" tabindex="5" title="' + this.content.print + '"></a>');
+        this.$printButton = $('<a class="print" tabindex="5" title="' + this.content.print + '"><span /></a>');
         this.$rightOptions.append(this.$printButton);
         
-        this.$fullScreenBtn = $('<a href="#" class="fullScreen" tabindex="6" title="' + this.content.fullScreen + '"></a>');
+        this.$fullScreenBtn = $('<a href="#" class="fullScreen" tabindex="6" title="' + this.content.fullScreen + '"><span /></a>');
         this.$rightOptions.append(this.$fullScreenBtn);
 
         this.updateButton(this.$downloadButton, "downloadEnabled");
