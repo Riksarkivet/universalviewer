@@ -1,6 +1,6 @@
 //! openseadragon 2.1.0
-//! Built on 2015-12-07
-//! Git commit: v2.1.0-21-92be395-dirty
+//! Built on 2015-12-09
+//! Git commit: v2.1.0-22-703f922-dirty
 //! http://openseadragon.github.io
 //! License: http://openseadragon.github.io/license/
 
@@ -4396,7 +4396,7 @@ $.EventSource.prototype = /** @lends OpenSeadragon.EventSource.prototype */{
                 eventParams = getCaptureEventParams( tracker, $.MouseTracker.havePointerEvents ? 'pointerevent' : pointerType );
                 // We emulate mouse capture by hanging listeners on the document object.
                 //    (Note we listen on the capture phase so the captured handlers will get called first)
-                if (isInIframe() && canAccessEvents(window.top)) {
+                if (isInIframe && canAccessEvents(window.top)) {
                     $.addEvent(
                         window.top,
                         eventParams.upName,
@@ -4439,7 +4439,7 @@ $.EventSource.prototype = /** @lends OpenSeadragon.EventSource.prototype */{
                 eventParams = getCaptureEventParams( tracker, $.MouseTracker.havePointerEvents ? 'pointerevent' : pointerType );
                 // We emulate mouse capture by hanging listeners on the document object.
                 //    (Note we listen on the capture phase so the captured handlers will get called first)
-                if (isInIframe() && canAccessEvents(window.top)) {
+                if (isInIframe && canAccessEvents(window.top)) {
                     $.removeEvent(
                         window.top,
                         eventParams.upName,
@@ -6294,20 +6294,28 @@ $.EventSource.prototype = /** @lends OpenSeadragon.EventSource.prototype */{
         }
     }
     
+    var isInIframe = (function() {
+        try {
+            return window.self !== window.top;
+        } catch (e) {
+            return true;
+        }
+    })();
+    
     /**
      * @function
      * @private
      * @inner
      * @returns {Boolean} True if inside an iframe, otherwise false.
      */
-    function isInIframe () {
-        try {
-            return window.self !== window.top;
-        } catch (e) {
-            return true;
-        }
-    }
-    
+    // function isInIframe () {
+    //     try {
+    //         return window.self !== window.top;
+    //     } catch (e) {
+    //         return true;
+    //     }
+    // }
+    // 
     /**
      * @function
      * @private
