@@ -92,7 +92,7 @@ class HeaderPanel extends BaseView {
                 checkMobile = false;
             }
             if (!checkMobile) {
-                this.$linkOldImageViewer = $('<a class="linkOldImageViewer" tabindex="2" title="' + this.content.backOldImageViewer + '" href="' + url + '?viewer=DjVu">' + this.content.backOldImageViewer + '</a>');
+                this.$linkOldImageViewer = $('<a class="linkOldImageViewer" target="_top" tabindex="2" title="' + this.content.backOldImageViewer + '" href="' + url + '?viewer=DjVu">' + this.content.backOldImageViewer + '</a>');
                 this.$rightOptions.append(this.$linkOldImageViewer);
             }
         }
