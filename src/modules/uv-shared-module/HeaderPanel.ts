@@ -110,6 +110,10 @@ class HeaderPanel extends BaseView {
         
         this.$fullScreenBtn = $('<a href="#" class="fullScreen" tabindex="6" title="' + this.content.fullScreen + '"><span /></a>');
         this.$rightOptions.append(this.$fullScreenBtn);
+        
+        if(!this.isTouch()){
+            this.$rightOptions.children().addClass("no-touch");
+        }
 
         this.updateButton(this.$downloadButton, "downloadEnabled");
         this.updateButton(this.$printButton, "printEnabled");

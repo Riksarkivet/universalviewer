@@ -31,6 +31,10 @@ class Panel {
             this.$element.height($parent.height());
         }
     }
+    
+    isTouch(): boolean {
+        return !!("ontouchstart" in window) || window.navigator.msMaxTouchPoints > 0;
+    }
 }
 
 export = Panel;

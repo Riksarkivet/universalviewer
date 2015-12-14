@@ -119,6 +119,11 @@ class PagingHeaderPanel extends HeaderPanel {
 
         this.$lastButton = $('<a class="imageBtn last" tabindex="3"><span /></a>');
         this.$nextOptions.append(this.$lastButton);
+        
+        
+        if(!this.isTouch()){
+            this.$centerOptions.find(".imageBtn").addClass("no-touch");
+        }
 
         if (this.isPageModeEnabled()) {
             this.$pageModeOption.attr('checked', 'checked');
