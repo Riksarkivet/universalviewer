@@ -71,9 +71,9 @@ class RiksarkivetPrint {
         if (ua.indexOf("MSIE ") > 0 || ua.indexOf("rv:11") > 0 || ua.indexOf("Edge") > 0) { var pageStyle = ' @page { margin: 5mm; size: auto; } '; }
         else {  var pageStyle = ' @page { margin: 0mm; } '; }
         if (Math.floor(widthPercentageLandscape * 297) >= Math.floor(widthPercentagePortrait) * 210)
-            styleArray.push('<style type="text/css">@media print { ' + landscapeStyle + pageStyle + ' } </style>');
+            styleArray.push('<style type="text/css">@media print { ' + landscapeStyle + ' } ' + pageStyle + '</style>');
         else
-            styleArray.push('<style type="text/css">@media print { ' + portraitStyle + pageStyle + ' } </style>');
+            styleArray.push('<style type="text/css">@media print { ' + portraitStyle + ' } ' + pageStyle + '</style>');
 
         //styleArray.push('<style type="text/css">@media print and (orientation:landscape) { ' + landscapeStyle + ' }</style>');
         //styleArray.push('<style type="text/css">@media print and (orientation:portrait) { ' + portraitStyle + ' }</style>');
@@ -106,6 +106,7 @@ class RiksarkivetPrint {
                         objFrame.document.execCommand('print', false, null);
                     }
                     else {
+                        objFrame.focus();
                         objFrame.print();
                     }
                 }
