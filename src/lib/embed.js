@@ -152,20 +152,22 @@ docReady(function() {
 
             return 0;
         }
+        
+        callback(window.jQuery, scriptUri, absScriptUri, loaded);
 
         // only load jQuery if not already included in page.
-        if (!(j = window.jQuery) || compareVersionNumbers(version, j.fn.jquery) || callback(j, scriptUri, absScriptUri, loaded)) {
-            var script = document.createElement("script");
-            script.type = "text/javascript";
-            script.src = "//ajax.googleapis.com/ajax/libs/jquery/" + version + "/jquery.min.js";
-            script.onload = script.onreadystatechange = function () {
-                if (!loaded && (!(d = this.readyState) || d === "loaded" || d === "complete")) {
-                    callback((j = window.jQuery).noConflict(1), scriptUri, absScriptUri, loaded = true);
-                    j(script).remove();
-                }
-            };
-            document.getElementsByTagName("head")[0].appendChild(script);
-        }
+        // if (!(j = window.jQuery) || compareVersionNumbers(version, j.fn.jquery) || callback(j, scriptUri, absScriptUri, loaded)) {
+        //     var script = document.createElement("script");
+        //     script.type = "text/javascript";
+        //     script.src = "//ajax.googleapis.com/ajax/libs/jquery/" + version + "/jquery.min.js";
+        //     script.onload = script.onreadystatechange = function () {
+        //         if (!loaded && (!(d = this.readyState) || d === "loaded" || d === "complete")) {
+        //             callback((j = window.jQuery).noConflict(1), scriptUri, absScriptUri, loaded = true);
+        //             j(script).remove();
+        //         }
+        //     };
+        //     document.getElementsByTagName("head")[0].appendChild(script);
+        // }
     })(window, document, "1.10.1", function ($, scriptUri, absScriptUri, jqueryLoaded) {
 
         $.support.cors = true;
