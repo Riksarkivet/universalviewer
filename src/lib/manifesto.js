@@ -993,12 +993,6 @@ var Manifesto;
         Manifest.prototype.isMultiSequence = function () {
             return this.getTotalSequences() > 1;
         };
-        Manifest.prototype.getViewingDirection = function () {
-            if (this.getProperty('viewingDirection')) {
-                return new Manifesto.ViewingDirection(this.getProperty('viewingDirection'));
-            }
-            return Manifesto.ViewingDirection.LEFTTORIGHT;
-        };
         return Manifest;
     })(Manifesto.IIIFResource);
     Manifesto.Manifest = Manifest;
@@ -1298,9 +1292,6 @@ var Manifesto;
         Sequence.prototype.getViewingDirection = function () {
             if (this.getProperty('viewingDirection')) {
                 return new Manifesto.ViewingDirection(this.getProperty('viewingDirection'));
-            }
-            else if (this.options.resource.getViewingDirection) {
-                return this.options.resource.getViewingDirection();
             }
             return Manifesto.ViewingDirection.LEFTTORIGHT;
         };

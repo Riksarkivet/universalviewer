@@ -252,7 +252,6 @@ declare module Manifesto {
         private _parseTreeNode(node, range);
         getManifestType(): ManifestType;
         isMultiSequence(): boolean;
-        getViewingDirection(): ViewingDirection;
     }
 }
 declare module Manifesto {
@@ -491,7 +490,6 @@ declare module Manifesto {
         getTotalSequences(): number;
         getTree(): TreeNode;
         getManifestType(): ManifestType;
-        getViewingDirection(): Manifesto.ViewingDirection;
         isMultiSequence(): boolean;
         rootRange: IRange;
     }

@@ -45,7 +45,7 @@ class RightPanel extends BaseExpandPanel {
         super.resize();
 
         this.$element.css({
-            'left': this.$element.parent().width() - this.$element.outerWidth()
+            'left': Math.floor(this.$element.parent().width() - this.$element.outerWidth())
         });
     }
 }
