@@ -217,6 +217,7 @@ String.prototype.utf8_to_b64 = function () {
 };
 
 !function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.manifesto=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+(function (global){
 var Manifesto;
 (function (Manifesto) {
     var StringValue = (function () {
@@ -531,8 +532,10 @@ var Manifesto;
         ServiceProfile.STANFORDIIIF1IMAGECOMPLIANCE2 = new ServiceProfile("http://library.stanford.edu/iiif/image-api/1.1/compliance.html#level2");
         ServiceProfile.STANFORDIIIF1IMAGECONFORMANCE1 = new ServiceProfile("http://library.stanford.edu/iiif/image-api/1.1/conformance.html#level1");
         ServiceProfile.STANFORDIIIF1IMAGECONFORMANCE2 = new ServiceProfile("http://library.stanford.edu/iiif/image-api/1.1/conformance.html#level2");
+        ServiceProfile.IIIF1IMAGELEVEL0 = new ServiceProfile("http://iiif.io/api/image/1/level0.json");
         ServiceProfile.IIIF1IMAGELEVEL1 = new ServiceProfile("http://iiif.io/api/image/1/level1.json");
         ServiceProfile.IIIF1IMAGELEVEL2 = new ServiceProfile("http://iiif.io/api/image/1/level2.json");
+        ServiceProfile.IIIF2IMAGELEVEL0 = new ServiceProfile("http://iiif.io/api/image/2/level0.json");
         ServiceProfile.IIIF2IMAGELEVEL1 = new ServiceProfile("http://iiif.io/api/image/2/level1.json");
         ServiceProfile.IIIF2IMAGELEVEL2 = new ServiceProfile("http://iiif.io/api/image/2/level2.json");
         ServiceProfile.IXIF = new ServiceProfile("http://wellcomelibrary.org/ld/ixif/0/alpha.json");
@@ -648,13 +651,42 @@ var Manifesto;
             }
             return metadata;
         };
-        // todo: once UV download menu uses manifesto parsed objects, this can be moved back from Utils
         ManifestResource.prototype.getRendering = function (format) {
-            return Manifesto.Utils.getRendering(this, format);
+            var renderings = this.getRenderings();
+            // normalise format to string
+            if (typeof format !== 'string') {
+                format = format.toString();
+            }
+            for (var i = 0; i < renderings.length; i++) {
+                var rendering = renderings[i];
+                if (rendering.getFormat().toString() === format) {
+                    return rendering;
+                }
+            }
+            return null;
         };
-        // todo: once UV download menu uses manifesto parsed objects, this can be moved back from Utils
         ManifestResource.prototype.getRenderings = function () {
-            return Manifesto.Utils.getRenderings(this);
+            var rendering;
+            // if passing a manifesto-parsed object, use the __jsonld.rendering property,
+            // otherwise look for a rendering property
+            if (this.__jsonld) {
+                rendering = this.__jsonld.rendering;
+            }
+            else {
+                rendering = this.rendering;
+            }
+            var renderings = [];
+            if (!rendering)
+                return renderings;
+            // coerce to array
+            if (!_isArray(rendering)) {
+                rendering = [rendering];
+            }
+            for (var i = 0; i < rendering.length; i++) {
+                var r = rendering[i];
+                renderings.push(new Manifesto.Rendering(r, this.options));
+            }
+            return renderings;
         };
         ManifestResource.prototype.getService = function (profile) {
             return Manifesto.Utils.getService(this, profile);
@@ -1037,6 +1069,7 @@ var Manifesto;
                     var tree = manifest.getTree();
                     tree.label = manifest.getTitle() || 'manifest ' + (i + 1);
                     tree.navDate = manifest.getNavDate();
+                    tree.data.id = manifest.id;
                     tree.data.type = Manifesto.TreeNodeType.MANIFEST.toString();
                     parentCollection.treeRoot.addNode(tree);
                 }
@@ -1049,6 +1082,7 @@ var Manifesto;
                     var tree = collection.getTree();
                     tree.label = collection.getTitle() || 'collection ' + (i + 1);
                     tree.navDate = collection.getNavDate();
+                    tree.data.id = collection.id;
                     tree.data.type = Manifesto.TreeNodeType.COLLECTION.toString();
                     parentCollection.treeRoot.addNode(tree);
                     this._parseCollections(collection);
@@ -1122,6 +1156,7 @@ var Manifesto;
                 for (var i = 0; i < children.length; i++) {
                     var c = children[i];
                     var canvas = new Manifesto.Canvas(c, this.options);
+                    canvas.index = i;
                     this.canvases.push(canvas);
                 }
             }
@@ -1269,17 +1304,10 @@ var Manifesto;
         };
         Sequence.prototype.getThumbs = function (width, height) {
             var thumbs = [];
-            for (var i = 0; i < this.getTotalCanvases(); i++) {
+            var totalCanvases = this.getTotalCanvases();
+            for (var i = 0; i < totalCanvases; i++) {
                 var canvas = this.getCanvasByIndex(i);
-                //if (!_isNumber(height)) {
-                var heightRatio = canvas.getHeight() / canvas.getWidth();
-                if (heightRatio) {
-                    height = Math.floor(width * heightRatio);
-                }
-                //}
-                var uri = canvas.getThumbUri(width, height);
-                var label = canvas.getLabel();
-                thumbs.push(new Manifesto.Thumb(i, uri, label, width, height, true));
+                thumbs.push(new Manifesto.Thumb(width, canvas));
             }
             return thumbs;
         };
@@ -1412,6 +1440,9 @@ var Manifesto;
         }
         Service.prototype.getProfile = function () {
             var profile = this.getProperty('profile');
+            if (!profile) {
+                profile = this.getProperty('dcterms:conformsTo');
+            }
             if (_isArray(profile)) {
                 return new Manifesto.ServiceProfile(profile[0]);
             }
@@ -1435,13 +1466,16 @@ var Manifesto;
 var Manifesto;
 (function (Manifesto) {
     var Thumb = (function () {
-        function Thumb(index, uri, label, width, height, visible) {
-            this.index = index;
-            this.uri = uri;
-            this.label = label;
+        function Thumb(width, canvas) {
+            this.data = canvas;
+            this.index = canvas.index;
             this.width = width;
-            this.height = height;
-            this.visible = visible;
+            var heightRatio = canvas.getHeight() / canvas.getWidth();
+            if (heightRatio) {
+                this.height = Math.floor(this.width * heightRatio);
+            }
+            this.uri = canvas.getThumbUri(width, this.height);
+            this.label = canvas.getLabel();
         }
         return Thumb;
     })();
@@ -1452,14 +1486,21 @@ var Manifesto;
     var TreeNode = (function () {
         function TreeNode(label, data) {
             this.label = label;
-            this.data = data;
+            this.data = data || {};
             this.nodes = [];
-            if (!data)
-                this.data = {};
         }
         TreeNode.prototype.addNode = function (node) {
             this.nodes.push(node);
             node.parentNode = this;
+        };
+        TreeNode.prototype.isCollection = function () {
+            return this.data.type === Manifesto.TreeNodeType.COLLECTION.toString();
+        };
+        TreeNode.prototype.isManifest = function () {
+            return this.data.type === Manifesto.TreeNodeType.MANIFEST.toString();
+        };
+        TreeNode.prototype.isRange = function () {
+            return this.data.type === Manifesto.TreeNodeType.RANGE.toString();
         };
         return TreeNode;
     })();
@@ -1482,9 +1523,9 @@ var Manifesto;
         TreeNodeType.prototype.range = function () {
             return new TreeNodeType(TreeNodeType.RANGE.toString());
         };
-        TreeNodeType.COLLECTION = new TreeNodeType("collection");
-        TreeNodeType.MANIFEST = new TreeNodeType("manifest");
-        TreeNodeType.RANGE = new TreeNodeType("range");
+        TreeNodeType.COLLECTION = new TreeNodeType("sc:collection");
+        TreeNodeType.MANIFEST = new TreeNodeType("sc:manifest");
+        TreeNodeType.RANGE = new TreeNodeType("sc:range");
         return TreeNodeType;
     })(Manifesto.StringValue);
     Manifesto.TreeNodeType = TreeNodeType;
@@ -1544,7 +1585,7 @@ var Manifesto;
                 request.end();
             });
         };
-        Utils.loadExternalResource = function (resource, clickThrough, login, getAccessToken, storeAccessToken, getStoredAccessToken, handleResourceResponse, options) {
+        Utils.loadExternalResource = function (resource, tokenStorageStrategy, clickThrough, login, getAccessToken, storeAccessToken, getStoredAccessToken, handleResourceResponse, options) {
             return new Promise(function (resolve, reject) {
                 if (options && options.pessimisticAccessControl) {
                     // pessimistic: access control cookies may have been deleted.
@@ -1586,7 +1627,7 @@ var Manifesto;
                     // if cookies are deleted a page refresh is required.
                     // try loading the resource using an access token that matches the info.json domain.
                     // if an access token is found, request the resource using it regardless of whether it is access controlled.
-                    getStoredAccessToken(resource).then(function (storedAccessToken) {
+                    getStoredAccessToken(resource, tokenStorageStrategy).then(function (storedAccessToken) {
                         if (storedAccessToken) {
                             // try using the stored access token
                             resource.getData(storedAccessToken).then(function () {
@@ -1597,7 +1638,7 @@ var Manifesto;
                                 else {
                                     // otherwise, load the resource data to determine the correct access control services.
                                     // if access controlled, do login.
-                                    Utils.authorize(resource, clickThrough, login, getAccessToken, storeAccessToken, getStoredAccessToken).then(function () {
+                                    Utils.authorize(resource, tokenStorageStrategy, clickThrough, login, getAccessToken, storeAccessToken, getStoredAccessToken).then(function () {
                                         resolve(handleResourceResponse(resource));
                                     })["catch"](function (error) {
                                         reject(error);
@@ -1608,7 +1649,7 @@ var Manifesto;
                             });
                         }
                         else {
-                            Utils.authorize(resource, clickThrough, login, getAccessToken, storeAccessToken, getStoredAccessToken).then(function () {
+                            Utils.authorize(resource, tokenStorageStrategy, clickThrough, login, getAccessToken, storeAccessToken, getStoredAccessToken).then(function () {
                                 resolve(handleResourceResponse(resource));
                             })["catch"](function (error) {
                                 reject(error);
@@ -1620,10 +1661,10 @@ var Manifesto;
                 }
             });
         };
-        Utils.loadExternalResources = function (resources, clickThrough, login, getAccessToken, storeAccessToken, getStoredAccessToken, handleResourceResponse, options) {
+        Utils.loadExternalResources = function (resources, tokenStorageStrategy, clickThrough, login, getAccessToken, storeAccessToken, getStoredAccessToken, handleResourceResponse, options) {
             return new Promise(function (resolve, reject) {
                 var promises = _map(resources, function (resource) {
-                    return Utils.loadExternalResource(resource, clickThrough, login, getAccessToken, storeAccessToken, getStoredAccessToken, handleResourceResponse, options);
+                    return Utils.loadExternalResource(resource, tokenStorageStrategy, clickThrough, login, getAccessToken, storeAccessToken, getStoredAccessToken, handleResourceResponse, options);
                 });
                 Promise.all(promises)
                     .then(function () {
@@ -1633,11 +1674,11 @@ var Manifesto;
                 });
             });
         };
-        Utils.authorize = function (resource, clickThrough, login, getAccessToken, storeAccessToken, getStoredAccessToken) {
+        Utils.authorize = function (resource, tokenStorageStrategy, clickThrough, login, getAccessToken, storeAccessToken, getStoredAccessToken) {
             return new Promise(function (resolve, reject) {
                 resource.getData().then(function () {
                     if (resource.isAccessControlled()) {
-                        getStoredAccessToken(resource).then(function (storedAccessToken) {
+                        getStoredAccessToken(resource, tokenStorageStrategy).then(function (storedAccessToken) {
                             if (storedAccessToken) {
                                 // try using the stored access token
                                 resource.getData(storedAccessToken).then(function () {
@@ -1658,7 +1699,7 @@ var Manifesto;
                                     // if the resource has a click through service, use that.
                                     clickThrough(resource).then(function () {
                                         getAccessToken(resource).then(function (accessToken) {
-                                            storeAccessToken(resource, accessToken).then(function () {
+                                            storeAccessToken(resource, accessToken, tokenStorageStrategy).then(function () {
                                                 resource.getData(accessToken).then(function () {
                                                     resolve(resource);
                                                 })["catch"](function (error) {
@@ -1676,7 +1717,7 @@ var Manifesto;
                                     // get an access token
                                     login(resource).then(function () {
                                         getAccessToken(resource).then(function (accessToken) {
-                                            storeAccessToken(resource, accessToken).then(function () {
+                                            storeAccessToken(resource, accessToken, tokenStorageStrategy).then(function () {
                                                 resource.getData(accessToken).then(function () {
                                                     resolve(resource);
                                                 })["catch"](function (error) {
@@ -1701,43 +1742,6 @@ var Manifesto;
                     }
                 });
             });
-        };
-        Utils.getRendering = function (resource, format) {
-            var renderings = this.getRenderings(resource);
-            // normalise format to string
-            if (typeof format !== 'string') {
-                format = format.toString();
-            }
-            for (var i = 0; i < renderings.length; i++) {
-                var rendering = renderings[i];
-                if (rendering.getFormat().toString() === format) {
-                    return rendering;
-                }
-            }
-            return null;
-        };
-        Utils.getRenderings = function (resource) {
-            var rendering;
-            // if passing a manifesto-parsed object, use the __jsonld.rendering property,
-            // otherwise look for a rendering property
-            if (resource.__jsonld) {
-                rendering = resource.__jsonld.rendering;
-            }
-            else {
-                rendering = resource.rendering;
-            }
-            var renderings = [];
-            if (!rendering)
-                return renderings;
-            // coerce to array
-            if (!_isArray(rendering)) {
-                rendering = [rendering];
-            }
-            for (var i = 0; i < rendering.length; i++) {
-                var r = rendering[i];
-                renderings.push(new Manifesto.Rendering(r, resource.options));
-            }
-            return renderings;
         };
         Utils.getService = function (resource, profile) {
             var services = this.getServices(resource);
@@ -1797,7 +1801,7 @@ var Manifesto;
     })();
     Manifesto.Utils = Utils;
 })(Manifesto || (Manifesto = {}));
-module.exports = {
+global.manifesto = module.exports = {
     AnnotationMotivation: new Manifesto.AnnotationMotivation(),
     CanvasType: new Manifesto.CanvasType(),
     ElementType: new Manifesto.ElementType(),
@@ -1812,10 +1816,6 @@ module.exports = {
     ViewingHint: new Manifesto.ViewingHint(),
     create: function (manifest, options) {
         return Manifesto.Deserialiser.parse(manifest, options);
-    },
-    // todo: deprecate this - temporary to enable current UV download menu
-    getRenderings: function (resource) {
-        return Manifesto.Utils.getRenderings(resource);
     },
     getService: function (resource, profile) {
         return Manifesto.Utils.getService(resource, profile);
@@ -1833,8 +1833,10 @@ module.exports = {
             profile.toString() === Manifesto.ServiceProfile.STANFORDIIIFIMAGECONFORMANCE2.toString() ||
             profile.toString() === Manifesto.ServiceProfile.STANFORDIIIF1IMAGECONFORMANCE1.toString() ||
             profile.toString() === Manifesto.ServiceProfile.STANFORDIIIF1IMAGECONFORMANCE2.toString() ||
+            profile.toString() === Manifesto.ServiceProfile.IIIF1IMAGELEVEL0.toString() ||
             profile.toString() === Manifesto.ServiceProfile.IIIF1IMAGELEVEL1.toString() ||
             profile.toString() === Manifesto.ServiceProfile.IIIF1IMAGELEVEL2.toString() ||
+            profile.toString() === Manifesto.ServiceProfile.IIIF2IMAGELEVEL0.toString() ||
             profile.toString() === Manifesto.ServiceProfile.IIIF2IMAGELEVEL1.toString() ||
             profile.toString() === Manifesto.ServiceProfile.IIIF2IMAGELEVEL2.toString()) {
             return true;
@@ -1843,8 +1845,8 @@ module.exports = {
     },
     // todo: create hasServiceDescriptor
     // based on @profile and @type (or lack of) can the resource describe associated services?
-    loadExternalResources: function (resources, clickThrough, login, getAccessToken, storeAccessToken, getStoredAccessToken, handleResourceResponse, options) {
-        return Manifesto.Utils.loadExternalResources(resources, clickThrough, login, getAccessToken, storeAccessToken, getStoredAccessToken, handleResourceResponse, options);
+    loadExternalResources: function (resources, tokenStorageStrategy, clickThrough, login, getAccessToken, storeAccessToken, getStoredAccessToken, handleResourceResponse, options) {
+        return Manifesto.Utils.loadExternalResources(resources, tokenStorageStrategy, clickThrough, login, getAccessToken, storeAccessToken, getStoredAccessToken, handleResourceResponse, options);
     },
     loadManifest: function (uri) {
         return Manifesto.Utils.loadResource(uri);
@@ -1874,7 +1876,9 @@ module.exports = {
 /// <reference path="./Sequence.ts" />
 /// <reference path="./Serialisation.ts" />
 /// <reference path="./Service.ts" />
+/// <reference path="./IThumb.ts" />
 /// <reference path="./Thumb.ts" />
+/// <reference path="./ITreeNode.ts" />
 /// <reference path="./TreeNode.ts" />
 /// <reference path="./TreeNodeType.ts" />
 /// <reference path="./Utils.ts" />
@@ -1918,11 +1922,23 @@ var Manifesto;
         Resource.prototype.getHeight = function () {
             return this.getProperty('height');
         };
+        Resource.prototype.getMaxWidth = function () {
+            return this.getProperty('maxWidth');
+        };
+        Resource.prototype.getMaxHeight = function () {
+            var maxHeight = this.getProperty('maxHeight');
+            // if a maxHeight hasn't been specified, default to maxWidth.
+            // maxWidth in essence becomes maxEdge
+            if (!maxHeight) {
+                return this.getMaxWidth();
+            }
+        };
         return Resource;
     })(Manifesto.ManifestResource);
     Manifesto.Resource = Resource;
 })(Manifesto || (Manifesto = {}));
 
+}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"http":6,"lodash.assign":27,"lodash.endswith":37,"lodash.isarray":39,"lodash.isstring":40,"lodash.last":41,"lodash.map":42,"url":24}],2:[function(_dereq_,module,exports){
 /*!
  * The buffer module from node.js, for the browser.

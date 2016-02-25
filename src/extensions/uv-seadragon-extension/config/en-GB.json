@@ -4,18 +4,20 @@
     "bookmarkThumbHeight": 150,
     "bookmarkThumbWidth": 90,
     "leftPanelEnabled": true,
+    "limitLocales": false,
     "minWidthBreakPoint": 610,
+    "navigatorEnabled": true,
     "openTemplate": "http://universalviewer.io?manifest={0}",
     "overrideFullScreen": false,
     "pagingEnabled": true,
     "pessimisticAccessControl": false,
     "preserveViewport": false,
     "rightPanelEnabled": true,
+    "saveUserSettings": false,
     "searchWithinEnabled": true,
     "theme": "uv-en-GB-theme",
-    "useArrowKeysToNavigate": false,
-    "navigatorEnabled": true,
-    "saveUserSettings": false
+    "tokenStorage": "session",
+    "useArrowKeysToNavigate": false
   },
   "modules":
   {
@@ -26,7 +28,8 @@
       "options":
       {
         "confinedImageSize": 1000,
-        "showInBottomCorner": true
+        "showInBottomCorner": true,
+        "maxImageWidth": 1000
       }
     },
     "embedDialogue":
@@ -57,6 +60,8 @@
     {
       "options":
       {
+        "displayOrder": "",
+        "exclude": "",
         "panelAnimationDuration": 250,
         "panelCollapsedWidth": 30,
         "panelExpandedWidth": 255,
@@ -70,6 +75,7 @@
     {
       "options":
       {
+        "imageSelectionBoxEnabled": false,
         "localeToggleEnabled": false,
         "pageModeEnabled": true,
         "pagingToggleEnabled": true,
@@ -128,6 +134,7 @@
         "panelCollapsedWidth": 30,
         "panelExpandedWidth": 255,
         "panelOpen": true,
+        "tabOrder": "",
         "thumbsEnabled": true,
         "thumbsExtraHeight": 8,
         "thumbsImageFadeInDuration": 300,

@@ -1,4 +1,5 @@
 import BaseCommands = require("../uv-shared-module/BaseCommands");
+import IMetadataItem = require("../uv-shared-module/IMetadataItem");
 import RightPanel = require("../uv-shared-module/RightPanel");
 
 class MoreInfoRightPanel extends RightPanel {
@@ -75,10 +76,11 @@ class MoreInfoRightPanel extends RightPanel {
         // show loading icon.
         this.$main.addClass('loading');
 
-        this.displayInfo();
+        var data: IMetadataItem[] = this.provider.getMetadata();
+        this.displayInfo(data);
     }
 
-    displayInfo(): void {
+    displayInfo(data: IMetadataItem[]): void {
         this.$main.removeClass('loading');
 
         if (this.manifestData.length == 0 && this.canvasData.length == 0){
@@ -90,13 +92,81 @@ class MoreInfoRightPanel extends RightPanel {
 
         var manifestRenderData = $.extend(true, [], this.manifestData);
         var canvasRenderData = $.extend(true, [], this.canvasData);
+        
+        this.renderElement(this.$items, manifestRenderData, this.content.manifestHeader);
+        this.renderElement(this.$canvasItems, canvasRenderData, this.content.canvasHeader);
+
 
         if (this.config.options.aggregateValues) {
             this.aggregateValues(manifestRenderData, canvasRenderData);
         }
+        
+        var displayOrderConfig: string = this.options.displayOrder;
 
-        this.renderElement(this.$items, manifestRenderData, this.content.manifestHeader);
-        this.renderElement(this.$canvasItems, canvasRenderData, this.content.canvasHeader);
+        if (displayOrderConfig){
+
+            displayOrderConfig = displayOrderConfig.toLowerCase();
+            displayOrderConfig = displayOrderConfig.replace(/ /g,"");
+            var displayOrder: string[] = displayOrderConfig.split(',');
+
+            // sort items
+            var sorted = [];
+
+            _.each(displayOrder, (item: string) => {
+                var match: IMetadataItem = data.en().where((x => x.label.toLowerCase() === item)).first();
+                if (match){
+                    sorted.push(match);
+                    data.remove(match);
+                }
+            });
+
+            // add remaining items that were not in the displayOrder.
+            _.each(data, (item: IMetadataItem) => {
+                sorted.push(item);
+            });
+
+            data = sorted;
+        }
+
+        // Exclusions
+
+        var excludeConfig: string = this.options.exclude;
+
+        if (excludeConfig) {
+            excludeConfig = excludeConfig.toLowerCase();
+            excludeConfig = excludeConfig.replace(/ /g,"");
+            var exclude: string[] = excludeConfig.split(',');
+
+            _.each(exclude, (item: string) => {
+                var match: IMetadataItem = data.en().where((x => x.label.toLowerCase() === item)).first();
+                if (match){
+                    data.remove(match);
+                }
+            });
+        }
+
+        // flatten metadata into array.
+        var flattened: IMetadataItem[] = [];
+
+        _.each(data, (item: IMetadataItem) => {
+            if (_.isArray(item.value)){
+                flattened = flattened.concat(<IMetadataItem[]>item.value);
+            } else {
+                flattened.push(item);
+            }
+        });
+
+        data = flattened;
+
+        _.each(data, (item: IMetadataItem) => {
+            var built: any = this.buildItem(item);
+            this.$items.append(built);
+            if (limitType === "lines") {
+                built.find('.text').toggleExpandTextByLines(limit, this.content.less, this.content.more);
+            } else if (limitType === "chars") {
+                built.find('.text').ellipsisHtmlFixed(limit, null);
+            }
+        });
     }
 
     aggregateValues(fromData: any[], toData: any[]) {
@@ -144,31 +214,36 @@ class MoreInfoRightPanel extends RightPanel {
         return $header;
     }
 
-    buildItem(item: any): any {
+    buildItem(item: IMetadataItem): any {
         var $elem = this.moreInfoItemTemplate.clone();
         var $header = $elem.find('.header');
         var $text = $elem.find('.text');
 
         item.label = this.provider.sanitize(item.label);
-        item.value = this.provider.sanitize(item.value);
+        item.value = this.provider.sanitize(<string>item.value);
 
-        switch(item.label.toLowerCase()){
-            case "attribution":
-                item.label = this.content.attribution;
-                break;
-            case "description":
-                item.label = this.content.description;
-                break;
-            case "license":
-                item.label = this.content.license;
-                break;
+        if (item.isRootLevel) {
+            switch (item.label.toLowerCase()) {
+                case "attribution":
+                    item.label = this.content.attribution;
+                    break;
+                case "description":
+                    item.label = this.content.description;
+                    break;
+                case "license":
+                    item.label = this.content.license;
+                    break;
+                case "logo":
+                    item.label = this.content.logo;
+                    break;
+            }
         }
 
         // replace \n with <br>
-        item.value = item.value.replace('\n', '<br>');
+        item.value = (<string>item.value).replace('\n', '<br>');
 
         $header.html(item.label);
-        $text.html(item.value);
+        $text.html(<string>item.value);
         $text.targetBlank();
 
         item.label = item.label.trim();

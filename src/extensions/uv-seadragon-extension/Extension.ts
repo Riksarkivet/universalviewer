@@ -226,7 +226,7 @@ class Extension extends BaseExtension {
 
             this.triggerSocket(Commands.CURRENT_VIEW_URI,
                 {
-                    "cropUri": (<ISeadragonProvider>that.provider).getCroppedImageUri(canvas, this.getViewer(), true),
+                    "cropUri": (<ISeadragonProvider>that.provider).getCroppedImageUri(canvas, this.getViewer()),
                     "fullUri": (<ISeadragonProvider>that.provider).getConfinedImageUri(canvas, canvas.getWidth(), canvas.getHeight())
                 });
         });
@@ -294,6 +294,12 @@ class Extension extends BaseExtension {
             this.triggerSocket(Commands.VIEW_PAGE, index);
             this.viewPage(index);
         });
+
+        Utils.Async.WaitFor(() => {
+            return this.centerPanel && this.centerPanel.isCreated;
+        }, () => {
+            this.checkForSearchParam();
+        });
     }
     
     private triggerTrackEvent(category)
@@ -348,6 +354,20 @@ class Extension extends BaseExtension {
 
         if (this.isRightPanelEnabled()){
             this.rightPanel.init();
+        }
+    }
+
+    checkForSearchParam(): void{
+        // if a h value is in the hash params, do a search.
+        if (this.provider.isDeepLinkingEnabled()){
+
+            // if a highlight param is set, use it to search.
+            var highlight: string = this.getParam(Params.highlight);
+
+            if (highlight){
+                highlight.replace(/\+/g, " ").replace(/"/g, "");
+                $.publish(Commands.SEARCH, [highlight]);
+            }
         }
     }
 
@@ -517,7 +537,7 @@ class Extension extends BaseExtension {
 
         bookmark.index = this.provider.canvasIndex;
         bookmark.label = canvas.getLabel();
-        bookmark.path = (<ISeadragonProvider>this.provider).getCroppedImageUri(canvas, this.getViewer(), true);
+        bookmark.path = (<ISeadragonProvider>this.provider).getCroppedImageUri(canvas, this.getViewer());
         bookmark.thumb = canvas.getThumbUri(this.provider.config.options.bookmarkThumbWidth, this.provider.config.options.bookmarkThumbHeight);
         bookmark.title = this.provider.getTitle();
         bookmark.type = manifesto.ElementType.image().toString();

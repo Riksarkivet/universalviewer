@@ -23,7 +23,7 @@
     },
     "downloadDialogue": {
       "content": {
-        "currentViewAsJpg": "Current view (jpg)",
+        "currentViewAsJpg": "Current view {0} x {1}px (jpg)",
         "download": "Download",
         "editSettings": "Edit Settings",
         "entireDocument": "Entire document ({0})",
@@ -32,8 +32,8 @@
         "pagingNote": "Please turn off Two Page View for additional options.",
         "preview": "Preview",
         "title": "Download",
-        "wholeImageHighRes": "Whole image high res ({0})",
-        "wholeImageLowResAsJpg": "Whole image low res (jpg)"
+        "wholeImageHighRes": "Whole image {0} x {1}px ({2})",
+        "wholeImageLowResAsJpg": "Whole image {0} x {1}px (jpg)"
       }
     },
     "embedDialogue": {
@@ -41,7 +41,7 @@
         "customSize": "Custom Size",
         "height": "Height",
         "instructions": "To embed this item in your own website, copy and paste the code below.",
-        "title": "Embed",
+        "title": "Share",
         "width": "Width"
       }
     },
@@ -97,6 +97,7 @@
         "holdingText": "Your module goes here!",
         "less": "less",
         "license": "License",
+        "logo": "Logo",
         "more": "more",
         "noData": "No data to display",
         "title": "Information",
@@ -145,11 +146,13 @@
         "zoomOut": "Zoom Out"
       }
     },
-    "searchFooterPanel": {
-      "content": {
+    "searchFooterPanel":
+    {
+      "content":
+      {
         "clearSearch": "Clear Search",
         "defaultLabel": "-",
-        "displaying": "Displaying {0} {1} of {2}",
+        "displaying": "{0} {1} of {2}",
         "enterKeyword": "Enter Keyword",
         "image": "image",
         "imageCaps": "Image",

@@ -4,14 +4,22 @@ import Commands = require("./Commands");
 import DownloadOption = require("../../modules/uv-shared-module/DownloadOption");
 import ISeadragonExtension = require("./ISeadragonExtension");
 import ISeadragonProvider = require("./ISeadragonProvider");
+import CroppedImageDimensions = require("./CroppedImageDimensions");
+import Size = Utils.Measurements.Size;
 
 class DownloadDialogue extends BaseDownloadDialogue {
 
     $buttonsContainer: JQuery;
+    $canvasOptionsContainer: JQuery;
+    $canvasOptions: JQuery;
     $currentViewAsJpgButton: JQuery;
     $downloadButton: JQuery;
+    $imageOptionsContainer: JQuery;
+    $imageOptions: JQuery;
     $pagingNote: JQuery;
     $settingsButton: JQuery;
+    $sequenceOptionsContainer: JQuery;
+    $sequenceOptions: JQuery;
     $wholeImageHighResButton: JQuery;
     $wholeImageLowResAsJpgButton: JQuery;
     renderingUrls: string[];
@@ -33,17 +41,32 @@ class DownloadDialogue extends BaseDownloadDialogue {
         this.$pagingNote.append(this.$settingsButton);
         this.$content.append(this.$pagingNote);
 
-        this.$currentViewAsJpgButton = $('<li><input id="' + DownloadOption.currentViewAsJpg.toString() + '" type="radio" name="downloadOptions" /><label for="' + DownloadOption.currentViewAsJpg.toString() + '">' + this.content.currentViewAsJpg + '</label></li>');
-        this.$downloadOptions.append(this.$currentViewAsJpgButton);
+        this.$imageOptionsContainer = $('<li class="group image"></li>');
+        this.$downloadOptions.append(this.$imageOptionsContainer);
+        this.$imageOptions = $('<ul></ul>');
+        this.$imageOptionsContainer.append(this.$imageOptions);
+
+        this.$currentViewAsJpgButton = $('<li class="option"><input id="' + DownloadOption.currentViewAsJpg.toString() + '" type="radio" name="downloadOptions" /><label for="' + DownloadOption.currentViewAsJpg.toString() + '"></label></li>');
+        this.$imageOptions.append(this.$currentViewAsJpgButton);
         this.$currentViewAsJpgButton.hide();
 
-        this.$wholeImageHighResButton = $('<li><input id="' + DownloadOption.wholeImageHighRes.toString() + '" type="radio" name="downloadOptions" /><label id="' + DownloadOption.wholeImageHighRes.toString() + 'label" for="' + DownloadOption.wholeImageHighRes.toString() + '"></label></li>');
-        this.$downloadOptions.append(this.$wholeImageHighResButton);
+        this.$wholeImageHighResButton = $('<li class="option"><input id="' + DownloadOption.wholeImageHighRes.toString() + '" type="radio" name="downloadOptions" /><label id="' + DownloadOption.wholeImageHighRes.toString() + 'label" for="' + DownloadOption.wholeImageHighRes.toString() + '"></label></li>');
+        this.$imageOptions.append(this.$wholeImageHighResButton);
         this.$wholeImageHighResButton.hide();
 
-        this.$wholeImageLowResAsJpgButton = $('<li><input id="' + DownloadOption.wholeImageLowResAsJpg.toString() + '" type="radio" name="downloadOptions" /><label for="' + DownloadOption.wholeImageLowResAsJpg.toString() + '">' + this.content.wholeImageLowResAsJpg + '</label></li>');
-        this.$downloadOptions.append(this.$wholeImageLowResAsJpgButton);
+        this.$wholeImageLowResAsJpgButton = $('<li class="option"><input id="' + DownloadOption.wholeImageLowResAsJpg.toString() + '" type="radio" name="downloadOptions" /><label for="' + DownloadOption.wholeImageLowResAsJpg.toString() + '">' + this.content.wholeImageLowResAsJpg + '</label></li>');
+        this.$imageOptions.append(this.$wholeImageLowResAsJpgButton);
         this.$wholeImageLowResAsJpgButton.hide();
+
+        this.$canvasOptionsContainer = $('<li class="group canvas"></li>');
+        this.$downloadOptions.append(this.$canvasOptionsContainer);
+        this.$canvasOptions = $('<ul></ul>');
+        this.$canvasOptionsContainer.append(this.$canvasOptions);
+
+        this.$sequenceOptionsContainer = $('<li class="group sequence"></li>');
+        this.$downloadOptions.append(this.$sequenceOptionsContainer);
+        this.$sequenceOptions = $('<ul></ul>');
+        this.$sequenceOptionsContainer.append(this.$sequenceOptions);
 
         this.$buttonsContainer = $('<div class="buttons"></div>');
         this.$content.append(this.$buttonsContainer);
@@ -72,7 +95,7 @@ class DownloadDialogue extends BaseDownloadDialogue {
                 switch (id){
                     case DownloadOption.currentViewAsJpg.toString():
                         var viewer = (<ISeadragonExtension>that.extension).getViewer();
-                        window.open((<ISeadragonProvider>that.provider).getCroppedImageUri(canvas, viewer, true));
+                        window.open((<ISeadragonProvider>that.provider).getCroppedImageUri(canvas, viewer));
                         $.publish(Commands.DOWNLOAD_CURRENTVIEW);
                         break;
                     case DownloadOption.wholeImageHighRes.toString():
@@ -100,51 +123,79 @@ class DownloadDialogue extends BaseDownloadDialogue {
     open() {
         super.open();
 
+        var canvas: Manifesto.ICanvas = this.provider.getCurrentCanvas();
+
         if (this.isDownloadOptionAvailable(DownloadOption.currentViewAsJpg)) {
+            var $label: JQuery = this.$currentViewAsJpgButton.find('label');
+            var label: string = this.content.currentViewAsJpg;
+            var viewer = (<ISeadragonExtension>this.extension).getViewer();
+            var dimensions: CroppedImageDimensions = (<ISeadragonProvider>this.provider).getCroppedImageDimensions(canvas, viewer);
+            label = String.format(label, dimensions.size.width, dimensions.size.height);
+            $label.text(label);
             this.$currentViewAsJpgButton.show();
         } else {
             this.$currentViewAsJpgButton.hide();
         }
 
         if (this.isDownloadOptionAvailable(DownloadOption.wholeImageHighRes)) {
+            var $label: JQuery = this.$wholeImageHighResButton.find('label');
             var mime = this.getMimeTypeForCurrentCanvas();
-            var label = String.format(this.content.wholeImageHighRes, this.simplifyMimeType(mime));
-            $('#' + DownloadOption.wholeImageHighRes.toString() + 'label').text(label);
+            var size: Size = this.getDimensionsForCurrentCanvas();
+            var label = String.format(this.content.wholeImageHighRes, size.width, size.height, this.simplifyMimeType(mime));
+            $label.text(label);
             this.$wholeImageHighResButton.show();
         } else {
             this.$wholeImageHighResButton.hide();
         }
 
         if (this.isDownloadOptionAvailable(DownloadOption.wholeImageLowResAsJpg)) {
+            var $label: JQuery = this.$wholeImageLowResAsJpgButton.find('label');
+            var size: Size = (<ISeadragonProvider>this.provider).getConfinedImageDimensions(canvas, this.options.confinedImageSize);
+            var label = String.format(this.content.wholeImageLowResAsJpg, size.width, size.height);
+            $label.text(label);
             this.$wholeImageLowResAsJpgButton.show();
         } else {
             this.$wholeImageLowResAsJpgButton.hide();
         }
 
         this.resetDynamicDownloadOptions();
-        var currentCanvas: Manifesto.ICanvas = this.provider.getCurrentCanvas();
+
         if (this.isDownloadOptionAvailable(DownloadOption.dynamicImageRenderings)) {
-            var images = currentCanvas.getImages();
+            var images = canvas.getImages();
             for (var i = 0; i < images.length; i++) {
-                this.addDownloadOptionsForRenderings(images[i].getResource(), this.content.entireFileAsOriginal);
+                this.addDownloadOptionsForRenderings(images[i].getResource(), this.content.entireFileAsOriginal, DownloadOption.dynamicImageRenderings);
             }
         }
+
         if (this.isDownloadOptionAvailable(DownloadOption.dynamicCanvasRenderings)) {
-            this.addDownloadOptionsForRenderings(currentCanvas, this.content.entireFileAsOriginal);
-        }
-        if (this.isDownloadOptionAvailable(DownloadOption.dynamicSequenceRenderings)) {
-            this.addDownloadOptionsForRenderings(this.provider.getCurrentSequence(), this.content.entireDocument);
+            this.addDownloadOptionsForRenderings(canvas, this.content.entireFileAsOriginal, DownloadOption.dynamicCanvasRenderings);
         }
 
-        if (!this.$downloadOptions.find('li:visible').length){
+        if (this.isDownloadOptionAvailable(DownloadOption.dynamicSequenceRenderings)) {
+            this.addDownloadOptionsForRenderings(this.provider.getCurrentSequence(), this.content.entireDocument, DownloadOption.dynamicSequenceRenderings);
+        }
+
+        if (!this.$downloadOptions.find('li.option:visible').length){
             this.$noneAvailable.show();
             this.$downloadButton.hide();
         } else {
             // select first option.
-            this.$downloadOptions.find('input:visible:first').prop("checked", true);
+            this.$downloadOptions.find('li.option input:visible:first').prop("checked", true);
             this.$noneAvailable.hide();
             this.$downloadButton.show();
         }
+
+        // hide empty groups
+        this.$downloadOptions.find('li.group').each((index, group) => {
+            var $group: JQuery = $(group);
+
+            $group.show();
+
+            if ($group.find('li.option:hidden').length === $group.find('li.option').length){
+                // all options are hidden, hide group.
+                $group.hide();
+            }
+        });
 
         if (this.provider.isPagingSettingEnabled()) {
             this.$pagingNote.show();
@@ -158,11 +209,11 @@ class DownloadDialogue extends BaseDownloadDialogue {
     resetDynamicDownloadOptions() {
         this.renderingUrls = [];
         this.renderingUrlsCount = 0;
-        this.$downloadOptions.find('.dynamic').remove();
+        this.$downloadOptions.find('li.dynamic').remove();
     }
 
-    addDownloadOptionsForRenderings(resource: Manifesto.IManifestResource, defaultLabel: string) {
-        var renderings: Manifesto.IRendering[] = manifesto.getRenderings(resource);
+    addDownloadOptionsForRenderings(resource: Manifesto.IManifestResource, defaultLabel: string, type: DownloadOption) {
+        var renderings: Manifesto.IRendering[] = resource.getRenderings();
 
         for (var i = 0; i < renderings.length; i++) {
             var rendering: Manifesto.IRendering = renderings[i];
@@ -178,14 +229,25 @@ class DownloadDialogue extends BaseDownloadDialogue {
                 }
                 label = String.format(label, this.simplifyMimeType(rendering.getFormat().toString()));
                 this.renderingUrls[currentId] = rendering.id;
-                var newButton = $('<li class="dynamic"><input id="' + currentId + '" type="radio" name="downloadOptions" /><label for="' + currentId + '">' + label + '</label></li>');
-                this.$downloadOptions.append(newButton);
+                var newButton = $('<li class="option dynamic"><input id="' + currentId + '" type="radio" name="downloadOptions" /><label for="' + currentId + '">' + label + '</label></li>');
+
+                switch (type) {
+                    case DownloadOption.dynamicImageRenderings:
+                        this.$imageOptions.append(newButton);
+                        break;
+                    case DownloadOption.dynamicCanvasRenderings:
+                        this.$canvasOptions.append(newButton);
+                        break;
+                    case DownloadOption.dynamicSequenceRenderings:
+                        this.$sequenceOptions.append(newButton);
+                        break;
+                }
             }
         }
     }
 
     getSelectedOption() {
-        return this.$downloadOptions.find("input:checked");
+        return this.$downloadOptions.find("li.option input:checked");
     }
 
     getCurrentCanvasImageResource() {
@@ -206,9 +268,31 @@ class DownloadDialogue extends BaseDownloadDialogue {
         return resource ? resource.getFormat().toString() : null;
     }
 
-    getDimensionsForCurrentCanvas() {
-        var resource = this.getCurrentCanvasImageResource();
-        return resource ? [resource.getWidth(), resource.getHeight()] : [0, 0];
+    getDimensionsForCurrentCanvas(): Size {
+        var image = this.getCurrentCanvasImageResource();
+        var size = new Size(0, 0);
+
+        if (!image) return size;
+
+        size.width = image.getWidth();
+        size.height = image.getHeight();
+
+        var maxWidth: number = image.getMaxWidth();
+        var maxHeight: number = image.getMaxHeight();
+
+        var configMaxWidth: number = this.options.maxImageWidth;
+
+        if (maxWidth){
+
+            if (configMaxWidth){
+                maxWidth = Math.min(maxWidth, configMaxWidth);
+            }
+
+            size.width = Math.min(size.width, maxWidth);
+            size.height = Math.min(size.height, maxHeight);
+        }
+
+        return size;
     }
 
     isDownloadOptionAvailable(option: DownloadOption): boolean {
@@ -217,11 +301,11 @@ class DownloadDialogue extends BaseDownloadDialogue {
             case DownloadOption.dynamicCanvasRenderings:
             case DownloadOption.dynamicImageRenderings:
             case DownloadOption.wholeImageHighRes:
-                return this.provider.isPagingSettingEnabled() ? false : true;
+                return !this.provider.isPagingSettingEnabled();
             case DownloadOption.wholeImageLowResAsJpg:
                 // hide low-res option if hi-res width is smaller than constraint
-                var dimensions = this.getDimensionsForCurrentCanvas();
-                return (!this.provider.isPagingSettingEnabled() && (dimensions[0] > this.options.confinedImageSize))
+                var size: Size = this.getDimensionsForCurrentCanvas();
+                return (!this.provider.isPagingSettingEnabled() && (size.width > this.options.confinedImageSize));
             default:
                 return true;
         }
