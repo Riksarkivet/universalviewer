@@ -154,7 +154,7 @@ class HeaderPanel extends BaseView {
         this.$printButton.onPressed(() => {
             var canvas = this.provider.getCurrentCanvas();
             var viewer = (<ISeadragonExtension>this.extension).getViewer();
-            var imageUri = (<ISeadragonProvider>this.provider).getCroppedImageUri(canvas, viewer, true);
+            var imageUri = (<ISeadragonProvider>this.provider).getCroppedImageUri(canvas, viewer);
             var imageUriTmp = imageUri.substring(0, imageUri.indexOf('/0/default.jpg'));
             imageUri = imageUri.substring(0, imageUriTmp.lastIndexOf('/')) + '/full/0/default.jpg';
             var title = this.extension.provider.getTitle();

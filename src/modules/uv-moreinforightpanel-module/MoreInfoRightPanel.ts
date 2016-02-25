@@ -75,12 +75,10 @@ class MoreInfoRightPanel extends RightPanel {
 
         // show loading icon.
         this.$main.addClass('loading');
-
-        var data: IMetadataItem[] = this.provider.getMetadata();
-        this.displayInfo(data);
+        this.displayInfo();
     }
 
-    displayInfo(data: IMetadataItem[]): void {
+    displayInfo(): void {
         this.$main.removeClass('loading');
 
         if (this.manifestData.length == 0 && this.canvasData.length == 0){
@@ -92,14 +90,6 @@ class MoreInfoRightPanel extends RightPanel {
 
         var manifestRenderData = $.extend(true, [], this.manifestData);
         var canvasRenderData = $.extend(true, [], this.canvasData);
-        
-        this.renderElement(this.$items, manifestRenderData, this.content.manifestHeader);
-        this.renderElement(this.$canvasItems, canvasRenderData, this.content.canvasHeader);
-
-
-        if (this.config.options.aggregateValues) {
-            this.aggregateValues(manifestRenderData, canvasRenderData);
-        }
         
         var displayOrderConfig: string = this.options.displayOrder;
 
@@ -113,19 +103,19 @@ class MoreInfoRightPanel extends RightPanel {
             var sorted = [];
 
             _.each(displayOrder, (item: string) => {
-                var match: IMetadataItem = data.en().where((x => x.label.toLowerCase() === item)).first();
+                var match: IMetadataItem = manifestRenderData.en().where((x => x.label.toLowerCase() === item)).first();
                 if (match){
                     sorted.push(match);
-                    data.remove(match);
+                    manifestRenderData.remove(match);
                 }
             });
 
             // add remaining items that were not in the displayOrder.
-            _.each(data, (item: IMetadataItem) => {
+            _.each(manifestRenderData, (item: IMetadataItem) => {
                 sorted.push(item);
             });
 
-            data = sorted;
+            manifestRenderData = sorted;
         }
 
         // Exclusions
@@ -138,9 +128,9 @@ class MoreInfoRightPanel extends RightPanel {
             var exclude: string[] = excludeConfig.split(',');
 
             _.each(exclude, (item: string) => {
-                var match: IMetadataItem = data.en().where((x => x.label.toLowerCase() === item)).first();
+                var match: IMetadataItem = manifestRenderData.en().where((x => x.label.toLowerCase() === item)).first();
                 if (match){
-                    data.remove(match);
+                    manifestRenderData.remove(match);
                 }
             });
         }
@@ -148,7 +138,7 @@ class MoreInfoRightPanel extends RightPanel {
         // flatten metadata into array.
         var flattened: IMetadataItem[] = [];
 
-        _.each(data, (item: IMetadataItem) => {
+        _.each(manifestRenderData, (item: IMetadataItem) => {
             if (_.isArray(item.value)){
                 flattened = flattened.concat(<IMetadataItem[]>item.value);
             } else {
@@ -156,17 +146,14 @@ class MoreInfoRightPanel extends RightPanel {
             }
         });
 
-        data = flattened;
-
-        _.each(data, (item: IMetadataItem) => {
-            var built: any = this.buildItem(item);
-            this.$items.append(built);
-            if (limitType === "lines") {
-                built.find('.text').toggleExpandTextByLines(limit, this.content.less, this.content.more);
-            } else if (limitType === "chars") {
-                built.find('.text').ellipsisHtmlFixed(limit, null);
-            }
-        });
+        manifestRenderData = flattened;
+        
+        if (this.config.options.aggregateValues) {
+            this.aggregateValues(manifestRenderData, canvasRenderData);
+        }
+        
+        this.renderElement(this.$items, manifestRenderData, this.content.manifestHeader);
+        this.renderElement(this.$canvasItems, canvasRenderData, this.content.canvasHeader);
     }
 
     aggregateValues(fromData: any[], toData: any[]) {
