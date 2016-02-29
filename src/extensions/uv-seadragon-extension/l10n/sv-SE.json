@@ -166,6 +166,7 @@
       "content": {
         "locale": "Språk",
         "navigatorEnabled": "Visa minivy",
+        "zoomPerClickEnabled": "Zooma med musklick",
         "pagingEnabled": "Visa dubbelsidig vy",
         "preserveViewport": "Behåll zoomläge",
         "title": "Inställningar",

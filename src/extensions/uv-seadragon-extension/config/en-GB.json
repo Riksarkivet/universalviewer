@@ -14,6 +14,7 @@
     "preserveViewport": false,
     "rightPanelEnabled": true,
     "saveUserSettings": false,
+    "zoomPerClickEnabled": true,
     "searchWithinEnabled": true,
     "theme": "uv-en-GB-theme",
     "tokenStorage": "session",

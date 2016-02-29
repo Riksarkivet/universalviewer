@@ -171,6 +171,7 @@
       "content": {
         "locale": "Locale",
         "navigatorEnabled": "Navigator Enabled",
+        "zoomPerClickEnabled": "Click to Zoom",
         "pagingEnabled": "Two Page View",
         "preserveViewport": "Preserve Zoom",
         "title": "Settings",
