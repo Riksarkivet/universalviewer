@@ -87,7 +87,8 @@ module.exports = function (grunt) {
                             'json2.min.js',
                             'require.js',
                             'l10n.js',
-                            'base64.min.js'
+                            'base64.min.js',
+                            'openseadragon-filtering.js'
                         ],
                         dest: '<%= config.dirs.build %>/lib/'
                     },
@@ -225,6 +226,7 @@ module.exports = function (grunt) {
                             'lib/embed.js', 
                             'lib/json2.min.js',
                             'lib/openseadragon.js',
+                            'lib/openseadragon-filtering.js',
                             'lib/require.js', 
                             'lib/uv-seadragon-extension.en-GB.config.json',
                             'lib/uv-seadragon-extension.sv-SE.config.json',
@@ -294,6 +296,16 @@ module.exports = function (grunt) {
                             'utils/dist/utils.d.ts'
                         ],
                         dest: '<%= config.dirs.typings %>'
+                    },
+                    {
+                        // all files that need to be copied from /lib to /src/extensions/uv-seadragon-extension/lib post bower install
+                        cwd: '<%= config.dirs.bower %>',
+                        expand: true,
+                        flatten: true,
+                        src: [
+                            'openseadragon-filtering/openseadragon-filtering.js'
+                        ],
+                        dest: '<%= config.dirs.uvSeadragonExtension %>/lib'
                     }
                 ]
             },

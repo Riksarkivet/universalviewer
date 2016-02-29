@@ -91,6 +91,7 @@ class SeadragonCenterPanel extends CenterPanel {
             blendTime: this.config.options.blendTime || 0,
             autoHideControls: this.config.options.autoHideControls == null ? true : this.config.options.autoHideControls,
             prefixUrl: prefixUrl,
+            //crossOriginPolicy: 'Anonymous',
             navImages: {
                 zoomIn: {
                     REST:   'zoom_in.png',
@@ -237,6 +238,15 @@ class SeadragonCenterPanel extends CenterPanel {
         this.isCreated = true;
 
         this.resize();
+        
+        // this.viewer.setFilterOptions({
+        //     filters: {
+        //         processors: [
+        //             OpenSeadragon.Filters.BRIGHTNESS(-50),
+        //             OpenSeadragon.Filters.INVERT()
+        //         ]
+        //     }
+        // });
     }
 
     createNavigationButtons() {

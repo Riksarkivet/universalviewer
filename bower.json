@@ -28,6 +28,7 @@
     "uv-cy-GB-theme": "universalviewer/uv-cy-GB-theme",
     "uv-en-GB-theme": "universalviewer/uv-en-GB-theme",
     "uv-sv-SE-theme": "riksarkivet/uv-sv-SE-theme",
-    "exjs": "~0.3.0"
+    "exjs": "~0.3.0",
+    "openseadragon-filtering": "Riksarkivet/OpenSeadragonFiltering"
   }
 }

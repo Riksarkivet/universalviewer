@@ -42,6 +42,12 @@ require.config({
         },
         yepnopecss: {
             deps: ['yepnope']
+        },
+        'openseadragon': {
+            exports: 'OpenSeadragon'
+        },
+        'openseadragon-filtering': {
+            deps: ['openseadragon']
         }
     }
 });
