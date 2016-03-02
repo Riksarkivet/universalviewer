@@ -36,16 +36,7 @@ class SettingsDialogue extends BaseSettingsDialogue {
         this.$navigatorEnabled.append(this.$navigatorEnabledCheckbox);
 
         this.$navigatorEnabledLabel = $('<label for="navigatorEnabled">' + this.content.navigatorEnabled + '</label>');
-        this.$navigatorEnabled.append(this.$navigatorEnabledLabel);
-        
-        this.$zoomPerClickEnabled = $('<div class="setting zoomClick"></div>');
-        this.$scroll.append(this.$zoomPerClickEnabled);
-
-        this.$zoomPerClickEnabledCheckbox = $('<input id="zoomPerClickEnabled" type="checkbox" />');
-        this.$zoomPerClickEnabled.append(this.$zoomPerClickEnabledCheckbox);
-
-        this.$zoomPerClickEnabledLabel = $('<label for="zoomPerClickEnabled">' + this.content.zoomPerClickEnabled + '</label>');
-        this.$zoomPerClickEnabled.append(this.$zoomPerClickEnabledLabel);        
+        this.$navigatorEnabled.append(this.$navigatorEnabledLabel);          
         
         this.$pagingEnabled = $('<div class="setting pagingEnabled"></div>');
         this.$scroll.append(this.$pagingEnabled);
@@ -55,6 +46,15 @@ class SettingsDialogue extends BaseSettingsDialogue {
 
         this.$pagingEnabledLabel = $('<label for="pagingEnabled">' + this.content.pagingEnabled + '</label>');
         this.$pagingEnabled.append(this.$pagingEnabledLabel);
+
+        this.$zoomPerClickEnabled = $('<div class="setting zoomClick"></div>');
+        this.$scroll.append(this.$zoomPerClickEnabled);
+
+        this.$zoomPerClickEnabledCheckbox = $('<input id="zoomPerClickEnabled" type="checkbox" />');
+        this.$zoomPerClickEnabled.append(this.$zoomPerClickEnabledCheckbox);
+
+        this.$zoomPerClickEnabledLabel = $('<label for="zoomPerClickEnabled">' + this.content.zoomPerClickEnabled + '</label>');
+        this.$zoomPerClickEnabled.append(this.$zoomPerClickEnabledLabel);     
 
         this.$preserveViewport = $('<div class="setting preserveViewport"></div>');
         this.$scroll.append(this.$preserveViewport);
