@@ -32,8 +32,8 @@
         "pagingNote": "Please turn off Two Page View for additional options.",
         "preview": "Preview",
         "title": "Download",
-        "wholeImageHighRes": "Whole image {0} x {1}px ({2})",
-        "wholeImageLowResAsJpg": "Whole image {0} x {1}px (jpg)"
+        "wholeImageHighRes": "Whole image ({2})",
+        "wholeImageLowResAsJpg": "Whole image (jpg)"
       }
     },
     "embedDialogue": {

@@ -32,8 +32,8 @@
         "pagingNote": "Stäng av dubbelsidig vy för ytterligare alternativ.",
         "preview": "Förhandsgranska",
         "title": "Ladda ner",
-        "wholeImageHighRes": "Hela bilden hög upplösning {0} x {1}px ({2})",
-        "wholeImageLowResAsJpg": "Hela bilden låg upplösning {0} x {1}px (jpg)"
+        "wholeImageHighRes": "Hela bilden hög upplösning ({2})",
+        "wholeImageLowResAsJpg": "Hela bilden låg upplösning (jpg)"
       }
     },
     "embedDialogue": {
