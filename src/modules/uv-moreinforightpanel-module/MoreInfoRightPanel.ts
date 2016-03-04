@@ -37,7 +37,7 @@ class MoreInfoRightPanel extends RightPanel {
                                            <div class="header"></div>\
                                            <div class="text"></div>\
                                        </div>');
-        this.copyTextTemplate = $('<a class="copyText" alt=""' + this.content.copyToClipboard  + '"" title="' + this.content.copyToClipboard + '"></a>');
+        this.copyTextTemplate = $('<a class="copyText" alt="' + this.content.copyToClipboard  + '" title="' + this.content.copyToClipboard + '"></a>');
 
         this.$items = $('<div class="items"></div>');
         this.$main.append(this.$items);
@@ -137,18 +137,7 @@ class MoreInfoRightPanel extends RightPanel {
             });
         }
 
-        // flatten metadata into array.
-        var flattened: IMetadataItem[] = [];
-
-        _.each(manifestRenderData, (item: IMetadataItem) => {
-            if (_.isArray(item.value)){
-                flattened = flattened.concat(<IMetadataItem[]>item.value);
-            } else {
-                flattened.push(item);
-            }
-        });
-
-        manifestRenderData = flattened;
+        manifestRenderData = this.flattenMetadataIntoArray(manifestRenderData);
         
         if (this.config.options.aggregateValues) {
             this.aggregateValues(manifestRenderData, canvasRenderData);
@@ -156,6 +145,21 @@ class MoreInfoRightPanel extends RightPanel {
         
         this.renderElement(this.$items, manifestRenderData, this.content.manifestHeader);
         this.renderElement(this.$canvasItems, canvasRenderData, this.content.canvasHeader);
+    }
+    
+    flattenMetadataIntoArray(renderData) {
+        // flatten metadata into array.
+        var flattened: IMetadataItem[] = [];
+
+        _.each(renderData, (item: IMetadataItem) => {
+            if (_.isArray(item.value)){
+                flattened = flattened.concat(<IMetadataItem[]>item.value);
+            } else {
+                flattened.push(item);
+            }
+        });
+
+        return flattened;
     }
 
     aggregateValues(fromData: any[], toData: any[]) {
@@ -240,7 +244,7 @@ class MoreInfoRightPanel extends RightPanel {
 
         $elem.addClass(item.label.toCssClass());
 
-        if (Utils.Clipboard.SupportsCopy())
+        if (Utils.Clipboard.SupportsCopy() && $text.text() && $header.text())
             this.addCopyButton($elem, $header);
         
         return $elem;
@@ -263,8 +267,10 @@ class MoreInfoRightPanel extends RightPanel {
         $elem.on('click', (e) => {
             var imgElement = e.target as HTMLElement;
             var headerTextElement = imgElement.previousSibling.textContent;
-            var manifestItems = this.manifestData[0].value as IMetadataItem[];
-            var matchingItems = manifestItems.concat(this.canvasData).filter(md => md.label == headerTextElement);
+            var manifestItems = this.flattenMetadataIntoArray(this.manifestData);
+            var canvasItems = this.flattenMetadataIntoArray(this.canvasData);
+            var matchingItems = manifestItems.concat(canvasItems)
+                    .filter(md => md.label && headerTextElement && md.label.toLowerCase() == headerTextElement.toLowerCase());
             var text = matchingItems.map(function(md) { return md.value }).join('');
             Utils.Clipboard.Copy(text);
         });
