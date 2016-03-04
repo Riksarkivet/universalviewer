@@ -99,7 +99,8 @@
         "noData": "Ingen information finns att visa",
         "title": "Information",
         "manifestHeader": "Om källan",
-        "canvasHeader": "Om bilden"
+        "canvasHeader": "Om bilden",
+        "copyToClipboard": "Kopiera till urklipp"
       }
     },
     "pagingHeaderPanel": {

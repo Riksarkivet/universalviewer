@@ -48,15 +48,15 @@ var Utils;
     var Clipboard = (function () {
         function Clipboard() {
         }
-        Clipboard.Copy = function (elem) {
+        Clipboard.Copy = function (text) {
             var $temp = $("<input>");
             $("body").append($temp);
-            $temp.val($(elem).text()).select();
+            $temp.val(text).select();
             document.execCommand("copy");
             $temp.remove();
         };
         Clipboard.SupportsCopy = function () {
-            return true;
+            return document.queryCommandSupported && document.queryCommandSupported('copy');
         };
         return Clipboard;
     })();

@@ -102,7 +102,8 @@
         "noData": "No data to display",
         "title": "Information",
         "manifestHeader": "About the source",
-        "canvasHeader": "About the image"
+        "canvasHeader": "About the image",
+        "copyToClipboard": "Copy to clipboard"
       }
     },
     "pagingHeaderPanel": {
