@@ -100,7 +100,8 @@
         "title": "Information",
         "manifestHeader": "Om källan",
         "canvasHeader": "Om bilden",
-        "copyToClipboard": "Kopiera till urklipp"
+        "copyToClipboard": "Kopiera till urklipp",
+        "copiedToClipboard": "Kopierat till urklipp"
       }
     },
     "pagingHeaderPanel": {
