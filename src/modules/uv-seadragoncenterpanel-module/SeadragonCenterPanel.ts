@@ -96,7 +96,7 @@ class SeadragonCenterPanel extends CenterPanel {
             autoHideControls: this.config.options.autoHideControls == null ? true : this.config.options.autoHideControls,
             prefixUrl: prefixUrl,
             minScrollDeltaTime: 10,
-            //crossOriginPolicy: 'use-credentials',
+            crossOriginPolicy: 'use-credentials',
             toolbar: 'toolbar',
             navImages: {
                 zoomIn: {
