@@ -49,7 +49,7 @@ var Utils;
         function Clipboard() {
         }
         Clipboard.Copy = function (text) {
-            var $tempDiv = $("<div>");
+            var $tempDiv = $("<div style='position:absolute;left:-9999px'>");
             var brRegex = /<br\s*[\/]?>/gi;
             text = text.replace(brRegex, "\n");
             $("body").append($tempDiv);
