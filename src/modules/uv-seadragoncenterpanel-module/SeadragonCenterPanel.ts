@@ -35,6 +35,7 @@ class SeadragonCenterPanel extends CenterPanel {
     $zoomInButton: JQuery;
     $zoomOutButton: JQuery;
     $navigator: JQuery;
+    $toolbar: JQuery;
 
     constructor($element: JQuery) {
         super($element);
@@ -48,6 +49,9 @@ class SeadragonCenterPanel extends CenterPanel {
 
         this.$viewer = $('<div id="viewer"></div>');
         this.$content.prepend(this.$viewer);
+        
+        this.$toolbar = $('<div id="toolbar"></div>');
+        this.$viewer.append(this.$toolbar);
 
         $.subscribe(BaseCommands.OPEN_EXTERNAL_RESOURCE, (e, resources: Manifesto.IExternalResource[]) => {
             Utils.Async.WaitFor(() => {
@@ -92,7 +96,8 @@ class SeadragonCenterPanel extends CenterPanel {
             autoHideControls: this.config.options.autoHideControls == null ? true : this.config.options.autoHideControls,
             prefixUrl: prefixUrl,
             minScrollDeltaTime: 10,
-            //crossOriginPolicy: 'Anonymous',
+            //crossOriginPolicy: 'use-credentials',
+            toolbar: 'toolbar',
             navImages: {
                 zoomIn: {
                     REST:   'zoom_in.png',
@@ -244,7 +249,8 @@ class SeadragonCenterPanel extends CenterPanel {
         //     filters: {
         //         processors: [
         //             OpenSeadragon.Filters.BRIGHTNESS(-50),
-        //             OpenSeadragon.Filters.INVERT()
+        //             OpenSeadragon.Filters.CONTRAST(50),
+        //             OpenSeadragon.Filters.GAMMA(50),
         //         ]
         //     }
         // });
