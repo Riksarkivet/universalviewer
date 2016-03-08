@@ -80,7 +80,7 @@ class MoreInfoRightPanel extends RightPanel {
             data = this.exclude(data, this.readConfig(this.options.manifestExclude));
         }
         
-        return this.flattenMetadataIntoArray(data);
+        return this.flatten(data);
     }
     
     getCanvasData(canvas: Manifesto.ICanvas) {
@@ -90,7 +90,7 @@ class MoreInfoRightPanel extends RightPanel {
             data = this.exclude(data, this.canvasExcludeConfig);
         }
         
-        return this.flattenMetadataIntoArray(data);
+        return this.flatten(data);
     }
     
     readConfig(config: string) {
@@ -171,11 +171,11 @@ class MoreInfoRightPanel extends RightPanel {
         return excluded;
     }
     
-    flattenMetadataIntoArray(renderData: IMetadataItem[]) {
+    flatten(data: IMetadataItem[]) {
         // flatten metadata into array.
         var flattened: IMetadataItem[] = [];
 
-        _.each(renderData, item => {
+        _.each(data, item => {
             if (_.isArray(item.value)){
                 flattened = flattened.concat(<IMetadataItem[]>item.value);
             } else {
@@ -293,8 +293,8 @@ class MoreInfoRightPanel extends RightPanel {
         $elem.on('click', (e) => {
             var imgElement = e.target as HTMLElement;
             var headerTextElement = imgElement.previousSibling.textContent;
-            var manifestItems = this.flattenMetadataIntoArray(this.manifestData);
-            var canvasItems = this.flattenMetadataIntoArray(this.canvasData);
+            var manifestItems = this.flatten(this.manifestData);
+            var canvasItems = this.flatten(this.canvasData);
             var matchingItems = manifestItems.concat(canvasItems)
                     .filter(md => md.label && headerTextElement && md.label.toLowerCase() == headerTextElement.toLowerCase());
             var text = matchingItems.map(function(md) { return md.value }).join('');
