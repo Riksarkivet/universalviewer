@@ -34,6 +34,7 @@ interface IProvider{
     getLogo(): string;
     getManifestType(): Manifesto.ManifestType;
     getMetadata(): IMetadataItem[];
+    getCanvasMetadata(canvas: Manifesto.ICanvas): IMetadataItem[];
     getNextPageIndex(index?: number): number;
     getPagedIndices(index?: number): number[];
     getPrevPageIndex(index?: number): number;
