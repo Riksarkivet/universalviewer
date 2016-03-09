@@ -105,10 +105,7 @@ class MoreInfoRightPanel extends RightPanel {
     
     readConfig(config: string) {
         if (config) {
-            return config
-                .toLowerCase()
-                .replace(/ /g,"")
-                .split(',');
+            return _.map(config.toLowerCase().split(','), x => _.trim(x));
         }
         else {
             return [];
