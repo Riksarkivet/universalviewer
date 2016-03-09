@@ -127,6 +127,7 @@ class BaseExtension implements IExtension {
             $(document).keydown((e) => {
 
                 var event: string = null;
+                var preventDefault: boolean = true;
 
                 if (!e.ctrlKey && !e.altKey && !e.shiftKey) {
                     if (e.keyCode === KeyCodes.KeyDown.Enter) event = BaseCommands.RETURN;
@@ -135,8 +136,14 @@ class BaseExtension implements IExtension {
                     if (e.keyCode === KeyCodes.KeyDown.PageDown) event = BaseCommands.PAGE_DOWN;
                     if (e.keyCode === KeyCodes.KeyDown.End) event = BaseCommands.END;
                     if (e.keyCode === KeyCodes.KeyDown.Home) event = BaseCommands.HOME;
-                    if (e.keyCode === KeyCodes.KeyDown.NumpadPlus || e.keyCode === 171 || e.keyCode === KeyCodes.KeyDown.Equals) event = BaseCommands.PLUS;
-                    if (e.keyCode === KeyCodes.KeyDown.NumpadMinus || e.keyCode === 173 || e.keyCode === KeyCodes.KeyDown.Dash) event = BaseCommands.MINUS;
+                    if (e.keyCode === KeyCodes.KeyDown.NumpadPlus || e.keyCode === 171 || e.keyCode === KeyCodes.KeyDown.Equals) {
+                        event = BaseCommands.PLUS;
+                        preventDefault = false;  
+                    } 
+                    if (e.keyCode === KeyCodes.KeyDown.NumpadMinus || e.keyCode === 173 || e.keyCode === KeyCodes.KeyDown.Dash) {
+                        event = BaseCommands.MINUS;
+                        preventDefault = false;
+                    } 
 
                     if (that.useArrowKeysToNavigate()) {
                         if (e.keyCode === KeyCodes.KeyDown.LeftArrow) event = BaseCommands.LEFT_ARROW;
@@ -148,7 +155,9 @@ class BaseExtension implements IExtension {
                 if (e.ctrlKey && e.shiftKey && e.keyCode === KeyCodes.KeyDown.c) event = BaseCommands.COPY_SOURCE_REFERENCE;
 
                 if (event){
-                    e.preventDefault();
+                    if (preventDefault) {
+                        e.preventDefault();
+                    }
                     $.publish(event);
                 }
             });
