@@ -67,6 +67,16 @@ class MoreInfoRightPanel extends RightPanel {
             this.canvasData = this.getCanvasData(this.provider.getCanvasByIndex(canvasIndex));
             this.displayInfo();
         });
+
+        $.subscribe(BaseCommands.COPY_SOURCE_REFERENCE, (e) => {
+            var label = this.content.sourceReference;
+            var $copyBtn = $('.items .item .header:contains(' + label + ') .copyText');
+            $copyBtn.show();
+            this.copyValueForLabel(label);
+            setTimeout(function() {
+                $copyBtn.hide();
+            }, 2000);
+        });
     }
     
     getManifestData() {

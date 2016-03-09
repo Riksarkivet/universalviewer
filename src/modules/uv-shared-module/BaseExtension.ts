@@ -145,6 +145,7 @@ class BaseExtension implements IExtension {
                         if (e.keyCode === KeyCodes.KeyDown.DownArrow) event = BaseCommands.DOWN_ARROW;
                     }
                 }
+                if (e.ctrlKey && e.shiftKey && e.keyCode === KeyCodes.KeyDown.c) event = BaseCommands.COPY_SOURCE_REFERENCE;
 
                 if (event){
                     e.preventDefault();

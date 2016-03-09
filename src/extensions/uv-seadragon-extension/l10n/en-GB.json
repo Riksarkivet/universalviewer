@@ -104,7 +104,8 @@
         "manifestHeader": "About the source",
         "canvasHeader": "About the image",
         "copyToClipboard": "Copy to clipboard",
-        "copiedToClipboard": "Copied to clipboard"
+        "copiedToClipboard": "Copied to clipboard",
+        "sourceReference": "Source reference"
       }
     },
     "pagingHeaderPanel": {
