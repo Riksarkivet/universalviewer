@@ -30,6 +30,7 @@ class SeadragonCenterPanel extends CenterPanel {
     $rightButton: JQuery;
     $leftButton: JQuery;
     $rotateButton: JQuery;
+    $adjustButton: JQuery;
     $spinner: JQuery;
     $viewer: JQuery;
     $zoomInButton: JQuery;
@@ -52,7 +53,7 @@ class SeadragonCenterPanel extends CenterPanel {
         
         this.$toolbar = $('<div id="toolbar"></div>');
         this.$viewer.append(this.$toolbar);
-
+        
         $.subscribe(BaseCommands.OPEN_EXTERNAL_RESOURCE, (e, resources: Manifesto.IExternalResource[]) => {
             Utils.Async.WaitFor(() => {
                 return this.isResized;
@@ -163,6 +164,12 @@ class SeadragonCenterPanel extends CenterPanel {
         this.$rotateButton.attr('tabindex', 14);
         this.$rotateButton.prop('title', this.content.rotateRight);
         this.$rotateButton.addClass('rotate');
+        
+        this.$adjustButton = $('<div id="adjust"><img src="' + prefixUrl + 'home.png"></div>');
+        this.$adjustButton.attr('tabindex', 15);
+        this.$adjustButton.prop('title', this.content.adjust);
+        this.$adjustButton.insertAfter(this.$rotateButton);
+        
         
         this.$navigator = this.$viewer.find(".navigator");
         this.setNavigatorVisible();
