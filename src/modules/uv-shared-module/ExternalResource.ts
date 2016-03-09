@@ -60,6 +60,7 @@ class ExternalResource implements Manifesto.IExternalResource {
                 url: that.dataUri,
                 type: type,
                 dataType: 'json',
+                xhrFields: { withCredentials: true },
                 beforeSend: (xhr) => {
                     if (accessToken){
                         xhr.setRequestHeader("Authorization", "Bearer " + accessToken.accessToken);
