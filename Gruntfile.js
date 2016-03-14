@@ -88,7 +88,9 @@ module.exports = function (grunt) {
                             'require.js',
                             'l10n.js',
                             'base64.min.js',
-                            'openseadragon-filtering.js'
+                            'openseadragon-filtering.js',
+                            'rangeslider.js',
+                            'rangeslider.css'
                         ],
                         dest: '<%= config.dirs.build %>/lib/'
                     },
@@ -231,7 +233,9 @@ module.exports = function (grunt) {
                             'lib/require.js', 
                             'lib/uv-seadragon-extension.en-GB.config.json',
                             'lib/uv-seadragon-extension.sv-SE.config.json',
-                            'lib/uv-seadragon-extension-dependencies.js'
+                            'lib/uv-seadragon-extension-dependencies.js',
+                            'lib/rangeslider.js',
+                            'lib/rangeslider.css'
                         ],
                         dest: '<%= config.dirs.soktjanst %>/'
                     }
@@ -278,7 +282,9 @@ module.exports = function (grunt) {
                             'key-codes/dist/key-codes.js',
                             'lodash-compat/lodash.min.js',
                             'Units/Length.min.js',
-                            'utils/dist/utils.js'
+                            'utils/dist/utils.js',
+                            'rangeslider.js/dist/rangeslider.js',
+                            'rangeslider.js/dist/rangeslider.css'
                         ],
                         dest: '<%= config.dirs.lib %>'
                     },

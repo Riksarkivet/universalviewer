@@ -176,6 +176,12 @@
         "website": "<a href='https://github.com/riksarkivet/universalviewer'>mer info</a>"
       }
     },
+    "adjustDialogue": {
+      "content": {
+        "title": "Justera bild",
+        "contrast": "Justera kontrast"
+      }
+    },
     "treeViewLeftPanel": {
       "content": {
         "collapse": "Minimera innehåll",

@@ -29,6 +29,7 @@ class Commands {
     static HIDE_LOGIN_DIALOGUE: string              = Commands.namespace + 'onHideLoginDialogue';
     static HIDE_OVERLAY: string                     = Commands.namespace + 'onHideOverlay';
     static HIDE_SETTINGS_DIALOGUE: string           = Commands.namespace + 'onHideSettingsDialogue';
+    static HIDE_ADJUST_DIALOGUE: string             = Commands.namespace + 'onHideAdjustDialogue';
     static HOME: string                             = Commands.namespace + 'onHome';
     static LEFT_ARROW: string                       = Commands.namespace + 'onLeftArrow';
     static LEFTPANEL_COLLAPSE_FULL_FINISH: string   = Commands.namespace + 'onLeftPanelCollapseFullFinish';
@@ -67,12 +68,14 @@ class Commands {
     static SHOW_LOGIN_DIALOGUE: string              = Commands.namespace + 'onShowLoginDialogue';
     static SHOW_OVERLAY: string                     = Commands.namespace + 'onShowOverlay';
     static SHOW_SETTINGS_DIALOGUE: string           = Commands.namespace + 'onShowSettingsDialogue';
+    static SHOW_ADJUST_DIALOGUE: string             = Commands.namespace + 'onShowAdjustDialogue';
     static THUMB_SELECTED: string                   = Commands.namespace + 'onThumbSelected';
     static TOGGLE_FULLSCREEN: string                = Commands.namespace + 'onToggleFullScreen';
     static UP_ARROW: string                         = Commands.namespace + 'onUpArrow';
     static UPDATE_SETTINGS: string                  = Commands.namespace + 'onUpdateSettings';
     static VIEW_FULL_TERMS: string                  = Commands.namespace + 'onViewFullTerms';
     static WINDOW_UNLOAD: string                    = Commands.namespace + 'onWindowUnload';
+    static ADJUST_CONTRAST: string                  = Commands.namespace + 'onAdjustContrast';
 }
 
 export = Commands;

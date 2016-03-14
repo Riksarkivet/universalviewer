@@ -22,6 +22,7 @@ import RightPanel = require("../../modules/uv-shared-module/RightPanel");
 import SeadragonCenterPanel = require("../../modules/uv-seadragoncenterpanel-module/SeadragonCenterPanel");
 import Settings = require("../../modules/uv-shared-module/Settings");
 import SettingsDialogue = require("./SettingsDialogue");
+import AdjustDialogue = require("./AdjustDialogue");
 import Shell = require("../../modules/uv-shared-module/Shell");
 import ThumbsView = require("../../modules/uv-treeviewleftpanel-module/ThumbsView");
 import TreeView = require("../../modules/uv-treeviewleftpanel-module/TreeView");
@@ -34,6 +35,7 @@ class Extension extends BaseExtension {
     $externalContentDialogue: JQuery;
     $helpDialogue: JQuery;
     $settingsDialogue: JQuery;
+    $adjustDialogue: JQuery;
     centerPanel: SeadragonCenterPanel;
     currentRotation: number = 0;
     downloadDialogue: DownloadDialogue;
@@ -46,6 +48,7 @@ class Extension extends BaseExtension {
     mode: Mode;
     rightPanel: MoreInfoRightPanel;
     settingsDialogue: SettingsDialogue;
+    adjustDialogue: AdjustDialogue;
 
     constructor(bootstrapper: BootStrapper) {
         super(bootstrapper);
@@ -343,6 +346,10 @@ class Extension extends BaseExtension {
         this.$settingsDialogue = $('<div class="overlay settings"></div>');
         Shell.$overlays.append(this.$settingsDialogue);
         this.settingsDialogue = new SettingsDialogue(this.$settingsDialogue);
+        
+        this.$adjustDialogue = $('<div class="overlay adjust"></div>');
+        Shell.$overlays.append(this.$adjustDialogue);
+        this.adjustDialogue = new AdjustDialogue(this.$adjustDialogue);
 
         this.$externalContentDialogue = $('<div class="overlay externalContent"></div>');
         Shell.$overlays.append(this.$externalContentDialogue);

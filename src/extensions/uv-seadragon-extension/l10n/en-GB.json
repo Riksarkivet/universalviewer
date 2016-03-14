@@ -181,6 +181,12 @@
         "website": "<a href='https://github.com/universalviewer/universalviewer'>more info</a>"
       }
     },
+    "adjustDialogue": {
+      "content": {
+        "title": "Adjust image",
+        "contrast": "Adjust contrast"
+      }
+    },
     "treeViewLeftPanel": {
       "content": {
         "collapse": "Collapse Contents",

@@ -15,7 +15,8 @@
     "tasks",
     "tests"
   ],
-  "dependencies": {},
+  "dependencies": {
+  },
   "devDependencies": {
     "es6-promise": "~2.2.0",
     "extensions": "edsilv/extensions",
@@ -29,6 +30,7 @@
     "uv-en-GB-theme": "universalviewer/uv-en-GB-theme",
     "uv-sv-SE-theme": "riksarkivet/uv-sv-SE-theme",
     "exjs": "~0.3.0",
-    "openseadragon-filtering": "NIST-ISG/OpenSeadragonFiltering#master"
+    "openseadragon-filtering": "NIST-ISG/OpenSeadragonFiltering#master",
+    "rangeslider.js": "^2.1.1"
   }
 }

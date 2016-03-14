@@ -19,7 +19,8 @@ require.config({
         'utils': 'lib/utils',
         'xdomainrequest': 'lib/jquery.xdomainrequest',
         'yepnope': 'lib/yepnope.1.5.4-min',
-        'yepnopecss': 'lib/yepnope.css'
+        'yepnopecss': 'lib/yepnope.css',
+        'rangeslider' : 'lib/rangeslider'
     },
     shim: {
         jquery: {
@@ -48,6 +49,9 @@ require.config({
         },
         'openseadragon-filtering': {
             deps: ['openseadragon']
+        },
+        'rangeslider' : {
+            deps: ['jquery']
         }
     }
 });
@@ -82,6 +86,7 @@ require([
     'xdomainrequest',
     'yepnope',
     'yepnopecss',
+    'rangeslider'
     ], (
     bootstrapper,
     mediaelementExtension,

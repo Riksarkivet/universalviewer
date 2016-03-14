@@ -165,10 +165,15 @@ class SeadragonCenterPanel extends CenterPanel {
         this.$rotateButton.prop('title', this.content.rotateRight);
         this.$rotateButton.addClass('rotate');
         
-        this.$adjustButton = $('<div id="adjust"><img src="' + prefixUrl + 'home.png"></div>');
+        this.$adjustButton = $('<div id="adjust"><img src="' + prefixUrl + 'contrast.png"></div>');
         this.$adjustButton.attr('tabindex', 15);
         this.$adjustButton.prop('title', this.content.adjust);
         this.$adjustButton.insertAfter(this.$rotateButton);
+        
+        this.$adjustButton.on('click', (e) => {
+            e.preventDefault();
+            $.publish(BaseCommands.SHOW_ADJUST_DIALOGUE);
+        });
         
         
         this.$navigator = this.$viewer.find(".navigator");
@@ -261,6 +266,36 @@ class SeadragonCenterPanel extends CenterPanel {
         //         ]
         //     }
         // });
+        
+        $.subscribe(BaseCommands.ADJUST_CONTRAST, (e, params) => {
+            this.adjustContrast(params);
+        });
+    }
+    
+    adjustContrast(value: number) {
+        var value = this.convertFromPercent(value, 0, 3, 1);
+        
+        this.viewer.setFilterOptions({
+            filters: {
+                processors: [
+                    OpenSeadragon.Filters.CONTRAST(value)
+                ]
+            },
+            loadMode: 'sync'
+        });
+    }
+    
+    convertFromPercent(percent: number, min: number, max: number, center: number) {
+        if (percent == 50)
+            return center;
+        else if (percent < 50) {
+            var steps = (center - min) / 50;
+            return percent * steps + min;    
+        }
+        else {
+            var steps = (max - center) / 50;
+            return (percent - 50) * steps + center;    
+        }
     }
 
     createNavigationButtons() {
