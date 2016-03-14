@@ -18,11 +18,11 @@ class AdjustDialogue extends BaseAdjustDialogue {
         this.$contrastSliderLabel = $('<label for="contrastSlider">' + this.content.contrast + '</label>');
         this.$contrast.append(this.$contrastSliderLabel);
         
-        this.$contrastSlider = $('<input id="contrastSlider" type="range", min="0", max="100" step="1" value="50">');
+        this.$contrastSlider = $('<input id="contrastSlider" type="range", min="0", max="100" step="5" value="50">');
         this.$contrast.append(this.$contrastSlider);
         this.$contrastSlider.rangeslider({
             polyfill: false,
-            onSlide: (position, value) => {
+            onSlideEnd: (position, value) => {
                 this.adjustContrast(value);
             }
         });
