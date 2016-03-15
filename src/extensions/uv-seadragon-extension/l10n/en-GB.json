@@ -184,7 +184,9 @@
     "adjustDialogue": {
       "content": {
         "title": "Adjust image",
-        "contrast": "Adjust contrast"
+        "contrast": "Contrast",
+        "brightness": "Brightness",
+        "reset": "Reset"
       }
     },
     "treeViewLeftPanel": {

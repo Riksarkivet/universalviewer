@@ -76,6 +76,8 @@ class Commands {
     static VIEW_FULL_TERMS: string                  = Commands.namespace + 'onViewFullTerms';
     static WINDOW_UNLOAD: string                    = Commands.namespace + 'onWindowUnload';
     static ADJUST_CONTRAST: string                  = Commands.namespace + 'onAdjustContrast';
+    static ADJUST_BRIGHTNESS: string                = Commands.namespace + 'onAdjustBrightness';
+    static ADJUST_FINALIZE: string                  = Commands.namespace + 'onAdjustFinalize';
 }
 
 export = Commands;

@@ -3,9 +3,6 @@ import ISeadragonExtension = require("./ISeadragonExtension");
 
 class AdjustDialogue extends BaseAdjustDialogue {
 
-    $contrastSlider: JQuery;
-    $contrastSliderLabel: JQuery;
-
     constructor($element: JQuery) {
         super($element);
     }
@@ -14,24 +11,11 @@ class AdjustDialogue extends BaseAdjustDialogue {
         this.setConfig('adjustDialogue');
 
         super.create();
-        
-        this.$contrastSliderLabel = $('<label for="contrastSlider">' + this.content.contrast + '</label>');
-        this.$contrast.append(this.$contrastSliderLabel);
-        
-        this.$contrastSlider = $('<input id="contrastSlider" type="range", min="0", max="100" step="5" value="50">');
-        this.$contrast.append(this.$contrastSlider);
-        this.$contrastSlider.rangeslider({
-            polyfill: false,
-            onSlideEnd: (position, value) => {
-                this.adjustContrast(value);
-            }
-        });
     }
 
-    open(): void {
-        super.open();
-    }
-
+    // open(): void {
+    //     super.open();
+    // }
 }
 
 export = AdjustDialogue;

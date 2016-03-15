@@ -179,7 +179,9 @@
     "adjustDialogue": {
       "content": {
         "title": "Justera bild",
-        "contrast": "Justera kontrast"
+        "contrast": "Kontrast",
+        "brightness": "Ljusstyrka",
+        "reset": "Återställ"
       }
     },
     "treeViewLeftPanel": {

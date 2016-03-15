@@ -25,6 +25,8 @@ class SeadragonCenterPanel extends CenterPanel {
     title: string;
     userData: any;
     viewer: any;
+    contrastPercent: number;
+    brightnessPercent: number;
 
     $goHomeButton: JQuery;
     $rightButton: JQuery;
@@ -53,6 +55,9 @@ class SeadragonCenterPanel extends CenterPanel {
         
         this.$toolbar = $('<div id="toolbar"></div>');
         this.$viewer.append(this.$toolbar);
+        
+        this.contrastPercent = 50;
+        this.brightnessPercent = 50;
         
         $.subscribe(BaseCommands.OPEN_EXTERNAL_RESOURCE, (e, resources: Manifesto.IExternalResource[]) => {
             Utils.Async.WaitFor(() => {
@@ -237,6 +242,21 @@ class SeadragonCenterPanel extends CenterPanel {
         this.$rotateButton.on('click', () => {
             $.publish(Commands.SEADRAGON_ROTATION, [this.viewer.viewport.getRotation()]);
         });
+        
+        $.subscribe(BaseCommands.ADJUST_CONTRAST, (e, params) => {
+            this.contrastPercent = params;
+            this.adjustImage(false);
+        });
+        
+        $.subscribe(BaseCommands.ADJUST_BRIGHTNESS, (e, params) => {
+            this.brightnessPercent = params;
+            this.adjustImage(false);
+        });
+        
+        $.subscribe(BaseCommands.ADJUST_FINALIZE, (e, params) => {
+            this.adjustImage(true);
+        });
+        
 
         this.title = this.extension.provider.getTitle();
 
@@ -256,36 +276,22 @@ class SeadragonCenterPanel extends CenterPanel {
         this.isCreated = true;
 
         this.resize();
-        
-        // this.viewer.setFilterOptions({
-        //     filters: {
-        //         processors: [
-        //             OpenSeadragon.Filters.BRIGHTNESS(-50),
-        //             OpenSeadragon.Filters.CONTRAST(50),
-        //             OpenSeadragon.Filters.GAMMA(50),
-        //         ]
-        //     }
-        // });
-        
-        $.subscribe(BaseCommands.ADJUST_CONTRAST, (e, params) => {
-            this.adjustContrast(params);
-        });
     }
     
-    adjustContrast(value: number) {
-        var value = this.convertFromPercent(value, 0, 3, 1);
-        
+    adjustImage(async: boolean) {
         this.viewer.setFilterOptions({
             filters: {
                 processors: [
-                    OpenSeadragon.Filters.CONTRAST(value)
+                    OpenSeadragon.Filters.CONTRAST(this.convertFromPercent(this.contrastPercent, 0, 1, 3)),
+                    OpenSeadragon.Filters.BRIGHTNESS(this.convertFromPercent(this.brightnessPercent, -255, 0, 255)),
+                    //OpenSeadragon.Filters.GAMMA(this.convertFromPercent(this.brightnessPercent * -1 + 100, 0, 1, 5))
                 ]
             },
-            loadMode: 'sync'
+            loadMode: async ? 'async' : 'sync'
         });
     }
-    
-    convertFromPercent(percent: number, min: number, max: number, center: number) {
+ 
+    convertFromPercent(percent: number, min: number, center: number, max: number) {
         if (percent == 50)
             return center;
         else if (percent < 50) {
