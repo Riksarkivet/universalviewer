@@ -1,3 +1,4 @@
+import Riksarkivet = require("./Riksarkivet");
 class RiksarkivetPrint {
     UVContainerIdWithHash: string;
     printSourceTextId: string;
@@ -10,6 +11,7 @@ class RiksarkivetPrint {
     printSourceTextHeightInPixels: number;
     printSourceText: string;
     imageUri: string;
+    riksarkivet: Riksarkivet;
 
 
     constructor() {
@@ -22,12 +24,13 @@ class RiksarkivetPrint {
         this.printSourceTopMarginsInPixels = 20;
         this.printSourceBottomMarginsInPixels = 20;
         this.printSourceTextHeightInPixels = 20;
+        this.riksarkivet = new Riksarkivet();
     }
 
     public printImage(imageUri: string, title: string, canvas: Manifesto.ICanvas) {
         var that = this;
 
-        var bildid = this.getBildIdFromCanvas(canvas);
+        var bildid = this.riksarkivet.GetBildIdFromCanvas(canvas);
         this.printSourceText = title + ' - ' + bildid + ' (Riksarkivet)';
         this.imageUri = imageUri;
 
@@ -46,13 +49,6 @@ class RiksarkivetPrint {
         img.src = imageUri;
 
     };
-
-    private getBildIdFromCanvas(canvas: Manifesto.ICanvas) {
-        var bildid = canvas.getImages()[0].getResource().getServices()[0].id;
-        bildid = bildid.substr(bildid.indexOf("!") + 1);
-
-        return bildid;
-    }
 
     private getPrintStyles(widthPercentageLandscape, widthPercentagePortrait) {
         var fullWidthLandscape = 100;

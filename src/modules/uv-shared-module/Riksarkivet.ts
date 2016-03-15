@@ -1,4 +1,3 @@
-import IMetadataItem = require("../uv-shared-module/IMetadataItem");
 class Riksarkivet {
     public GetBildIdFromCanvas(canvas: Manifesto.ICanvas) {
         var bildid = canvas.getImages()[0].getResource().getServices()[0].id;
