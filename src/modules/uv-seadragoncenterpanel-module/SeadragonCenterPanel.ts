@@ -282,8 +282,8 @@ class SeadragonCenterPanel extends CenterPanel {
         this.viewer.setFilterOptions({
             filters: {
                 processors: [
-                    OpenSeadragon.Filters.CONTRAST(this.convertFromPercent(this.contrastPercent, 0, 1, 3)),
-                    OpenSeadragon.Filters.BRIGHTNESS(this.convertFromPercent(this.brightnessPercent, -255, 0, 255)),
+                    OpenSeadragon.Filters.CONTRAST(this.convertFromPercent(this.contrastPercent, 0.2, 1, 2)),
+                    OpenSeadragon.Filters.BRIGHTNESS(this.convertFromPercent(this.brightnessPercent, -200, 0, 130)),
                     //OpenSeadragon.Filters.GAMMA(this.convertFromPercent(this.brightnessPercent * -1 + 100, 0, 1, 5))
                 ]
             },
