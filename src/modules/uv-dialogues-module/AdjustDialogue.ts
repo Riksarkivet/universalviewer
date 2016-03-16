@@ -87,18 +87,24 @@ class AdjustDialogue extends Dialogue {
         this.$reset.append(this.$resetButton);
         
         this.$resetButton.on("click", e => {
-            this.reset();
+            this.setValues(50, 50);
         })
 
         this.$element.hide();
+        
+        
+        var settings = this.provider.getSettings();
+        this.setValues(
+            settings.contrastPercent ? settings.contrastPercent : 50, 
+            settings.brightnessPercent ? settings.brightnessPercent : 50)
     }
     
-    reset() {
-        this.$contrastSlider.val("50").change();
-        this.adjustContrast(50);
+    setValues(contrast: number, brightness: number) {
+        this.$contrastSlider.val(contrast.toString()).change();
+        this.adjustContrast(contrast);
         
-        this.$brightnessSlider.val("50").change();
-        this.adjustBrightness(50);
+        this.$brightnessSlider.val(brightness.toString()).change();
+        this.adjustBrightness(brightness);
         
         this.stopSliding();
     }
@@ -115,10 +121,12 @@ class AdjustDialogue extends Dialogue {
     
     adjustContrast(value: number) {
         $.publish(BaseCommands.ADJUST_CONTRAST, [value]);
+        this.provider.updateSettings({ contrastPercent: value});
     }
     
     adjustBrightness(value: number) {
         $.publish(BaseCommands.ADJUST_BRIGHTNESS, [value]);
+        this.provider.updateSettings({ brightnessPercent: value});
     }
 
     open(): void {

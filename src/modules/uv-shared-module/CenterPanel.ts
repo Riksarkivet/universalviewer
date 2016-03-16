@@ -7,6 +7,9 @@ class CenterPanel extends BaseView {
     $closeAttributionButton: JQuery;
     $content: JQuery;
     $title: JQuery;
+    
+    contrastPercent: number;
+    brightnessPercent: number;
 
     constructor($element: JQuery) {
         super($element, false, true);
@@ -46,6 +49,10 @@ class CenterPanel extends BaseView {
         if (this.options.titleEnabled === false){
             this.$title.hide();
         }
+        
+        var settings = this.provider.getSettings();
+        this.contrastPercent = settings.contrastPercent ? settings.contrastPercent : 50;
+        this.brightnessPercent = settings.brightnessPercent ? settings.brightnessPercent : 50;
     }
 
     showAttribution(): void {

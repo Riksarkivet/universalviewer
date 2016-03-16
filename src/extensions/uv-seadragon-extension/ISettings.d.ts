@@ -5,4 +5,6 @@ interface ISettings {
     panelOpenRightPanel?: boolean;
     preserveViewport?: boolean;
     zoomPerClickEnabled?: boolean;
+    contrastPercent?: number;
+    brightnessPercent?: number;
 }

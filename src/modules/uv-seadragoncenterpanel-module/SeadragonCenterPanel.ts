@@ -25,8 +25,6 @@ class SeadragonCenterPanel extends CenterPanel {
     title: string;
     userData: any;
     viewer: any;
-    contrastPercent: number;
-    brightnessPercent: number;
 
     $goHomeButton: JQuery;
     $rightButton: JQuery;
@@ -53,8 +51,6 @@ class SeadragonCenterPanel extends CenterPanel {
         this.$viewer = $('<div id="viewer"></div>');
         this.$content.prepend(this.$viewer);
        
-        this.contrastPercent = 50;
-        this.brightnessPercent = 50;
         
         $.subscribe(BaseCommands.OPEN_EXTERNAL_RESOURCE, (e, resources: Manifesto.IExternalResource[]) => {
             Utils.Async.WaitFor(() => {

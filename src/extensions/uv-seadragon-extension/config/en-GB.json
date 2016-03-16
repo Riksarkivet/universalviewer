@@ -3,6 +3,8 @@
   {
     "bookmarkThumbHeight": 150,
     "bookmarkThumbWidth": 90,
+    "brightnessPercent": 50,
+    "contrastPercent": 50,
     "leftPanelEnabled": true,
     "limitLocales": false,
     "minWidthBreakPoint": 610,
