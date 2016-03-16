@@ -140,6 +140,7 @@
     "seadragonCenterPanel": {
       "content": {
         "acknowledgements": "Attribution",
+        "adjust": "Adjust image",
         "goHome": "Show entire page",
         "imageUnavailable": "Image Unavailable",
         "next": "Next",

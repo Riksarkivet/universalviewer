@@ -137,6 +137,7 @@
     "seadragonCenterPanel": {
       "content": {
         "acknowledgements": "Tack",
+        "adjust": "Justera bild",
         "goHome": "Visa hela sidan",
         "imageUnavailable": "Oåtkomlig bild",
         "next": "Nästa",
