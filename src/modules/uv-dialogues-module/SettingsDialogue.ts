@@ -36,8 +36,8 @@ class SettingsDialogue extends Dialogue {
             this.close();
         });
 
-        this.$title = $('<h1></h1>');
-        this.$content.append(this.$title);
+        // this.$title = $('<h1></h1>');
+        // this.$content.append(this.$title);
 
         this.$scroll = $('<div class="scroll"></div>');
         this.$content.append(this.$scroll);
@@ -58,7 +58,8 @@ class SettingsDialogue extends Dialogue {
         this.$locale.append(this.$localeDropDown);
 
         // initialise ui.
-        this.$title.text(this.content.title);
+        // this.$title.text(this.content.title);
+        this.setTitle(this.content.title);
 
         this.$version.text("v" + Version.Version);
 

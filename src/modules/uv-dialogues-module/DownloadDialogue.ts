@@ -30,8 +30,9 @@ class DownloadDialogue extends Dialogue {
         });
 
         // create ui.
-        this.$title = $('<h1>' + this.content.title + '</h1>');
-        this.$content.append(this.$title);
+        // this.$title = $('<h1>' + this.content.title + '</h1>');
+        // this.$content.append(this.$title);
+        this.setTitle(this.content.title);
 
         this.$noneAvailable = $('<div class="noneAvailable">' + this.content.noneAvailable + '</div>');
         this.$content.append(this.$noneAvailable);

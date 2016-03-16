@@ -15,6 +15,8 @@ class Dialogue extends BaseView {
     $content: JQuery;
     $middle: JQuery;
     $top: JQuery;
+    $header: JQuery;
+    $title: JQuery;
 
     constructor($element: JQuery) {
         super($element, false, false);
@@ -45,12 +47,15 @@ class Dialogue extends BaseView {
 
         this.$top = $('<div class="top"></div>');
         this.$element.append(this.$top);
-
-        this.$closeButton = $('<a href="#" class="close">' + this.content.close + '</a>');
-        this.$top.append(this.$closeButton);
-
+        
         this.$middle = $('<div class="middle"></div>');
         this.$element.append(this.$middle);
+        
+        this.$header = $('<div class="header"></div>');
+        this.$middle.append(this.$header);
+        
+        this.$closeButton = $('<a href="#" class="close">' + this.content.close + '</a>');
+        this.$header.append(this.$closeButton);
 
         this.$content = $('<div class="content"></div>');
         this.$middle.append(this.$content);
@@ -65,6 +70,17 @@ class Dialogue extends BaseView {
         });
 
         this.returnFunc = this.close;
+    }
+    
+    setTitle(text: string) {
+        //if (this.$header.has(".title").length == 0) {
+        if (this.$title) {
+            this.$title.val(text);
+        }
+        else {
+            this.$title = $('<div class="title">' + text + '</div>');
+            this.$header.append(this.$title);
+        }
     }
 
     enableClose(): void {

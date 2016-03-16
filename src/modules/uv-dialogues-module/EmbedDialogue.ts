@@ -66,8 +66,9 @@ class EmbedDialogue extends Dialogue {
         this.currentHeight = this.smallHeight;
 
         // create ui.
-        this.$title = $('<h1>' + this.content.title + '</h1>');
-        this.$content.append(this.$title);
+        // this.$title = $('<h1>' + this.content.title + '</h1>');
+        // this.$content.append(this.$title);
+        this.setTitle(this.content.title);
 
         this.$firstRow = $('<div class="firstRow"><div class="leftCol"></div><div class="rightCol"></div></div>');
         this.$content.append(this.$firstRow);

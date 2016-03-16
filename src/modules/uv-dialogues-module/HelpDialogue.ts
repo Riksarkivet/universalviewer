@@ -28,8 +28,8 @@ class HelpDialogue extends Dialogue {
             this.close();
         });
 
-        this.$title = $('<h1></h1>');
-        this.$content.append(this.$title);
+        // this.$title = $('<h1></h1>');
+        // this.$content.append(this.$title);
 
         this.$scroll = $('<div class="scroll"></div>');
         this.$content.append(this.$scroll);
@@ -38,7 +38,8 @@ class HelpDialogue extends Dialogue {
         this.$scroll.append(this.$message);
 
         // initialise ui.
-        this.$title.text(this.content.title);
+        //this.$title.text(this.content.title);
+        this.setTitle(this.content.title);
         this.$message.html(this.content.text);
 
         // ensure anchor tags link to _blank.

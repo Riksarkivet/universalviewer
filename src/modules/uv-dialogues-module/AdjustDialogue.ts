@@ -40,9 +40,10 @@ class AdjustDialogue extends Dialogue {
             this.close();
         });
 
-        this.$title = $('<h1></h1>');
-        this.$content.append(this.$title);
-        this.$title.text(this.content.title);
+        // this.$title = $('<h1></h1>');
+        // this.$header.append(this.$title);
+        // this.$title.text(this.content.title);
+        this.setTitle(this.content.title);
 
         this.$contrast = $('<div class="contrast"></div>');
         this.$content.append(this.$contrast);
