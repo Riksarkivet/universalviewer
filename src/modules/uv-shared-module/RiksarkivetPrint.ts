@@ -90,7 +90,7 @@ class RiksarkivetPrint {
             $(printContainerIdWithHash).remove();
         }
 
-        var img = $('<img id="' + printImageId + '" />').attr('src', this.imageUri)
+        var img = $('<img id="' + printImageId + '" crossorigin="use-credentials" />').attr('src', this.imageUri)
             .on('load', function () {
                 if (!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0) {
                     alert('broken image!');
