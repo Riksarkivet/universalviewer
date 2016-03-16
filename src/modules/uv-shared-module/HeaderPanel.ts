@@ -88,10 +88,11 @@ class HeaderPanel extends BaseView {
             if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/webOS/i) || navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/Windows Phone/i)) {
                 checkMobile = true;
             }
-            else {
-                checkMobile = false;
+            var checkOnlyUVViewer = false;
+            if (url.contains("Folk_")) {
+                checkOnlyUVViewer = true;
             }
-            if (!checkMobile) {
+            if (!checkMobile && !checkOnlyUVViewer) {
                 this.$linkOldImageViewer = $('<a class="linkOldImageViewer" target="_top" tabindex="2" title="' + this.content.backOldImageViewer + '" href="' + url + '?viewer=DjVu">' + this.content.backOldImageViewer + '</a>');
                 this.$rightOptions.append(this.$linkOldImageViewer);
             }
