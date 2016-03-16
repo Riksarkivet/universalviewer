@@ -253,6 +253,7 @@ class SeadragonCenterPanel extends CenterPanel {
             this.adjustImage(true);
         });
         
+        this.adjustImage(true);
 
         this.title = this.extension.provider.getTitle();
 
@@ -275,13 +276,17 @@ class SeadragonCenterPanel extends CenterPanel {
     }
     
     adjustImage(async: boolean) {
+        var processors = [];
+        
+        if (this.contrastPercent != 50)
+            processors.push(OpenSeadragon.Filters.CONTRAST(this.convertFromPercent(this.contrastPercent, 0.2, 1, 2)));
+            
+        if (this.brightnessPercent != 50)
+            processors.push(OpenSeadragon.Filters.BRIGHTNESS(this.convertFromPercent(this.brightnessPercent, -200, 0, 130)));
+        
         this.viewer.setFilterOptions({
             filters: {
-                processors: [
-                    OpenSeadragon.Filters.CONTRAST(this.convertFromPercent(this.contrastPercent, 0.2, 1, 2)),
-                    OpenSeadragon.Filters.BRIGHTNESS(this.convertFromPercent(this.brightnessPercent, -200, 0, 130)),
-                    //OpenSeadragon.Filters.GAMMA(this.convertFromPercent(this.brightnessPercent * -1 + 100, 0, 1, 5))
-                ]
+                processors: processors
             },
             loadMode: async ? 'async' : 'sync'
         });
