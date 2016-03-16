@@ -52,10 +52,7 @@ class SeadragonCenterPanel extends CenterPanel {
 
         this.$viewer = $('<div id="viewer"></div>');
         this.$content.prepend(this.$viewer);
-        
-        this.$toolbar = $('<div id="toolbar"></div>');
-        this.$viewer.append(this.$toolbar);
-        
+       
         this.contrastPercent = 50;
         this.brightnessPercent = 50;
         
@@ -103,7 +100,6 @@ class SeadragonCenterPanel extends CenterPanel {
             prefixUrl: prefixUrl,
             minScrollDeltaTime: 10,
             crossOriginPolicy: 'use-credentials',
-            toolbar: 'toolbar',
             navImages: {
                 zoomIn: {
                     REST:   'zoom_in.png',
