@@ -72,7 +72,8 @@
         "panelOpen": false,
         "textLimit": 4,
         "textLimitType": "lines",
-        "aggregateValues": ""
+        "aggregateValues": "",
+        "showCopyToClipboard": false
       }
     },
     "pagingHeaderPanel":
