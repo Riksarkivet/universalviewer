@@ -122,7 +122,7 @@ class PagingHeaderPanel extends HeaderPanel {
         this.$nextOptions.append(this.$lastButton);
         
         
-        if(!this.isTouch()){
+        if(!Utils.Device.isTouch()){
             this.$centerOptions.find(".imageBtn").addClass("no-touch");
         }
 
