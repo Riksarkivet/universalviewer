@@ -4,10 +4,12 @@ class AutoComplete{
 	results: any;
 	selectedResultIndex: number;
     $element: JQuery;
-    autoCompleteUri: string;
+    autoCompleteFunc: (terms: string, cb: (results: string[]) => void) => void;
     delay: number;
+    minChars: number;
     onSelect: (terms: string) => void;
-    parseResults: (results: string[]) => string[];
+    parseResultsFunc: (results: string[]) => string[];
+    positionAbove: boolean;
 
 	$searchResultsList: JQuery;
 	$searchResultTemplate: JQuery;
@@ -17,20 +19,29 @@ class AutoComplete{
     lastKeyDownWasValid: boolean = false;
 
     constructor(element: JQuery,
-                autoCompleteUri: string,
-                delay: number,
-                parseResults: (results: any) => string[],
-                onSelect: (terms: string) => void){
+                autoCompleteFunc: (terms: string, cb: (results: string[]) => void) => void,
+                parseResultsFunc: (results: any) => string[],
+                onSelect: (terms: string) => void,
+                delay: number = 300,
+                minChars: number = 2,
+                positionAbove: boolean = false){
 
         this.$element = element;
-        this.autoCompleteUri = autoCompleteUri;
+        this.autoCompleteFunc = autoCompleteFunc;
         this.delay = delay;
-        this.parseResults = parseResults;
+        this.minChars = minChars;
         this.onSelect = onSelect;
+        this.parseResultsFunc = parseResultsFunc;
+        this.positionAbove = positionAbove;
 
         // create ui.
         this.$searchResultsList = $('<ul class="autocomplete"></ul>');
-        this.$element.parent().prepend(this.$searchResultsList);
+
+        if (this.positionAbove){
+            this.$element.parent().prepend(this.$searchResultsList);
+        } else {
+            this.$element.parent().append(this.$searchResultsList);
+        }
 
         this.$searchResultTemplate = $('<li class="result"><a href="#"></a></li>');
 
@@ -106,22 +117,25 @@ class AutoComplete{
                 }
             }
 
-            // after a delay, show autocomplete list.
-            typewatch(() => {
+            if (e.keyCode !== KeyCodes.KeyDown.Enter){
+                // after a delay, show autocomplete list.
+                typewatch(() => {
 
-                var val = that.getTerms();
+                    var val = that.getTerms();
 
-                // if there are more than 2 chars and no spaces
-                // update the autocomplete list.
-                if (val && val.length > 2 && !val.contains(' ')) {
-                    that.search(val);
-                } else {
-                    // otherwise, hide the autocomplete list.
-                    that.clearResults();
-                    that.hideResults();
-                }
+                    // if there are more than x chars and no spaces
+                    // update the autocomplete list.
+                    if (val && val.length > that.minChars && !val.contains(' ')) {
+                        that.search(val);
+                    } else {
+                        // otherwise, hide the autocomplete list.
+                        that.clearResults();
+                        that.hideResults();
+                    }
 
-            }, that.delay);
+                }, that.delay);
+            }
+
         });
 
         // hide results if clicked outside.
@@ -194,8 +208,8 @@ class AutoComplete{
 
         var that = this;
 
-        $.getJSON(String.format(this.autoCompleteUri, term), function (results: string[]) {
-            that.listResults(results);
+        this.autoCompleteFunc(term, (results: string[]) => {
+           that.listResults(results);
         });
     }
 
@@ -213,14 +227,20 @@ class AutoComplete{
     }
 
     updateListPosition(): void {
-        this.$searchResultsList.css({
-            'top': this.$searchResultsList.outerHeight(true) * -1
-        });
+        if (this.positionAbove){
+            this.$searchResultsList.css({
+                'top': this.$searchResultsList.outerHeight(true) * -1
+            });
+        } else {
+            this.$searchResultsList.css({
+                'top': this.$element.outerHeight(true)
+            });
+        }
     }
 
     listResults(results: string[]): void {
         // get an array of strings
-        this.results = this.parseResults(results);
+        this.results = this.parseResultsFunc(results);
 
         this.clearResults();
 
@@ -257,6 +277,9 @@ class AutoComplete{
 
     searchForItem($item): void {
         var term = $item.find('a').text();
+
+        this.$element.val(term);
+        this.hideResults();
 
         this.onSelect(term);
 

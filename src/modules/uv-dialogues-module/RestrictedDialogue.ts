@@ -1,15 +1,13 @@
 import BaseCommands = require("../uv-shared-module/BaseCommands");
 import Dialogue = require("../uv-shared-module/Dialogue");
-import ILoginDialogueOptions = require("../uv-shared-module/ILoginDialogueOptions");
 
-class LoginDialogue extends Dialogue {
+class RestrictedDialogue extends Dialogue {
 
     acceptCallback: any;
     $cancelButton: JQuery;
-    $loginButton: JQuery;
+    $nextVisibleButton: JQuery;
     $message: JQuery;
     $title: JQuery;
-    options: ILoginDialogueOptions;
     resource: Manifesto.IExternalResource;
 
     constructor($element: JQuery) {
@@ -18,12 +16,12 @@ class LoginDialogue extends Dialogue {
 
     create(): void {
 
-        this.setConfig('loginDialogue');
+        this.setConfig('restrictedDialogue');
 
         super.create();
 
-        this.openCommand = BaseCommands.SHOW_LOGIN_DIALOGUE;
-        this.closeCommand = BaseCommands.HIDE_LOGIN_DIALOGUE;
+        this.openCommand = BaseCommands.SHOW_RESTRICTED_DIALOGUE;
+        this.closeCommand = BaseCommands.HIDE_RESTRICTED_DIALOGUE;
 
         $.subscribe(this.openCommand, (s, e: any) => {
             this.acceptCallback = e.acceptCallback;
@@ -36,34 +34,29 @@ class LoginDialogue extends Dialogue {
             this.close();
         });
 
-        // this.$title = $('<h1></h1>');
-        // this.$content.append(this.$title);
+        this.$title = $('<h1></h1>');
+        this.$content.append(this.$title);
 
         this.$content.append('\
             <div>\
                 <p class="message scroll"></p>\
                 <div class="buttons">\
-                    <a class="login btn btn-primary" href="#" target="_parent"></a>\
-                    <a class="cancel btn btn-primary" href="#"></a>\
+                    <a class="cancel btn btn-primary" href="#" target="_parent"></a>\
                 </div>\
             </div>'
         );
 
         this.$message = this.$content.find('.message');
+        this.$message.targetBlank();
 
-        this.$loginButton = this.$content.find('.login');
-        this.$loginButton.text(this.content.login);
+        // todo: revisit?
+        //this.$nextVisibleButton = this.$content.find('.nextvisible');
+        //this.$nextVisibleButton.text(this.content.nextVisibleItem);
 
         this.$cancelButton = this.$content.find('.cancel');
         this.$cancelButton.text(this.content.cancel);
 
         this.$element.hide();
-
-        this.$loginButton.on('click', (e) => {
-            e.preventDefault();
-            this.close();
-            if (this.acceptCallback) this.acceptCallback();
-        });
 
         this.$cancelButton.on('click', (e) => {
             e.preventDefault();
@@ -74,14 +67,11 @@ class LoginDialogue extends Dialogue {
     open(): void {
         super.open();
 
-        this.setTitle(this.resource.loginService.getProperty('label'));
+        this.$title.text(this.resource.restrictedService.getProperty('label'));
 
-        var message: string = this.resource.loginService.getProperty('description');
-        if (this.options.warningMessage){
-            message = '<span class="warning">' + this.provider.config.content[this.options.warningMessage] + '</span><span class="description">' + message + '</span>';
-        }
+        var message: string = this.resource.restrictedService.getProperty('description');
+
         this.$message.html(message);
-
         this.$message.targetBlank();
 
         this.$message.find('a').on('click', function() {
@@ -89,13 +79,15 @@ class LoginDialogue extends Dialogue {
             $.publish(BaseCommands.EXTERNAL_LINK_CLICKED, [url]);
         });
 
-        if (this.options.showCancelButton){
-            this.$cancelButton.show();
-        } else {
-            this.$cancelButton.hide();
-        }
-
         this.resize();
+    }
+
+    close(): void {
+        super.close();
+
+        if (this.acceptCallback){
+            this.acceptCallback();
+        }
     }
 
     resize(): void {
@@ -103,4 +95,4 @@ class LoginDialogue extends Dialogue {
     }
 }
 
-export = LoginDialogue;
+export = RestrictedDialogue;

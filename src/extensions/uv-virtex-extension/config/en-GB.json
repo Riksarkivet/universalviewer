@@ -22,6 +22,7 @@
     {
       "options": {
         "downloadEnabled": false,
+        "feedbackEnabled": false,
         "minimiseButtons": true,
         "openEnabled": false
       }
@@ -50,7 +51,7 @@
         "panelExpandedWidth": 255
       }
     },
-    "treeViewLeftPanel": {
+    "contentLeftPanel": {
       "options": {
         "elideCount": 40,
         "galleryThumbHeight": 320,

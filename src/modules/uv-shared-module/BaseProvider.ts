@@ -5,6 +5,8 @@ import IMetadataItem = require("./IMetadataItem");
 import IProvider = require("./IProvider");
 import Params = require("../../Params");
 import UriLabeller = require("./UriLabeller");
+import IRange = require("./IRange");
+import ICanvas = require("./ICanvas");
 
 // providers contain methods that could be implemented differently according
 // to factors like varying back end data provisioning systems.
@@ -87,7 +89,11 @@ class BaseProvider implements IProvider{
 
     getCollectionIndex(iiifResource: Manifesto.IIIIFResource): number {
         // todo: support nested collections. walk up parents adding to array and return csv string.
-        return iiifResource.parentCollection.index;
+        var index: number;
+        if (iiifResource.parentCollection) {
+            index = iiifResource.parentCollection.index;
+        }
+        return index;
     }
 
     getManifestType(): Manifesto.ManifestType{
@@ -164,6 +170,25 @@ class BaseProvider implements IProvider{
         return this.config.options.seeAlsoEnabled !== false;
     }
 
+    getCanvases(): Manifesto.ICanvas[] {
+        return this.getCurrentSequence().getCanvases();
+    }
+
+    getCanvasById(id: string): Manifesto.ICanvas {
+        return this.getCurrentSequence().getCanvasById(id);
+    }
+
+    getCanvasesById(ids: string[]): Manifesto.ICanvas[] {
+        var canvases: Manifesto.ICanvas[] = [];
+
+        for (var i = 0; i < ids.length; i++) {
+            var id: string = ids[i];
+            canvases.push(this.getCanvasById(id));
+        }
+
+        return canvases;
+    }
+
     getCanvasByIndex(index: number): Manifesto.ICanvas {
         return this.getCurrentSequence().getCanvasByIndex(index);
     }
@@ -174,9 +199,18 @@ class BaseProvider implements IProvider{
 
     getCanvasRange(canvas: Manifesto.ICanvas): Manifesto.IRange {
         // get ranges that contain the canvas id. return the last.
-        var ranges: Manifesto.IRange[] = this.manifest.getRanges();
+        return this.getCanvasRanges(canvas).last();
+    }
 
-        return ranges.en().last(range => (range.getCanvases().en().any(c => c === canvas.id)));
+    getCanvasRanges(canvas: Manifesto.ICanvas): Manifesto.IRange[] {
+
+        if (canvas.ranges){
+            return canvas.ranges;
+        } else {
+            canvas.ranges = <IRange[]>this.manifest.getRanges().en().where(range => (range.getCanvasIds().en().any(c => c === canvas.id))).toArray();
+        }
+
+        return canvas.ranges;
     }
 
     getCurrentCanvas(): Manifesto.ICanvas {
@@ -187,29 +221,17 @@ class BaseProvider implements IProvider{
         return this.getSequenceByIndex(this.sequenceIndex);
     }
 
+    getRangeCanvases(range: Manifesto.IRange): Manifesto.ICanvas[] {
+        var ids: string[] = range.getCanvasIds();
+        return this.getCanvasesById(ids);
+    }
+
     getTotalCanvases(): number{
         return this.getCurrentSequence().getTotalCanvases();
     }
 
     isMultiCanvas(): boolean{
         return this.getCurrentSequence().isMultiCanvas();
-    }
-
-    isPagingAvailable(): boolean {
-        // paged mode is useless unless you have at least 3 pages...
-        return this.isPagingEnabled() && this.getTotalCanvases() > 2;
-    }
-
-    isPagingEnabled(): boolean{
-        return this.getCurrentSequence().isPagingEnabled();
-    }
-
-    isPagingSettingEnabled(): boolean {
-        if (this.isPagingAvailable()){
-            return this.getSettings().pagingEnabled;
-        }
-
-        return false;
     }
 
     getInfoUri(canvas: Manifesto.ICanvas): string{
@@ -231,7 +253,23 @@ class BaseProvider implements IProvider{
     }
 
     getViewingDirection(): Manifesto.ViewingDirection {
-        return this.getCurrentSequence().getViewingDirection();
+        var viewingDirection: Manifesto.ViewingDirection = this.getCurrentSequence().getViewingDirection();
+
+        if (!viewingDirection.toString()) {
+            viewingDirection = this.manifest.getViewingDirection();
+        }
+
+        return viewingDirection;
+    }
+
+    getViewingHint(): Manifesto.ViewingHint {
+        var viewingHint: Manifesto.ViewingHint = this.getCurrentSequence().getViewingHint();
+
+        if (!viewingHint.toString()) {
+            viewingHint = this.manifest.getViewingHint();
+        }
+
+        return viewingHint;
     }
 
     getFirstPageIndex(): number {
@@ -242,121 +280,16 @@ class BaseProvider implements IProvider{
         return this.getTotalCanvases() - 1;
     }
 
-    getPrevPageIndex(canvasIndex?: number): number {
-        if (typeof(canvasIndex) === 'undefined') canvasIndex = this.canvasIndex;
-
-        var index;
-
-        if (this.isPagingSettingEnabled()){
-            var indices = this.getPagedIndices(canvasIndex);
-
-            if (this.getViewingDirection().toString() === manifesto.ViewingDirection.rightToLeft().toString()){
-                index = indices.last() - 1;
-            } else {
-                index = indices[0] - 1;
-            }
-
-        } else {
-            index = canvasIndex - 1;
-        }
-
-        return index;
-    }
-
-    getNextPageIndex(canvasIndex?: number): number {
-        if (typeof(canvasIndex) === 'undefined') canvasIndex = this.canvasIndex;
-
-        var index;
-
-        if (this.isPagingSettingEnabled()){
-            var indices = this.getPagedIndices(canvasIndex);
-
-            if (this.getViewingDirection().toString() === manifesto.ViewingDirection.rightToLeft().toString()){
-                index = indices[0] + 1;
-            } else {
-                index = indices.last() + 1;
-            }
-
-        } else {
-            index = canvasIndex + 1;
-        }
-
-        if (index > this.getTotalCanvases() - 1) {
-            return -1;
-        }
-
-        return index;
-    }
-
-    getPrevFivePageIndex(canvasIndex?: number): number {
-        if (typeof (canvasIndex) === 'undefined') canvasIndex = this.canvasIndex;
-
-        var index;
-
-        if (this.isPagingSettingEnabled()) {
-            var indices = this.getPagedIndices(canvasIndex);
-
-            if (this.getViewingDirection().toString() === manifesto.ViewingDirection.rightToLeft().toString()) {
-                index = this.tryDecrementIndex(indices[0], 5);
-            } else {
-                index = this.tryDecrementIndex(indices.last(), 5);
-            }
-
-        } else {
-            index = this.tryDecrementIndex(canvasIndex, 5);
-        }
-
-        return index;
-    }
-
-    getNextFivePageIndex(canvasIndex?: number): number {
-        if (typeof (canvasIndex) === 'undefined') canvasIndex = this.canvasIndex;
-
-        var index;
-
-        if (this.isPagingSettingEnabled()) {
-            var indices = this.getPagedIndices(canvasIndex);
-
-            if (this.getViewingDirection().toString() === manifesto.ViewingDirection.rightToLeft().toString()) {
-                index = this.tryIncrementIndex(indices[0], 5);
-            } else {
-                index = this.tryIncrementIndex(indices.last(), 5);
-            }
-
-        } else {
-            index = this.tryIncrementIndex(canvasIndex, 5);
-        }
-
-        return index;
-    }
-
-    tryDecrementIndex(currentIndex: number, numberToIncrement: number): number {
-        for (var i = 0; i < numberToIncrement; i++) {
-            if (currentIndex > 0) {
-                currentIndex--;
-            }
-            else {
-                break;
-            }
-        }
-        return currentIndex;
-    }
-
-    tryIncrementIndex(currentIndex: number, numberToIncrement: number): number {
-        var totalCanvases = this.getTotalCanvases();
-        for (var i = 0; i < numberToIncrement; i++) {
-            if (currentIndex < (totalCanvases -1)) {
-                currentIndex++;
-            }
-            else {
-                break;
-            }
-        }
-        return currentIndex;
-    }
-
     getStartCanvasIndex(): number {
         return this.getCurrentSequence().getStartCanvasIndex();
+    }
+
+    getShareUrl(): string {
+        if (Utils.Documents.IsInIFrame()){
+            return parent.document.location.href;
+        }
+
+        return document.location.href;
     }
 
     addTimestamp(uri: string): string{
@@ -367,7 +300,7 @@ class BaseProvider implements IProvider{
         return (this.isHomeDomain && this.isOnlyInstance);
     }
 
-    getThumbs(width: number, height: number): Manifesto.Thumb[] {
+    getThumbs(width: number, height: number): Manifesto.IThumb[] {
         return this.getCurrentSequence().getThumbs(width, height);
     }
 
@@ -384,7 +317,11 @@ class BaseProvider implements IProvider{
         return this.getCurrentSequence().getCanvasIndexByLabel(label, foliated);
     }
 
-    getTree(): Manifesto.TreeNode{
+    getRanges(): IRange[] {
+        return <IRange[]>(<Manifesto.IManifest>this.manifest).getRanges();
+    }
+
+    getTree(): Manifesto.ITreeNode{
         return this.iiifResource.getTree();
     }
 

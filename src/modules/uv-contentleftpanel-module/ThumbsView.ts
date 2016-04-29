@@ -6,6 +6,7 @@ import ISeadragonExtension = require("../../extensions/uv-seadragon-extension/IS
 import ISeadragonProvider = require("../../extensions/uv-seadragon-extension/ISeadragonProvider");
 import Mode = require("../../extensions/uv-seadragon-extension/Mode");
 import Shell = require("../uv-shared-module/Shell");
+import ITreeNode = require("../uv-shared-module/ITreeNode");
 
 class ThumbsView extends BaseView {
 
@@ -23,7 +24,7 @@ class ThumbsView extends BaseView {
 
     create(): void {
 
-        this.setConfig('treeViewLeftPanel');
+        this.setConfig('contentLeftPanel');
 
         super.create();
 
@@ -148,6 +149,10 @@ class ThumbsView extends BaseView {
         this.isCreated = true;
     }
 
+    public selectAll(selected): void {
+
+    }
+
     scrollStop(): void {
 
         var scrollPos = 1 / ((this.$thumbs.height() - this.$element.height()) / this.$element.scrollTop());
@@ -264,7 +269,7 @@ class ThumbsView extends BaseView {
 
         this.$selectedThumb = this.getThumbByIndex(index);
 
-        if (this.provider.isPagingSettingEnabled()){
+        if ((<ISeadragonProvider>this.provider).isPagingSettingEnabled()){
             var indices = this.provider.getPagedIndices(index);
 
             _.each(indices, (index: number) => {

@@ -1,5 +1,6 @@
 import BaseSettingsDialogue = require("../../modules/uv-dialogues-module/SettingsDialogue");
 import ISeadragonExtension = require("./ISeadragonExtension");
+import ISeadragonProvider = require("./ISeadragonProvider");
 
 class SettingsDialogue extends BaseSettingsDialogue {
 
@@ -32,6 +33,7 @@ class SettingsDialogue extends BaseSettingsDialogue {
         this.$navigatorEnabled = $('<div class="setting navigatorEnabled"></div>');
         this.$scroll.append(this.$navigatorEnabled);
 
+        // todo: use .checkboxButton jquery extension
         this.$navigatorEnabledCheckbox = $('<input id="navigatorEnabled" type="checkbox" />');
         this.$navigatorEnabled.append(this.$navigatorEnabledCheckbox);
 
@@ -133,7 +135,7 @@ class SettingsDialogue extends BaseSettingsDialogue {
             this.$zoomPerClickEnabledCheckbox.removeAttr("checked");
         }        
 
-        if (!this.provider.isPagingAvailable()){
+        if (!(<ISeadragonProvider>this.provider).isPagingAvailable()){
             this.$pagingEnabled.hide();
         } else {
             if (settings.pagingEnabled){
