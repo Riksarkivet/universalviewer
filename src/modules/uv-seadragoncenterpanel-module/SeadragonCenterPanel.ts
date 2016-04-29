@@ -619,7 +619,7 @@ class SeadragonCenterPanel extends CenterPanel {
                 - parseInt(this.$title.css("padding-right"), 10));
         }
 
-        this.$title.ellipsisFill(this.title);
+        this.$title.ellipsisFill(this.provider.sanitize(this.title));
 
         this.$spinner.css('top', (this.$content.height() / 2) - (this.$spinner.height() / 2));
         this.$spinner.css('left', (this.$content.width() / 2) - (this.$spinner.width() / 2));
