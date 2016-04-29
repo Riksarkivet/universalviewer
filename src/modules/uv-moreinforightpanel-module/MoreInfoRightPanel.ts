@@ -60,8 +60,7 @@ class MoreInfoRightPanel extends RightPanel {
         this.$expandButton.attr('tabindex', '4');
         this.$collapseButton.attr('tabindex', '4');
 
-        this.$title.text(this.content.title);
-        this.$closedTitle.text(this.content.title);
+        this.setTitle(this.content.title);
 
         $.subscribe(BaseCommands.CANVAS_INDEX_CHANGED, (e, canvasIndex) => {
             this.canvasData = this.getCanvasData(this.provider.getCanvasByIndex(canvasIndex));

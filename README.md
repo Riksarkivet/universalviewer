@@ -36,6 +36,8 @@ Features:
 - Supports search and autocomplete service integration with overlayed search results.
 - Internationalised UI using [transifex.com](https://www.transifex.com/) (currently supports English and Welsh. Volunteers for more translations gratefully accepted!)
 
+[More about the Universal Viewer](https://github.com/UniversalViewer/universalviewer/wiki/About)
+
 ## Stable Builds
 
 See the [GitHub releases page](https://github.com/UniversalViewer/UniversalViewer/releases).
@@ -60,7 +62,7 @@ All command-line operations for building the UV are scripted using [Grunt](http:
 
 1. Clone the `universalviewer` repository and sub modules:
 
-	    git clone git@github.com:UniversalViewer/universalviewer.git --recursive
+	    git clone https://github.com/UniversalViewer/universalviewer.git --recursive
 
 1. On the command line, go in to the `universalviewer` folder
 

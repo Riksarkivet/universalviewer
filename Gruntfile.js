@@ -42,7 +42,9 @@ module.exports = function (grunt) {
             soktjanst: {
                 options: { force: true },
                 src: [ '<%= config.dirs.soktjanst %>/*']
-            }
+            },
+            distexamples: ['<%= config.dirs.examples %>/uv-*.zip', '<%= config.dirs.examples %>/uv-*.tar'],
+            extension: ['./src/extensions/*/build/*']
         },
 
         copy: {
@@ -193,19 +195,6 @@ module.exports = function (grunt) {
                     }
                 ]
             },
-            //app_rename: {
-            //    files: [
-            //        {
-            //            cwd: '<%= config.dirs.build %>',
-            //            expand: true,
-            //            src: ['app.html'],
-            //            rename: function (dest, src) {
-            //                return dest + 'app_original.html';
-            //            },
-            //            dest: '<%= config.dirs.build %>/'
-            //        }
-            //    ]
-            //},
             soktjanst: {
                 // copy files that we use from /dest to soktjanst/universalviewer.
                 files: [
@@ -241,6 +230,17 @@ module.exports = function (grunt) {
                     }
                 ]
             },
+            distexamples: {
+                // copy zip archives to examples
+                files: [
+                    {
+                        cwd: '<%= config.dirs.dist %>',
+                        expand: true,
+                        src: ['*.zip', '*.tar'],
+                        dest: '<%= config.dirs.examples %>/'
+                    }
+                ]
+            }
         },
 
         sync: {
@@ -275,7 +275,6 @@ module.exports = function (grunt) {
                         src: [
                             'es6-promise/promise.min.js',
                             'exjs/dist/ex.es3.min.js',
-                            'exjs/dist/ex.es3.min.js.map',
                             'extensions/dist/extensions.js',
                             'http-status-codes/dist/http-status-codes.js',
                             'jquery-plugins/dist/jquery-plugins.js',
@@ -576,7 +575,9 @@ module.exports = function (grunt) {
             'clean:dist',
             'copy:dist',
             'compress:zip',
-            'compress:tar'
+            'compress:tar',
+            'clean:distexamples',
+            'copy:distexamples'
         );
     });
 
