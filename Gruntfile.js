@@ -485,7 +485,11 @@ module.exports = function (grunt) {
         configure: {
             apply: {
                 options: {
-                    default: 'en-GB'
+                    default: 'en-GB',
+                    enabledLocales: [
+                        'en-GB',
+                        'sv-SE'
+                    ]
                 }
             }
         },

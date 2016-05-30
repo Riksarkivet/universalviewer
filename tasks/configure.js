@@ -18,13 +18,13 @@ module.exports = function (grunt) {
 
             if (!grunt.file.isDir(dir)) return;
 
-            configureExtension(dir);
+            configureExtension(dir, options.enabledLocales);
         });
     });
 
-    function configureExtension(dir) {
+    function configureExtension(dir, enabledLocales) {
 
-        var locales = getLocales(dir);
+        var locales = getLocales(dir, enabledLocales);
 
         // for each extension/l10n/xx-XX.json localisation file, find its counterpart extension/config/xx-XX.json config file.
         // if none is found, fall back to extension/config/en-GB.json
@@ -33,7 +33,7 @@ module.exports = function (grunt) {
         // use jsonSchemaGenerator to generate schema for examples editor.
         // copy to extension/config/xx-XX.schema.js
 
-        var l10nFiles = getL10nFiles(dir);
+        var l10nFiles = getL10nFiles(dir, enabledLocales);
 
         _.each(l10nFiles, function(localeFile) {
             var regex = (/(.*)\/l10n\/(.*).json/).exec(localeFile);
@@ -78,7 +78,7 @@ module.exports = function (grunt) {
         });
     }
 
-    function getLocales(dir) {
+    function getLocales(dir, enabledLocales) {
         // for each extension/l10n dir, get the contained
         // l10n files and add them to a config.locales array
 
@@ -88,7 +88,7 @@ module.exports = function (grunt) {
             }
         };
 
-        var jsonFiles = getL10nFiles(dir);
+        var jsonFiles = getL10nFiles(dir, enabledLocales);
 
         _.each(jsonFiles, function(file) {
 
@@ -118,13 +118,20 @@ module.exports = function (grunt) {
             //    locale.default = true;
             //}
 
-            config.localisation.locales.push(locale);
+            if (_.contains(enabledLocales, locale.name))
+                config.localisation.locales.push(locale);
         });
 
         return config;
     }
 
-    function getL10nFiles(dir){
-        return globArray.sync([path.join(dir, '*.json'), '!' + path.join(dir, 'xx-XX.json')]);
+    function getL10nFiles(dir, enabledLocales){
+        var files = globArray.sync([path.join(dir, '*.json'), '!' + path.join(dir, 'xx-XX.json')]);
+        
+        return _.filter(files, function(file) { 
+            return _.some(enabledLocales, function(enabledLocale) {
+                return file.endsWith(enabledLocale + ".json");
+            });
+        });
     }
 };
