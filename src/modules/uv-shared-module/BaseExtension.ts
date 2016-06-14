@@ -644,7 +644,7 @@ class BaseExtension implements IExtension {
 
         _.each(indices, (index) => {
             var canvas: Manifesto.ICanvas = this.provider.getCanvasByIndex(index);
-            var r: Manifesto.IExternalResource = new ExternalResource(canvas, this.provider.getInfoUri);
+            var r: Manifesto.IExternalResource = new ExternalResource(canvas, this.provider.getInfoUri, this.bootstrapper.isCORSEnabled());
 
             // used to reload resources with isResponseHandled = true.
             if (resources){

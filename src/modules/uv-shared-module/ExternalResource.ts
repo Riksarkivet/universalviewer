@@ -10,10 +10,12 @@ class ExternalResource implements Manifesto.IExternalResource {
     //public profile: Manifesto.ServiceProfile;
     public status: number;
     public tokenService: Manifesto.IService;
+    public isCORSEnabled = false;
 
-    constructor(resource: Manifesto.IManifestResource, dataUriFunc: (r: Manifesto.IManifestResource) => string) {
+    constructor(resource: Manifesto.IManifestResource, dataUriFunc: (r: Manifesto.IManifestResource) => string, isCORSEnabled: boolean) {
         this.dataUri = dataUriFunc(resource);
         this._parseAuthServices(resource);
+        this.isCORSEnabled = isCORSEnabled;
         //this.profile = (<Manifesto.IService>resource).getProfile();
     }
 
@@ -68,61 +70,85 @@ class ExternalResource implements Manifesto.IExternalResource {
                 type = 'HEAD';
             }
 
-            $.ajax(<JQueryAjaxSettings>{
-                url: that.dataUri,
-                type: type,
-                dataType: 'json',
-                xhrFields: { withCredentials: true },
-                beforeSend: (xhr) => {
-                    if (accessToken){
-                        xhr.setRequestHeader("Authorization", "Bearer " + accessToken.accessToken);
+            if (this.isCORSEnabled) {
+                $.ajax(<JQueryAjaxSettings>{
+                    url: that.dataUri,
+                    type: type,
+                    dataType: 'json',
+                    xhrFields: { withCredentials: true },
+                    beforeSend: (xhr) => {
+                        if (accessToken){
+                            xhr.setRequestHeader("Authorization", "Bearer " + accessToken.accessToken);
+                        }
                     }
-                }
-            }).done((data) => {
-
-                // if it's a resource without an info.json
-                // todo: if resource doesn't have a @profile
-                if (!data){
-                    that.status = HTTPStatusCode.OK;
+                }).done((data) => {
+                    this.parseInfoResponse(data);
                     resolve(that);
-                } else {
-                    var uri = unescape(data['@id']);
+                }).fail((error) => {
 
-                    that.data = data;
-                    that._parseAuthServices(that.data);
-
-                    // remove trailing /info.json
-                    if (_.endsWith(uri, '/info.json')){
-                        uri = uri.substr(0, _.lastIndexOf(uri, '/'));
+                    that.status = error.status;
+                    that.error = error;
+                    if (error.responseJSON){
+                        that._parseAuthServices(error.responseJSON);
                     }
-
-                    var dataUri = that.dataUri;
-
-                    if (_.endsWith(dataUri, '/info.json')){
-                        dataUri = dataUri.substr(0, _.lastIndexOf(dataUri, '/'));
-                    }
-
-                    // if the request was redirected to a degraded version and there's a login service to get the full quality version
-                    if (uri !== dataUri && that.loginService){
-                        that.status = HTTPStatusCode.MOVED_TEMPORARILY;
-                    } else {
-                        that.status = HTTPStatusCode.OK;
-                    }
-
                     resolve(that);
-                }
 
-            }).fail((error) => {
+                }); 
+            }
+            else {
+                $.ajax(<JQueryAjaxSettings>{
+                    url: that.dataUri,
+                    type: "GET",
+                    dataType: 'jsonp',
+                    jsonp: 'callback',
+                    jsonpCallback: 'infoCallback',
+                    beforeSend: (xhr) => {
+                        if (accessToken){
+                            xhr.setRequestHeader("Authorization", "Bearer " + accessToken.accessToken);
+                        }
+                    }
+                });
 
-                that.status = error.status;
-                that.error = error;
-                if (error.responseJSON){
-                    that._parseAuthServices(error.responseJSON);
-                }
-                resolve(that);
-
-            });
+                window.infoCallback = (data) => {
+                    this.parseInfoResponse(data);
+                    resolve(that);
+                };
+            }
         });
+    }
+
+    parseInfoResponse(data) {
+        // if it's a resource without an info.json
+        // todo: if resource doesn't have a @profile
+        if (!data){
+            this.status = HTTPStatusCode.OK;
+            //resolve(this);
+        } else {
+            var uri = unescape(data['@id']);
+
+            this.data = data;
+            this._parseAuthServices(this.data);
+
+            // remove trailing /info.json
+            if (_.endsWith(uri, '/info.json')){
+                uri = uri.substr(0, _.lastIndexOf(uri, '/'));
+            }
+
+            var dataUri = this.dataUri;
+
+            if (_.endsWith(dataUri, '/info.json')){
+                dataUri = dataUri.substr(0, _.lastIndexOf(dataUri, '/'));
+            }
+
+            // if the request was redirected to a degraded version and there's a login service to get the full quality version
+            if (uri !== dataUri && this.loginService){
+                this.status = HTTPStatusCode.MOVED_TEMPORARILY;
+            } else {
+                this.status = HTTPStatusCode.OK;
+            }
+
+            //resolve(this);
+        }
     }
 }
 

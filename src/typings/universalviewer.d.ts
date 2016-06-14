@@ -41,6 +41,7 @@ declare var virtex: IVirtex;
 interface Window{
     configExtensionCallback: any;
     manifestCallback: any;
+    infoCallback: any;
     manifesto: IManifesto;
     browserDetect: any;
     trackEvent(category: string, action: string, label: string, value?: any);
