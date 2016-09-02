@@ -15,7 +15,6 @@ class MoreInfoRightPanel extends RightPanel {
     canvasData: IMetadataItem[];
     aggregateValuesConfig: string[];
     canvasExcludeConfig: string[];
-    copyTextTemplate: JQuery;
 
     constructor($element: JQuery) {
         super($element);
