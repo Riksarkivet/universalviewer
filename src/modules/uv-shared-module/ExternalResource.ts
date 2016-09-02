@@ -13,6 +13,7 @@ class ExternalResource implements Manifesto.IExternalResource {
     public isCORSEnabled = false;
 
     constructor(resource: Manifesto.IManifestResource, dataUriFunc: (r: Manifesto.IManifestResource) => string, isCORSEnabled: boolean) {
+        resource.externalResource = this;
         this.dataUri = dataUriFunc(resource);
         this._parseAuthServices(resource);
         this.isCORSEnabled = isCORSEnabled;

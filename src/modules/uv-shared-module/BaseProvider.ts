@@ -27,6 +27,7 @@ class BaseProvider implements IProvider{
     isOnlyInstance: boolean;
     isReload: boolean;
     jsonp: boolean;
+    lastCanvasIndex: number;
     licenseFormatter: UriLabeller;
     locale: string;
     locales: any[];
@@ -115,11 +116,11 @@ class BaseProvider implements IProvider{
         return this.bootstrapper.params.getParam(Params.sequenceIndex);
     }
 
-    getCanvasType(canvas?: Manifesto.ICanvas): Manifesto.CanvasType {
-        if (!canvas){
-            canvas = this.getCurrentCanvas();
+    getElementType(element?: Manifesto.IElement): Manifesto.ElementType {
+        if (!element){
+            element = this.getCurrentCanvas();
         }
-        return canvas.getType();
+        return element.getType();
     }
 
     getAttribution(): string {
@@ -134,8 +135,8 @@ class BaseProvider implements IProvider{
         return this.manifest.getLogo();
     }
 
-    getTitle(): string {
-        return this.manifest.getTitle();
+    getLabel(): string {
+        return this.manifest.getLabel();
     }
 
     getSeeAlso(): any {
@@ -285,7 +286,7 @@ class BaseProvider implements IProvider{
     }
 
     getShareUrl(): string {
-        if (Utils.Documents.IsInIFrame()){
+        if (Utils.Documents.IsInIFrame() && this.isDeepLinkingEnabled()){
             return parent.document.location.href;
         }
 
@@ -396,28 +397,6 @@ class BaseProvider implements IProvider{
         }
 
         return result;
-    }
-
-    defaultToThumbsView(): boolean{
-        switch (this.getManifestType().toString()){
-            case manifesto.ManifestType.monograph().toString():
-                if (!this.isMultiSequence()) return true;
-                break;
-            case manifesto.ManifestType.manuscript().toString():
-                if (!this.isMultiSequence()) return true;
-                break;
-        }
-
-        // todo: use rendering?
-        //var sequenceType = this.getSequenceType();
-        //
-        //switch (sequenceType){
-        //    case 'application-pdf':
-        //        return true;
-        //        break;
-        //}
-
-        return false;
     }
 
     getSettings(): ISettings {
@@ -558,6 +537,23 @@ class BaseProvider implements IProvider{
 
     getSerializedLocales(): string {
         return this.serializeLocales(this.locales);
+    }
+
+    getCurrentElement(): Manifesto.IElement {
+        return <Manifesto.IElement>this.getCanvasByIndex(this.canvasIndex);
+    }
+
+    getResources(): Manifesto.IAnnotation[] {
+        var element: Manifesto.IElement = this.getCurrentElement();
+        return element.getResources();
+    }
+
+    hasParentCollection(): boolean {
+        return !!this.manifest.parentCollection;
+    }
+
+    hasResources(): boolean {
+        return this.getResources().length > 0;
     }
 }
 

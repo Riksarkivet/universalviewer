@@ -18,7 +18,6 @@ class HeaderPanel extends BaseView {
     $localeToggleButton: JQuery;
     $options: JQuery;
     $headerBorder: JQuery;
-    $pagingToggleButton: JQuery;
     $rightOptions: JQuery;
     $settingsButton: JQuery;
     $downloadButton: JQuery;
@@ -38,7 +37,6 @@ class HeaderPanel extends BaseView {
         super.create();
 
         $.subscribe(BaseCommands.SETTINGS_CHANGED, () => {
-            this.updatePagingToggle();
             this.updateButton(this.$downloadButton, "downloadEnabled");
             this.updateButton(this.$printButton, "printEnabled");
         });
@@ -70,9 +68,6 @@ class HeaderPanel extends BaseView {
 
         //this.$helpButton = $('<a href="#" class="action help">' + this.content.help + '</a>');
         //this.$rightOptions.append(this.$helpButton);
-
-        this.$pagingToggleButton = $('<a class="imageBtn pagingToggle"></a>');
-        this.$rightOptions.append(this.$pagingToggleButton);
 
         this.$localeToggleButton = $('<a class="localeToggle"></a>');
         this.$rightOptions.append(this.$localeToggleButton);
@@ -136,13 +131,7 @@ class HeaderPanel extends BaseView {
             $.publish(BaseCommands.HIDE_INFORMATION);
         });
 
-        this.updatePagingToggle();
-
         this.updateLocaleToggle();
-
-        this.$pagingToggleButton.on('click', () => {
-            this.updateSettings({ pagingEnabled: !this.getSettings().pagingEnabled });
-        });
 
         this.$localeToggleButton.on('click', () => {
             this.provider.changeLocale(String(this.$localeToggleButton.data('locale')));
@@ -176,27 +165,6 @@ class HeaderPanel extends BaseView {
         if (this.options.localeToggleEnabled === false){
             this.$localeToggleButton.hide();
         }
-
-        if (this.options.pagingToggleEnabled === false){
-            this.$pagingToggleButton.hide();
-        }
-    }
-
-    updatePagingToggle(): void {
-        if (!this.pagingToggleIsVisible()){
-            this.$pagingToggleButton.hide();
-            return;
-        }
-
-        if ((<ISeadragonProvider>this.provider).isPagingSettingEnabled()){
-            this.$pagingToggleButton.removeClass('two-up');
-            this.$pagingToggleButton.addClass('one-up');
-            this.$pagingToggleButton.prop('title', this.content.oneUp);
-        } else {
-            this.$pagingToggleButton.removeClass('one-up');
-            this.$pagingToggleButton.addClass('two-up');
-            this.$pagingToggleButton.prop('title', this.content.twoUp);
-        }
     }
 
     updateLocaleToggle(): void {
@@ -215,10 +183,6 @@ class HeaderPanel extends BaseView {
 
     localeToggleIsVisible(): boolean {
         return this.provider.getLocales().length > 1 && this.options.localeToggleEnabled;
-    }
-
-    pagingToggleIsVisible(): boolean {
-        return this.options.pagingToggleEnabled && (<ISeadragonProvider>this.provider).isPagingAvailable();
     }
 
     showInformation(args: InformationArgs): void {
@@ -282,10 +246,8 @@ class HeaderPanel extends BaseView {
 
         // hide toggle buttons below minimum width
         if (this.extension.width() < this.provider.config.options.minWidthBreakPoint){
-            if (this.pagingToggleIsVisible()) this.$pagingToggleButton.hide();
             if (this.localeToggleIsVisible()) this.$localeToggleButton.hide();
         } else {
-            if (this.pagingToggleIsVisible()) this.$pagingToggleButton.show();
             if (this.localeToggleIsVisible()) this.$localeToggleButton.show();
         }
     }

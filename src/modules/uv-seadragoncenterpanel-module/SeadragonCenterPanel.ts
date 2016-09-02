@@ -251,7 +251,7 @@ class SeadragonCenterPanel extends CenterPanel {
         
         this.adjustImage(true);
 
-        this.title = this.extension.provider.getTitle();
+        this.title = (<ISeadragonProvider>this.extension.provider).getLabel();
 
         this.createNavigationButtons();
 
@@ -378,6 +378,7 @@ class SeadragonCenterPanel extends CenterPanel {
         var leftPage: any;
         var leftPageBounds: any;
         var rightPage: any;
+        var rightPageBounds: any;
         var rightPagePos: any;
 
         // if there's more than one image, determine alignment strategy
@@ -400,9 +401,16 @@ class SeadragonCenterPanel extends CenterPanel {
                     leftPageBounds = leftPage.getBounds(true);
                     x = leftPageBounds.x + leftPageBounds.width;
                     rightPage = this.viewer.world.getItemAt(1);
-                    rightPagePos = rightPage.getBounds(true).getTopLeft();
+                    rightPageBounds = rightPage.getBounds(true);
+                    rightPagePos = rightPageBounds.getTopLeft();
                     rightPagePos.x = x + this.config.options.pageGap;
                     rightPage.setPosition(rightPagePos, true);
+
+                    if (rightPage.source.width > rightPage.source.height){
+                        rightPage.setWidth(leftPageBounds.width);
+                    } else {
+                        rightPage.setHeight(leftPageBounds.height);
+                    }
                 }
             } else {
 

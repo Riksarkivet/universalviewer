@@ -1,4 +1,5 @@
-﻿
+// uv-1.7.27
+
 //https://raw.githubusercontent.com/jfriend00/docReady/master/docready.js
 (function(funcName, baseObj) {
     // The public function name defaults to window.docReady
@@ -185,8 +186,8 @@ docReady(function() {
         // get the part preceding 'lib/embed.js'
         var baseUri = (/(.*)lib\//).exec(scriptUri)[1];
         appUri = baseUri + 'app.html';
-        easyXDMUri = baseUri + 'lib/easyXDM.min.js';
-        json2Uri = baseUri + 'lib/json2.min.js';
+        easyXDMUri = 'https://cdnjs.cloudflare.com/ajax/libs/easyXDM/2.4.17.1/easyXDM.min.js';
+        json2Uri = 'https://cdnjs.cloudflare.com/ajax/libs/easyXDM/2.4.17.1/json2.min.js';
 
         var a = document.createElement('a');
         a.href = absScriptUri;

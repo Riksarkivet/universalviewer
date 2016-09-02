@@ -1433,6 +1433,11 @@ declare module Utils {
     }
 }
 declare module Utils {
+    class Files {
+        static SimplifyMimeType(mime: string): string;
+    }
+}
+declare module Utils {
     class Keyboard {
         static GetCharCode(e: KeyboardEvent): number;
     }

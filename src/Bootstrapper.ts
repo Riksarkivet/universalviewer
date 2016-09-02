@@ -49,10 +49,10 @@ class Bootstrapper{
         return (null === this.params.jsonp) ? Modernizr.cors : !this.params.jsonp;
     }
 
-    loadIIIFResource(): void{
+    loadIIIFResource(): void {
         var that = this;
 
-        if (this.isCORSEnabled()){
+        if (this.isCORSEnabled()) {
             $.ajax({
                 dataType: "json",
                 url: that.params.manifestUri,
@@ -60,7 +60,7 @@ class Bootstrapper{
                 success: (r) => {
                     this.iiifResource = that.parseIIIFResource(JSON.stringify(r));
                     this.loadResource().then((manifest: Manifesto.IManifest) => {
-                        if (!manifest){
+                        if (!manifest) {
                             this.notFound();
                             return;
                         }
@@ -119,6 +119,16 @@ class Bootstrapper{
                             resolve();
                         }
 
+                        // Special case: we're trying to load the first manifest of the
+                        // collection, but the collection has no manifests but does have
+                        // subcollections. Thus, we should dive in until we find something
+                        // we can display!
+                        if (collection.getTotalManifests() == 0 && this.params.manifestIndex == 0 && collection.getTotalCollections() > 0) {
+                            that.params.collectionIndex = 0;
+                            that.params.manifestUri = collection.id;
+                            that.bootStrap(that.params);
+                        }
+
                         collection.getManifestByIndex(that.params.manifestIndex).then((manifest: Manifesto.IManifest) => {
                             resolve(manifest);
                         });
@@ -137,6 +147,12 @@ class Bootstrapper{
     manifestLoaded(manifest: Manifesto.IManifest): void {
 
         this.manifest = manifest;
+
+        var trackingLabel: string = manifest.getTrackingLabel();
+
+        trackingLabel += ', URI: ' + this.params.embedDomain;
+
+        window.trackingLabel = trackingLabel;
 
         var sequence: Manifesto.ISequence;
         var canvas: Manifesto.ICanvas;
