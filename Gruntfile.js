@@ -38,7 +38,6 @@ module.exports = function (grunt) {
             dist: ['<%= config.dirs.dist %>'],
             examples: ['<%= config.dirs.examples %>/uv-*'],
             apphtml: ['<%= config.dirs.build %>/app.html'],
-            extension: ['./src/extensions/*/build/*'],
             soktjanst: {
                 options: { force: true },
                 src: [ '<%= config.dirs.soktjanst %>/*']
