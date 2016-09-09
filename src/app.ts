@@ -16,7 +16,22 @@ require.config({
         'xdomainrequest': 'lib/jquery.xdomainrequest',
         'yepnopecss': 'lib/yepnope.css',
         'rangeslider' : 'lib/rangeslider'
+    },
+    shim: {
+        jquery: {
+            exports: '$'
+        },
+        'openseadragon': {
+            exports: 'OpenSeadragon'
+        },
+        'openseadragon-filtering': {
+            deps: ['openseadragon']
+        },
+        'rangeslider' : {
+            deps: ['jquery']
+        }
     }
+
 });
 
 require([
