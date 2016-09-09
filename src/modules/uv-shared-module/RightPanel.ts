@@ -44,7 +44,7 @@ class RightPanel extends BaseExpandPanel {
             settings.panelOpenRightPanel = false;            
             $.publish(BaseCommands.CLOSE_RIGHT_PANEL);
         }
-        this.provider.updateSettings(settings);
+        this.provider.updateSettings({panelOpenRightPanel: settings.panelOpenRightPanel});
     }
 
     resize(): void {

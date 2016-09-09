@@ -491,9 +491,7 @@ class SeadragonCenterPanel extends CenterPanel {
             }
 
             if (window.matchMedia && window.matchMedia("(max-width: 1024px)").matches) {
-                var settings: ISettings = this.provider.getSettings();
-                settings.navigatorEnabled = false;
-                this.provider.updateSettings(settings);
+                this.provider.updateSettings({navigatorEnabled: false});
             }
         } else {
             // it's not the first load

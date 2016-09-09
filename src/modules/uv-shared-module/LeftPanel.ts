@@ -51,7 +51,7 @@ class LeftPanel extends BaseExpandPanel {
             settings.panelOpenLeftPanel = false;            
             $.publish(BaseCommands.CLOSE_LEFT_PANEL);
         }
-        this.provider.updateSettings(settings);
+        this.provider.updateSettings({panelOpenLeftPanel: settings.panelOpenLeftPanel});
     }
 
     resize(): void {
