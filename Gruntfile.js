@@ -203,6 +203,7 @@ module.exports = function (grunt) {
                         filter: 'isFile',
                         src: [ 
                             'themes/uv-sv-SE-theme/img/*',
+                            'themes/uv-sv-SE-theme/img/uv-contentleftpanel-module/*',
                             'themes/uv-sv-SE-theme/img/uv-moreinforightpanel-module/*',
                             'themes/uv-sv-SE-theme/img/uv-pagingheaderpanel-module/*',
                             'themes/uv-sv-SE-theme/img/uv-seadragoncenterpanel-module/*',
