@@ -83,12 +83,7 @@ module.exports = function (grunt) {
                         cwd: '<%= config.dirs.lib %>',
                         src: [
                             'embed.js',
-                            'easyXDM.min.js',
-                            'easyxdm.swf',
-                            'json2.min.js',
-                            'require.js',
                             'l10n.js',
-                            'base64.min.js',
                             'openseadragon-filtering.js',
                             'rangeslider.js',
                             'rangeslider.css'
