@@ -463,13 +463,13 @@ class FooterPanel extends BaseFooterPanel {
         if (this.isPageModeEnabled()) {
             var canvas: Manifesto.ICanvas = this.provider.getCanvasByIndex(index);
 
-            var label = canvas.getLabel();
+            var label = this.provider.sanitize(canvas.getLabel());
 
             if (label === "") {
                 label = this.content.defaultLabel;
             }
 
-            var lastCanvasOrderLabel = this.provider.getLastCanvasLabel(true);
+            var lastCanvasOrderLabel = this.provider.sanitize(this.provider.getLastCanvasLabel(true)) ;
             this.$pagePositionLabel.html(String.format(displaying, this.content.page, label, lastCanvasOrderLabel));
         } else {
             this.$pagePositionLabel.html(String.format(displaying, this.content.image, index + 1, this.provider.getTotalCanvases()));
