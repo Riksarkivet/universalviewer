@@ -7,6 +7,7 @@ class BaseExpandPanel extends BaseView {
     isFullyExpanded: boolean = false;
     isUnopened: boolean = true;
     autoToggled: boolean = false;
+    expandFullEnabled: boolean = true;
 
     $top: JQuery;
     $title: JQuery;
@@ -32,22 +33,22 @@ class BaseExpandPanel extends BaseView {
         this.$title.prop('title', this.content.title);
         this.$top.append(this.$title);
 
-        this.$expandFullButton = $('<a class="expandFullButton"></a>');
+        this.$expandFullButton = $('<a class="expandFullButton" tabindex="0"></a>');
         this.$expandFullButton.prop('title', this.content.expandFull);
         this.$top.append(this.$expandFullButton);
         
-        if (!Utils.Bools.GetBool(this.config.options.expandFullEnabled, true)) {
+        if (!Utils.Bools.getBool(this.config.options.expandFullEnabled, true)) {
             this.$expandFullButton.hide();
         } 
 
-        this.$collapseButton = $('<div class="collapseButton"></div>');
+        this.$collapseButton = $('<div class="collapseButton" tabindex="0"></div>');
         this.$collapseButton.prop('title', this.content.collapse);
         this.$top.append(this.$collapseButton);
 
         this.$closed = $('<div class="closed"></div>');
         this.$element.append(this.$closed);
 
-        this.$expandButton = $('<a class="expandButton"></a>');
+        this.$expandButton = $('<a class="expandButton" tabindex="0"></a>');
         this.$expandButton.prop('title', this.content.expand);
         this.$closed.append(this.$expandButton);
 
@@ -214,7 +215,10 @@ class BaseExpandPanel extends BaseView {
 
     collapseFullFinish(): void {
         this.isFullyExpanded = false;
-        this.$expandFullButton.show();
+
+        if (this.expandFullEnabled){
+            this.$expandFullButton.show();
+        }
 
         this.focusExpandFullButton();
     }

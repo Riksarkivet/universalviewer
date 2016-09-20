@@ -1,6 +1,6 @@
-//! openseadragon 2.1.0
-//! Built on 2016-03-09
-//! Git commit: v2.1.0-156-4ad6d73-dirty
+//! openseadragon 2.2.1
+//! Built on 2016-06-21
+//! Git commit: v2.2.1-0-babdefd
 //! http://openseadragon.github.io
 //! License: http://openseadragon.github.io/license/
 
@@ -89,27 +89,8 @@
 
 
 /**
- * @version  openseadragon 2.1.0
- *
- * @file
- * <h2><strong>OpenSeadragon - Javascript Deep Zooming</strong></h2>
- * <p>
- * OpenSeadragon provides an html interface for creating
- * deep zoom user interfaces.  The simplest examples include deep
- * zoom for large resolution images, and complex examples include
- * zoomable map interfaces driven by SVG files.
- * </p>
- *
- */
-
-/**
- * @module OpenSeadragon
- *
- */
-
-/**
  * @namespace OpenSeadragon
- *
+ * @version openseadragon 2.2.1
  * @classdesc The root namespace for OpenSeadragon.  All utility methods
  * and classes are defined on or below this namespace.
  *
@@ -160,7 +141,7 @@
   *       created.
   *     * placement a string to define the relative position to the viewport.
   *       Only used if no width and height are specified. Default: 'TOP_LEFT'.
-  *       See {@link OpenSeadragon.OverlayPlacement} for possible values.
+  *       See {@link OpenSeadragon.Placement} for possible values.
   *
   * @property {String} [xmlPath=null]
   *     <strong>DEPRECATED</strong>. A relative path to load a DZI file from the server.
@@ -264,6 +245,12 @@
   *     A zoom percentage ( where 1 is 100% ) of the highest resolution level.
   *     When zoomed in beyond this value alternative compositing will be used to
   *     smooth out the edges between tiles. This will have a performance impact.
+  *     Can be set to Infinity to turn it off.
+  *     Note: This setting is ignored on iOS devices due to a known bug (See {@link https://github.com/openseadragon/openseadragon/issues/952})
+  *
+  * @property {Boolean} [iOSDevice=?]
+  *     True if running on an iOS device, false otherwise.
+  *     Used to disable certain features that behave differently on iOS devices.
   *
   * @property {Boolean} [autoResize=true]
   *     Set to false to prevent polling for viewer size changes. Useful for providing custom resize behavior.
@@ -379,16 +366,16 @@
   *
   * @property {String} [navigatorId=navigator-GENERATED DATE]
   *     The ID of a div to hold the navigator minimap.
-  *     If an ID is specified, the navigatorPosition, navigatorSizeRatio, navigatorMaintainSizeRatio, and navigatorTop|Left|Height|Width options will be ignored.
+  *     If an ID is specified, the navigatorPosition, navigatorSizeRatio, navigatorMaintainSizeRatio, navigator[Top|Left|Height|Width] and navigatorAutoFade options will be ignored.
   *     If an ID is not specified, a div element will be generated and placed on top of the main image.
   *
   * @property {String} [navigatorPosition='TOP_RIGHT']
   *     Valid values are 'TOP_LEFT', 'TOP_RIGHT', 'BOTTOM_LEFT', 'BOTTOM_RIGHT', or 'ABSOLUTE'.<br>
-  *     If 'ABSOLUTE' is specified, then navigatorTop|Left|Height|Width determines the size and position of the navigator minimap in the viewer, and navigatorSizeRatio and navigatorMaintainSizeRatio are ignored.<br>
-  *     For 'TOP_LEFT', 'TOP_RIGHT', 'BOTTOM_LEFT', and 'BOTTOM_RIGHT', the navigatorSizeRatio or navigatorHeight|Width values determine the size of the navigator minimap.
+  *     If 'ABSOLUTE' is specified, then navigator[Top|Left|Height|Width] determines the size and position of the navigator minimap in the viewer, and navigatorSizeRatio and navigatorMaintainSizeRatio are ignored.<br>
+  *     For 'TOP_LEFT', 'TOP_RIGHT', 'BOTTOM_LEFT', and 'BOTTOM_RIGHT', the navigatorSizeRatio or navigator[Height|Width] values determine the size of the navigator minimap.
   *
   * @property {Number} [navigatorSizeRatio=0.2]
-  *     Ratio of navigator size to viewer size. Ignored if navigatorHeight|Width are specified.
+  *     Ratio of navigator size to viewer size. Ignored if navigator[Height|Width] are specified.
   *
   * @property {Boolean} [navigatorMaintainSizeRatio=false]
   *     If true, the navigator minimap is resized (using navigatorSizeRatio) when the viewer size changes.
@@ -410,6 +397,10 @@
   * @property {Boolean} [navigatorAutoResize=true]
   *     Set to false to prevent polling for navigator size changes. Useful for providing custom resize behavior.
   *     Setting to false can also improve performance when the navigator is configured to a fixed size.
+  *
+  * @property {Boolean} [navigatorAutoFade=true]
+  *     If the user stops interacting with the viewport, fade the navigator minimap.
+  *     Setting to false will make the navigator minimap always visible.
   *
   * @property {Boolean} [navigatorRotate=true]
   *     If true, the navigator will be rotated together with the viewer.
@@ -697,8 +688,6 @@
   * This function serves as a single point of instantiation for an {@link OpenSeadragon.Viewer}, including all
   * combinations of out-of-the-box configurable features.
   *
-  * @function OpenSeadragon
-  * @memberof module:OpenSeadragon
   * @param {OpenSeadragon.Options} options - Viewer options.
   * @returns {OpenSeadragon.Viewer}
   */
@@ -729,10 +718,10 @@ if (typeof define === 'function' && define.amd) {
      * @since 1.0.0
      */
     $.version = {
-        versionStr: '2.1.0',
+        versionStr: '2.2.1',
         major: parseInt('2', 10),
-        minor: parseInt('1', 10),
-        revision: parseInt('0', 10)
+        minor: parseInt('2', 10),
+        revision: parseInt('1', 10)
     };
 
 
@@ -848,6 +837,21 @@ if (typeof define === 'function' && define.amd) {
         return true;
     };
 
+    /**
+     * Shim around Object.freeze. Does nothing if Object.freeze is not supported.
+     * @param {Object} obj The object to freeze.
+     * @return {Object} obj The frozen object.
+     */
+    $.freezeObject = function(obj) {
+        if (Object.freeze) {
+            $.freezeObject = Object.freeze;
+        } else {
+            $.freezeObject = function(obj) {
+                return obj;
+            };
+        }
+        return $.freezeObject(obj);
+    };
 
     /**
      * True if the browser supports the HTML5 canvas element
@@ -989,6 +993,18 @@ if (typeof define === 'function' && define.amd) {
         return target;
     };
 
+    var isIOSDevice = function () {
+        if (typeof navigator !== 'object') {
+            return false;
+        }
+        var userAgent = navigator.userAgent;
+        if (typeof userAgent !== 'string') {
+            return false;
+        }
+        return userAgent.indexOf('iPhone') !== -1 ||
+               userAgent.indexOf('iPad') !== -1 ||
+               userAgent.indexOf('iPod') !== -1;
+    };
 
     $.extend( $, /** @lends OpenSeadragon */{
         /**
@@ -1039,6 +1055,7 @@ if (typeof define === 'function' && define.amd) {
             minZoomImageRatio:      0.9, //-> closer to 0 allows zoom out to infinity
             maxZoomPixelRatio:      1.1, //-> higher allows 'over zoom' into pixels
             smoothTileEdgesMinZoom: 1.1, //-> higher than maxZoomPixelRatio disables it
+            iOSDevice:              isIOSDevice(),
             pixelsPerWheelLine:     40,
             autoResize:             true,
             preserveImageSizeOnResize: false, // requires autoResize=true
@@ -1071,6 +1088,7 @@ if (typeof define === 'function' && define.amd) {
             navigatorHeight:            null,
             navigatorWidth:             null,
             navigatorAutoResize:        true,
+            navigatorAutoFade:          true,
             navigatorRotate:            true,
 
             // INITIAL ROTATION
@@ -1328,6 +1346,49 @@ if (typeof define === 'function' && define.amd) {
                 return window.getComputedStyle( element, "" );
             },
 
+        /**
+         * Returns the property with the correct vendor prefix appended.
+         * @param {String} property the property name
+         * @returns {String} the property with the correct prefix or null if not
+         * supported.
+         */
+        getCssPropertyWithVendorPrefix: function(property) {
+            var memo = {};
+
+            $.getCssPropertyWithVendorPrefix = function(property) {
+                if (memo[property] !== undefined) {
+                    return memo[property];
+                }
+                var style = document.createElement('div').style;
+                var result = null;
+                if (style[property] !== undefined) {
+                    result = property;
+                } else {
+                    var prefixes = ['Webkit', 'Moz', 'MS', 'O',
+                        'webkit', 'moz', 'ms', 'o'];
+                    var suffix = $.capitalizeFirstLetter(property);
+                    for (var i = 0; i < prefixes.length; i++) {
+                        var prop = prefixes[i] + suffix;
+                        if (style[prop] !== undefined) {
+                            result = prop;
+                            break;
+                        }
+                    }
+                }
+                memo[property] = result;
+                return result;
+            };
+            return $.getCssPropertyWithVendorPrefix(property);
+        },
+
+        /**
+         * Capitalizes the first letter of a string
+         * @param {String} string
+         * @returns {String} The string with the first letter capitalized
+         */
+        capitalizeFirstLetter: function(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        },
 
         /**
          * Determines if a point is within the bounding rectangle of the given element (hit-test).
@@ -2539,188 +2600,7 @@ if (typeof define === 'function' && define.amd) {
         }
     }
 
-    /**
-     * @private
-     * @inner
-     * @function
-     * @param {XMLHttpRequest} xhr
-     * @param {String} tilesUrl
-     * @deprecated
-     */
-    function processDZIResponse( xhr, tilesUrl ) {
-        var status,
-            statusText,
-            doc = null;
-
-        if ( !xhr ) {
-            throw new Error( $.getString( "Errors.Security" ) );
-        } else if ( xhr.status !== 200 && xhr.status !== 0 ) {
-            status     = xhr.status;
-            statusText = ( status == 404 ) ?
-                "Not Found" :
-                xhr.statusText;
-            throw new Error( $.getString( "Errors.Status", status, statusText ) );
-        }
-
-        if ( xhr.responseXML && xhr.responseXML.documentElement ) {
-            doc = xhr.responseXML;
-        } else if ( xhr.responseText ) {
-            doc = $.parseXml( xhr.responseText );
-        }
-
-        return processDZIXml( doc, tilesUrl );
-    }
-
-    /**
-     * @private
-     * @inner
-     * @function
-     * @param {Document} xmlDoc
-     * @param {String} tilesUrl
-     * @deprecated
-     */
-    function processDZIXml( xmlDoc, tilesUrl ) {
-
-        if ( !xmlDoc || !xmlDoc.documentElement ) {
-            throw new Error( $.getString( "Errors.Xml" ) );
-        }
-
-        var root     = xmlDoc.documentElement,
-            rootName = root.tagName;
-
-        if ( rootName == "Image" ) {
-            try {
-                return processDZI( root, tilesUrl );
-            } catch ( e ) {
-                throw (e instanceof Error) ?
-                    e :
-                    new Error( $.getString("Errors.Dzi") );
-            }
-        } else if ( rootName == "Collection" ) {
-            throw new Error( $.getString( "Errors.Dzc" ) );
-        } else if ( rootName == "Error" ) {
-            return $._processDZIError( root );
-        }
-
-        throw new Error( $.getString( "Errors.Dzi" ) );
-    }
-
-    /**
-     * @private
-     * @inner
-     * @function
-     * @param {Element} imageNode
-     * @param {String} tilesUrl
-     * @deprecated
-     */
-    function processDZI( imageNode, tilesUrl ) {
-        var fileFormat    = imageNode.getAttribute( "Format" ),
-            sizeNode      = imageNode.getElementsByTagName( "Size" )[ 0 ],
-            dispRectNodes = imageNode.getElementsByTagName( "DisplayRect" ),
-            width         = parseInt( sizeNode.getAttribute( "Width" ), 10 ),
-            height        = parseInt( sizeNode.getAttribute( "Height" ), 10 ),
-            tileSize      = parseInt( imageNode.getAttribute( "TileSize" ), 10 ),
-            tileOverlap   = parseInt( imageNode.getAttribute( "Overlap" ), 10 ),
-            dispRects     = [],
-            dispRectNode,
-            rectNode,
-            i;
-
-        if ( !$.imageFormatSupported( fileFormat ) ) {
-            throw new Error(
-                $.getString( "Errors.ImageFormat", fileFormat.toUpperCase() )
-            );
-        }
-
-        for ( i = 0; i < dispRectNodes.length; i++ ) {
-            dispRectNode = dispRectNodes[ i ];
-            rectNode     = dispRectNode.getElementsByTagName( "Rect" )[ 0 ];
-
-            dispRects.push( new $.DisplayRect(
-                parseInt( rectNode.getAttribute( "X" ), 10 ),
-                parseInt( rectNode.getAttribute( "Y" ), 10 ),
-                parseInt( rectNode.getAttribute( "Width" ), 10 ),
-                parseInt( rectNode.getAttribute( "Height" ), 10 ),
-                0,  // ignore MinLevel attribute, bug in Deep Zoom Composer
-                parseInt( dispRectNode.getAttribute( "MaxLevel" ), 10 )
-            ));
-        }
-        return new $.DziTileSource(
-            width,
-            height,
-            tileSize,
-            tileOverlap,
-            tilesUrl,
-            fileFormat,
-            dispRects
-        );
-    }
-
-    /**
-     * @private
-     * @inner
-     * @function
-     * @param {Element} imageNode
-     * @param {String} tilesUrl
-     * @deprecated
-     */
-    function processDZIJSON( imageData, tilesUrl ) {
-        var fileFormat    = imageData.Format,
-            sizeData      = imageData.Size,
-            dispRectData  = imageData.DisplayRect || [],
-            width         = parseInt( sizeData.Width, 10 ),
-            height        = parseInt( sizeData.Height, 10 ),
-            tileSize      = parseInt( imageData.TileSize, 10 ),
-            tileOverlap   = parseInt( imageData.Overlap, 10 ),
-            dispRects     = [],
-            rectData,
-            i;
-
-        if ( !$.imageFormatSupported( fileFormat ) ) {
-            throw new Error(
-                $.getString( "Errors.ImageFormat", fileFormat.toUpperCase() )
-            );
-        }
-
-        for ( i = 0; i < dispRectData.length; i++ ) {
-            rectData     = dispRectData[ i ].Rect;
-
-            dispRects.push( new $.DisplayRect(
-                parseInt( rectData.X, 10 ),
-                parseInt( rectData.Y, 10 ),
-                parseInt( rectData.Width, 10 ),
-                parseInt( rectData.Height, 10 ),
-                0,  // ignore MinLevel attribute, bug in Deep Zoom Composer
-                parseInt( rectData.MaxLevel, 10 )
-            ));
-        }
-        return new $.DziTileSource(
-            width,
-            height,
-            tileSize,
-            tileOverlap,
-            tilesUrl,
-            fileFormat,
-            dispRects
-        );
-    }
-
-    /**
-     * @private
-     * @inner
-     * @function
-     * @param {Document} errorNode
-     * @throws {Error}
-     * @deprecated
-     */
-    $._processDZIError = function ( errorNode ) {
-        var messageNode = errorNode.getElementsByTagName( "Message" )[ 0 ],
-            message     = messageNode.firstChild.nodeValue;
-
-        throw new Error(message);
-    };
-
-}( OpenSeadragon ));
+}(OpenSeadragon));
 
 /*
  * OpenSeadragon - full-screen support functions
@@ -2926,7 +2806,31 @@ $.EventSource = function() {
 /** @lends OpenSeadragon.EventSource.prototype */
 $.EventSource.prototype = {
 
-    // TODO: Add a method 'one' which automatically unbinds a listener after the first triggered event that matches.
+    /**
+     * Add an event handler to be triggered only once (or a given number of times)
+     * for a given event.
+     * @function
+     * @param {String} eventName - Name of event to register.
+     * @param {OpenSeadragon.EventHandler} handler - Function to call when event
+     * is triggered.
+     * @param {Object} [userData=null] - Arbitrary object to be passed unchanged
+     * to the handler.
+     * @param {Number} [times=1] - The number of times to handle the event
+     * before removing it.
+     */
+    addOnceHandler: function(eventName, handler, userData, times) {
+        var self = this;
+        times = times || 1;
+        var count = 0;
+        var onceHandler = function(event) {
+            count++;
+            if (count === times) {
+                self.removeHandler(eventName, onceHandler);
+            }
+            handler(event);
+        };
+        this.addHandler(eventName, onceHandler, userData);
+    },
 
     /**
      * Add an event handler for a given event.
@@ -4393,11 +4297,11 @@ $.EventSource.prototype = {
      * @private
      * @inner
      */
-    function capturePointer( tracker, pointerType ) {
+    function capturePointer( tracker, pointerType, pointerCount ) {
         var pointsList = tracker.getActivePointersListByType( pointerType ),
             eventParams;
 
-        pointsList.captureCount++;
+        pointsList.captureCount += (pointerCount || 1);
 
         if ( pointsList.captureCount === 1 ) {
             if ( $.Browser.vendor === $.BROWSERS.IE && $.Browser.version < 9 ) {
@@ -4436,11 +4340,11 @@ $.EventSource.prototype = {
      * @private
      * @inner
      */
-    function releasePointer( tracker, pointerType ) {
+    function releasePointer( tracker, pointerType, pointerCount ) {
         var pointsList = tracker.getActivePointersListByType( pointerType ),
             eventParams;
 
-        pointsList.captureCount--;
+        pointsList.captureCount -= (pointerCount || 1);
 
         if ( pointsList.captureCount === 0 ) {
             if ( $.Browser.vendor === $.BROWSERS.IE && $.Browser.version < 9 ) {
@@ -5110,7 +5014,7 @@ $.EventSource.prototype = {
 
         if ( updatePointersDown( tracker, event, gPoints, 0 ) ) { // 0 means primary button press/release or touch contact
             $.stopEvent( event );
-            capturePointer( tracker, 'touch' );
+            capturePointer( tracker, 'touch', touchCount );
         }
 
         $.cancelEvent( event );
@@ -5164,7 +5068,7 @@ $.EventSource.prototype = {
         }
 
         if ( updatePointersUp( tracker, event, gPoints, 0 ) ) {
-            releasePointer( tracker, 'touch' );
+            releasePointer( tracker, 'touch', touchCount );
         }
 
         // simulate touchleave on our tracked element
@@ -6763,6 +6667,145 @@ $.Control.prototype = {
 }( OpenSeadragon ));
 
 /*
+ * OpenSeadragon - Placement
+ *
+ * Copyright (C) 2010-2016 OpenSeadragon contributors
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ * - Redistributions of source code must retain the above copyright notice,
+ *   this list of conditions and the following disclaimer.
+ *
+ * - Redistributions in binary form must reproduce the above copyright
+ *   notice, this list of conditions and the following disclaimer in the
+ *   documentation and/or other materials provided with the distribution.
+ *
+ * - Neither the name of CodePlex Foundation nor the names of its
+ *   contributors may be used to endorse or promote products derived from
+ *   this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+(function($) {
+
+    /**
+     * An enumeration of positions to anchor an element.
+     * @member Placement
+     * @memberOf OpenSeadragon
+     * @static
+     * @readonly
+     * @property {OpenSeadragon.Placement} CENTER
+     * @property {OpenSeadragon.Placement} TOP_LEFT
+     * @property {OpenSeadragon.Placement} TOP
+     * @property {OpenSeadragon.Placement} TOP_RIGHT
+     * @property {OpenSeadragon.Placement} RIGHT
+     * @property {OpenSeadragon.Placement} BOTTOM_RIGHT
+     * @property {OpenSeadragon.Placement} BOTTOM
+     * @property {OpenSeadragon.Placement} BOTTOM_LEFT
+     * @property {OpenSeadragon.Placement} LEFT
+     */
+    $.Placement = $.freezeObject({
+        CENTER:       0,
+        TOP_LEFT:     1,
+        TOP:          2,
+        TOP_RIGHT:    3,
+        RIGHT:        4,
+        BOTTOM_RIGHT: 5,
+        BOTTOM:       6,
+        BOTTOM_LEFT:  7,
+        LEFT:         8,
+        properties: {
+            0: {
+                isLeft: false,
+                isHorizontallyCentered: true,
+                isRight: false,
+                isTop: false,
+                isVerticallyCentered: true,
+                isBottom: false
+            },
+            1: {
+                isLeft: true,
+                isHorizontallyCentered: false,
+                isRight: false,
+                isTop: true,
+                isVerticallyCentered: false,
+                isBottom: false
+            },
+            2: {
+                isLeft: false,
+                isHorizontallyCentered: true,
+                isRight: false,
+                isTop: true,
+                isVerticallyCentered: false,
+                isBottom: false
+            },
+            3: {
+                isLeft: false,
+                isHorizontallyCentered: false,
+                isRight: true,
+                isTop: true,
+                isVerticallyCentered: false,
+                isBottom: false
+            },
+            4: {
+                isLeft: false,
+                isHorizontallyCentered: false,
+                isRight: true,
+                isTop: false,
+                isVerticallyCentered: true,
+                isBottom: false
+            },
+            5: {
+                isLeft: false,
+                isHorizontallyCentered: false,
+                isRight: true,
+                isTop: false,
+                isVerticallyCentered: false,
+                isBottom: true
+            },
+            6: {
+                isLeft: false,
+                isHorizontallyCentered: true,
+                isRight: false,
+                isTop: false,
+                isVerticallyCentered: false,
+                isBottom: true
+            },
+            7: {
+                isLeft: true,
+                isHorizontallyCentered: false,
+                isRight: false,
+                isTop: false,
+                isVerticallyCentered: false,
+                isBottom: true
+            },
+            8: {
+                isLeft: true,
+                isHorizontallyCentered: false,
+                isRight: false,
+                isTop: false,
+                isVerticallyCentered: true,
+                isBottom: false
+            }
+        }
+    });
+
+}(OpenSeadragon));
+
+/*
  * OpenSeadragon - Viewer
  *
  * Copyright (C) 2009 CodePlex Foundation
@@ -6804,14 +6847,19 @@ var nextHash = 1;
 
 /**
  *
- * The main point of entry into creating a zoomable image on the page.
- *
+ * The main point of entry into creating a zoomable image on the page.<br>
+ * <br>
  * We have provided an idiomatic javascript constructor which takes
- * a single object, but still support the legacy positional arguments.
- *
+ * a single object, but still support the legacy positional arguments.<br>
+ * <br>
  * The options below are given in order that they appeared in the constructor
- * as arguments and we translate a positional call into an idiomatic call.
- *
+ * as arguments and we translate a positional call into an idiomatic call.<br>
+ * <br>
+ * To create a viewer, you can use either of this methods:<br>
+ * <ul>
+ * <li><code>var viewer = new OpenSeadragon.Viewer(options);</code></li>
+ * <li><code>var viewer = OpenSeadragon(options);</code></li>
+ * </ul>
  * @class Viewer
  * @classdesc The main OpenSeadragon viewer class.
  *
@@ -6998,7 +7046,9 @@ $.Viewer = function( options ) {
         style.left     = "0px";
     }(this.canvas.style));
     $.setElementTouchActionNone( this.canvas );
-    this.canvas.tabIndex = (options.tabIndex === undefined ? 0 : options.tabIndex);
+    if (options.tabIndex !== "") {
+        this.canvas.tabIndex = (options.tabIndex === undefined ? 0 : options.tabIndex);
+    }
 
     //the container is created through applying the ControlDock constructor above
     this.container.className = "openseadragon-container";
@@ -7174,6 +7224,7 @@ $.Viewer = function( options ) {
             width:             this.navigatorWidth,
             height:            this.navigatorHeight,
             autoResize:        this.navigatorAutoResize,
+            autoFade:          this.navigatorAutoFade,
             prefixUrl:         this.prefixUrl,
             viewer:            this,
             navigatorRotate:   this.navigatorRotate,
@@ -7675,9 +7726,14 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
             docStyle.padding = "0";
 
             this.bodyWidth = bodyStyle.width;
-            this.bodyHeight = bodyStyle.height;
+            this.docWidth = docStyle.width;
             bodyStyle.width = "100%";
+            docStyle.width = "100%";
+
+            this.bodyHeight = bodyStyle.height;
+            this.docHeight = docStyle.height;
             bodyStyle.height = "100%";
+            docStyle.height = "100%";
 
             //when entering full screen on the ipad it wasnt sufficient to leave
             //the body intact as only only the top half of the screen would
@@ -7738,7 +7794,10 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
             docStyle.padding = this.docPadding;
 
             bodyStyle.width = this.bodyWidth;
+            docStyle.width = this.docWidth;
+
             bodyStyle.height = this.bodyHeight;
+            docStyle.height = this.docHeight;
 
             body.removeChild( this.element );
             nodes = this.previousBody.length;
@@ -7968,6 +8027,10 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
      * @param {Number} [options.y=0] The Y position for the image in viewport coordinates.
      * @param {Number} [options.width=1] The width for the image in viewport coordinates.
      * @param {Number} [options.height] The height for the image in viewport coordinates.
+     * @param {OpenSeadragon.Rect} [options.fitBounds] The bounds in viewport coordinates
+     * to fit the image into. If specified, x, y, width and height get ignored.
+     * @param {OpenSeadragon.Placement} [options.fitBoundsPlacement=OpenSeadragon.Placement.CENTER]
+     * How to anchor the image in the bounds if options.fitBounds is set.
      * @param {OpenSeadragon.Rect} [options.clip] - An area, in image pixels, to clip to
      * (portions of the image outside of this area will not be visible). Only works on
      * browsers that support the HTML5 canvas.
@@ -8103,6 +8166,8 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
                     y: queueItem.options.y,
                     width: queueItem.options.width,
                     height: queueItem.options.height,
+                    fitBounds: queueItem.options.fitBounds,
+                    fitBoundsPlacement: queueItem.options.fitBoundsPlacement,
                     clip: queueItem.options.clip,
                     placeholderFillStyle: queueItem.options.placeholderFillStyle,
                     opacity: queueItem.options.opacity,
@@ -8117,6 +8182,7 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
                     alwaysBlend: _this.alwaysBlend,
                     minPixelRatio: _this.minPixelRatio,
                     smoothTileEdgesMinZoom: _this.smoothTileEdgesMinZoom,
+                    iOSDevice: _this.iOSDevice,
                     crossOriginPolicy: _this.crossOriginPolicy,
                     debugMode: _this.debugMode
                 });
@@ -8139,6 +8205,7 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
 
                 if (_this.navigator) {
                     optionsClone = $.extend({}, queueItem.options, {
+                        replace: false, // navigator already removed the layer, nothing to replace
                         originalTiledImage: tiledImage,
                         tileSource: queueItem.tileSource
                     });
@@ -8481,7 +8548,7 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
                 if( this.toolbar ){
                     this.toolbar.addControl(
                         this.navControl,
-                        {anchor: this.navigationControlAnchor || $.ControlAnchor.TOP_LEFT}
+                        {anchor: $.ControlAnchor.TOP_LEFT}
                     );
                 } else {
                     this.addControl(
@@ -8544,10 +8611,12 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
      * is closed which include when changing page.
      * @method
      * @param {Element|String|Object} element - A reference to an element or an id for
-     *      the element which will be overlayed. Or an Object specifying the configuration for the overlay
+     *      the element which will be overlayed. Or an Object specifying the configuration for the overlay.
+     *      If using an object, see {@link OpenSeadragon.Overlay} for a list of
+     *      all available options.
      * @param {OpenSeadragon.Point|OpenSeadragon.Rect} location - The point or
      *      rectangle which will be overlayed. This is a viewport relative location.
-     * @param {OpenSeadragon.OverlayPlacement} placement - The position of the
+     * @param {OpenSeadragon.Placement} placement - The position of the
      *      viewport which the location coordinates will be treated as relative
      *      to.
      * @param {function} onDraw - If supplied the callback is called when the overlay
@@ -8589,7 +8658,7 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
          * @property {OpenSeadragon.Viewer} eventSource - A reference to the Viewer which raised the event.
          * @property {Element} element - The overlay element.
          * @property {OpenSeadragon.Point|OpenSeadragon.Rect} location
-         * @property {OpenSeadragon.OverlayPlacement} placement
+         * @property {OpenSeadragon.Placement} placement
          * @property {?Object} userData - Arbitrary subscriber-defined object.
          */
         this.raiseEvent( 'add-overlay', {
@@ -8608,7 +8677,7 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
      *      the element which is overlayed.
      * @param {OpenSeadragon.Point|OpenSeadragon.Rect} location - The point or
      *      rectangle which will be overlayed. This is a viewport relative location.
-     * @param {OpenSeadragon.OverlayPlacement} placement - The position of the
+     * @param {OpenSeadragon.Placement} placement - The position of the
      *      viewport which the location coordinates will be treated as relative
      *      to.
      * @return {OpenSeadragon.Viewer} Chainable.
@@ -8634,7 +8703,7 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
              * Viewer which raised the event.
              * @property {Element} element
              * @property {OpenSeadragon.Point|OpenSeadragon.Rect} location
-             * @property {OpenSeadragon.OverlayPlacement} placement
+             * @property {OpenSeadragon.Placement} placement
              * @property {?Object} userData - Arbitrary subscriber-defined object.
              */
             this.raiseEvent( 'update-overlay', {
@@ -8955,37 +9024,28 @@ function getOverlayObject( viewer, overlay ) {
     }
 
     var location = overlay.location;
-    if ( !location ) {
-        if ( overlay.width && overlay.height ) {
-            location = overlay.px !== undefined ?
-                viewer.viewport.imageToViewportRectangle( new $.Rect(
-                    overlay.px,
-                    overlay.py,
-                    overlay.width,
-                    overlay.height
-                ) ) :
-                new $.Rect(
-                    overlay.x,
-                    overlay.y,
-                    overlay.width,
-                    overlay.height
-                );
-        } else {
-            location = overlay.px !== undefined ?
-                viewer.viewport.imageToViewportCoordinates( new $.Point(
-                    overlay.px,
-                    overlay.py
-                ) ) :
-                new $.Point(
-                    overlay.x,
-                    overlay.y
-                );
+    var width = overlay.width;
+    var height = overlay.height;
+    if (!location) {
+        var x = overlay.x;
+        var y = overlay.y;
+        if (overlay.px !== undefined) {
+            var rect = viewer.viewport.imageToViewportRectangle(new $.Rect(
+                overlay.px,
+                overlay.py,
+                width || 0,
+                height || 0));
+            x = rect.x;
+            y = rect.y;
+            width = width !== undefined ? rect.width : undefined;
+            height = height !== undefined ? rect.height : undefined;
         }
+        location = new $.Point(x, y);
     }
 
     var placement = overlay.placement;
-    if ( placement && ( $.type( placement ) === "string" ) ) {
-        placement = $.OverlayPlacement[ overlay.placement.toUpperCase() ];
+    if (placement && $.type(placement) === "string") {
+        placement = $.Placement[overlay.placement.toUpperCase()];
     }
 
     return new $.Overlay({
@@ -8993,7 +9053,10 @@ function getOverlayObject( viewer, overlay ) {
         location: location,
         placement: placement,
         onDraw: overlay.onDraw,
-        checkResize: overlay.checkResize
+        checkResize: overlay.checkResize,
+        width: width,
+        height: height,
+        rotationMode: overlay.rotationMode
     });
 }
 
@@ -9306,22 +9369,25 @@ function onCanvasDrag( event ) {
 }
 
 function onCanvasDragEnd( event ) {
-    var gestureSettings;
-
-    if ( !event.preventDefaultAction && this.viewport ) {
-        gestureSettings = this.gestureSettingsByDeviceType( event.pointerType );
-        if ( gestureSettings.flickEnabled && event.speed >= gestureSettings.flickMinSpeed ) {
-            var amplitudeX = gestureSettings.flickMomentum * ( event.speed * Math.cos( event.direction - (Math.PI / 180 * this.viewport.degrees) ) ),
-                amplitudeY = gestureSettings.flickMomentum * ( event.speed * Math.sin( event.direction - (Math.PI / 180 * this.viewport.degrees) ) ),
-                center = this.viewport.pixelFromPoint( this.viewport.getCenter( true ) ),
-                target = this.viewport.pointFromPixel( new $.Point( center.x - amplitudeX, center.y - amplitudeY ) );
-            if( !this.panHorizontal ) {
-                target.x = center.x;
+    if (!event.preventDefaultAction && this.viewport) {
+        var gestureSettings = this.gestureSettingsByDeviceType(event.pointerType);
+        if (gestureSettings.flickEnabled &&
+            event.speed >= gestureSettings.flickMinSpeed) {
+            var amplitudeX = 0;
+            if (this.panHorizontal) {
+                amplitudeX = gestureSettings.flickMomentum * event.speed *
+                    Math.cos(event.direction);
             }
-            if( !this.panVertical ) {
-                target.y = center.y;
+            var amplitudeY = 0;
+            if (this.panVertical) {
+                amplitudeY = gestureSettings.flickMomentum * event.speed *
+                    Math.sin(event.direction);
             }
-            this.viewport.panTo( target, false );
+            var center = this.viewport.pixelFromPoint(
+                this.viewport.getCenter(true));
+            var target = this.viewport.pointFromPixel(
+                new $.Point(center.x - amplitudeX, center.y - amplitudeY));
+            this.viewport.panTo(target, false);
         }
         this.viewport.applyConstraints();
     }
@@ -9340,7 +9406,7 @@ function onCanvasDragEnd( event ) {
      * @property {Object} originalEvent - The original DOM event.
      * @property {?Object} userData - Arbitrary subscriber-defined object.
      */
-    this.raiseEvent( 'canvas-drag-end', {
+    this.raiseEvent('canvas-drag-end', {
         tracker: event.eventSource,
         position: event.position,
         speed: event.speed,
@@ -9727,33 +9793,26 @@ function updateOnce( viewer ) {
         return;
     }
 
-    var containerSize;
-    if ( viewer.autoResize ) {
-        containerSize = _getSafeElemSize( viewer.container );
-        if ( !containerSize.equals( THIS[ viewer.hash ].prevContainerSize ) ) {
-            if ( viewer.preserveImageSizeOnResize ) {
-                var prevContainerSize = THIS[ viewer.hash ].prevContainerSize;
-                var bounds = viewer.viewport.getBounds(true);
-                var deltaX = (containerSize.x - prevContainerSize.x);
-                var deltaY = (containerSize.y - prevContainerSize.y);
-                var viewportDiff = viewer.viewport.deltaPointsFromPixels(new OpenSeadragon.Point(deltaX, deltaY), true);
-                viewer.viewport.resize(new OpenSeadragon.Point(containerSize.x, containerSize.y), false);
-
-                // Keep the center of the image in the center and just adjust the amount of image shown
-                bounds.width += viewportDiff.x;
-                bounds.height += viewportDiff.y;
-                bounds.x -= (viewportDiff.x / 2);
-                bounds.y -= (viewportDiff.y / 2);
-                viewer.viewport.fitBoundsWithConstraints(bounds, true);
-            }
-            else {
+    if (viewer.autoResize) {
+        var containerSize = _getSafeElemSize(viewer.container);
+        var prevContainerSize = THIS[viewer.hash].prevContainerSize;
+        if (!containerSize.equals(prevContainerSize)) {
+            var viewport = viewer.viewport;
+            if (viewer.preserveImageSizeOnResize) {
+                var resizeRatio = prevContainerSize.x / containerSize.x;
+                var zoom = viewport.getZoom() * resizeRatio;
+                var center = viewport.getCenter();
+                viewport.resize(containerSize, false);
+                viewport.zoomTo(zoom, null, true);
+                viewport.panTo(center, true);
+            } else {
                 // maintain image position
-                var oldBounds = viewer.viewport.getBounds();
-                var oldCenter = viewer.viewport.getCenter();
-                resizeViewportAndRecenter(viewer, containerSize, oldBounds, oldCenter);
+                var oldBounds = viewport.getBounds();
+                viewport.resize(containerSize, true);
+                viewport.fitBoundsWithConstraints(oldBounds, true);
             }
-            THIS[ viewer.hash ].prevContainerSize = containerSize;
-            THIS[ viewer.hash ].forceRedraw = true;
+            THIS[viewer.hash].prevContainerSize = containerSize;
+            THIS[viewer.hash].forceRedraw = true;
         }
     }
 
@@ -9836,27 +9895,6 @@ function updateOnce( viewer ) {
     THIS[ viewer.hash ].animating = animated;
 
     //viewer.profiler.endUpdate();
-}
-
-// This function resizes the viewport and recenters the image
-// as it was before resizing.
-// TODO: better adjust width and height. The new width and height
-// should depend on the image dimensions and on the dimensions
-// of the viewport before and after switching mode.
-function resizeViewportAndRecenter( viewer, containerSize, oldBounds, oldCenter ) {
-    var viewport = viewer.viewport;
-
-    viewport.resize( containerSize, true );
-
-    var newBounds = new $.Rect(
-        oldCenter.x - ( oldBounds.width / 2.0 ),
-        oldCenter.y - ( oldBounds.height / 2.0 ),
-        oldBounds.width,
-        oldBounds.height
-    );
-
-    // let the viewport decide if the bounds are too big or too small
-    viewport.fitBoundsWithConstraints( newBounds, true );
 }
 
 function drawWorld( viewer ) {
@@ -10098,7 +10136,7 @@ $.Navigator = function( options ){
         options.controlOptions  = {
             anchor:           $.ControlAnchor.TOP_RIGHT,
             attachToViewer:   true,
-            autoFade:         true
+            autoFade:         options.autoFade
         };
 
         if( options.position ){
@@ -10342,8 +10380,8 @@ $.extend( $.Navigator.prototype, $.EventSource.prototype, $.Viewer.prototype, /*
             this.updateSize();
         }
 
-        if( viewport && this.viewport ) {
-            bounds      = viewport.getBounds( true );
+        if (viewport && this.viewport) {
+            bounds      = viewport.getBoundsNoRotate(true);
             topleft     = this.viewport.pixelFromPointNoRotate(bounds.getTopLeft(), false);
             bottomright = this.viewport.pixelFromPointNoRotate(bounds.getBottomRight(), false)
                 .minus( this.totalBorderWidths );
@@ -11053,7 +11091,7 @@ $.TileSource = function( width, height, tileSize, tileOverlap, minLevel, maxLeve
         this.aspectRatio = ( options.width && options.height ) ?
             (  options.width / options.height ) : 1;
         this.dimensions  = new $.Point( options.width, options.height );
-        
+
         if ( this.tileSize ){
             this._tileWidth = this._tileHeight = this.tileSize;
             delete this.tileSize;
@@ -11075,7 +11113,7 @@ $.TileSource = function( width, height, tileSize, tileOverlap, minLevel, maxLeve
                 this._tileHeight = 0;
             }
         }
-        
+
         this.tileOverlap = options.tileOverlap ? options.tileOverlap : 0;
         this.minLevel    = options.minLevel ? options.minLevel : 0;
         this.maxLevel    = ( undefined !== options.maxLevel && null !== options.maxLevel ) ?
@@ -11103,7 +11141,7 @@ $.TileSource.prototype = {
         );
         return this._tileWidth;
     },
-    
+
     /**
      * Return the tileWidth for a given level.
      * Subclasses should override this if tileWidth can be different at different levels
@@ -11194,7 +11232,7 @@ $.TileSource.prototype = {
               Math.floor( rect.x / this.getTileWidth(i) ),
               Math.floor( rect.y / this.getTileHeight(i) )
             );
-            
+
             if( tiles.x + 1 >= tilesPerSide.x && tiles.y + 1 >= tilesPerSide.y ){
                 break;
             }
@@ -11407,7 +11445,7 @@ $.TileSource.prototype = {
 
     /**
      * Responsible for retriving the url which will return an image for the
-     * region speified by the given x, y, and level components.
+     * region specified by the given x, y, and level components.
      * This method is not implemented by this class other than to throw an Error
      * announcing you have to implement it.  Because of the variety of tile
      * server technologies, and various specifications for building image
@@ -11815,7 +11853,9 @@ function configureFromXML( tileSource, xmlDoc ){
     } else if ( rootName == "Collection" ) {
         throw new Error( $.getString( "Errors.Dzc" ) );
     } else if ( rootName == "Error" ) {
-        return $._processDZIError( root );
+        var messageNode = root.getElementsByTagName("Message")[0];
+        var message = messageNode.firstChild.nodeValue;
+        throw new Error(message);
     }
 
     throw new Error( $.getString( "Errors.Dzi" ) );
@@ -14000,6 +14040,33 @@ $.Rect = function(x, y, width, height, degrees) {
     }
 };
 
+/**
+ * Builds a rectangle having the 3 specified points as summits.
+ * @static
+ * @memberof OpenSeadragon.Rect
+ * @param {OpenSeadragon.Point} topLeft
+ * @param {OpenSeadragon.Point} topRight
+ * @param {OpenSeadragon.Point} bottomLeft
+ * @returns {OpenSeadragon.Rect}
+ */
+$.Rect.fromSummits = function(topLeft, topRight, bottomLeft) {
+    var width = topLeft.distanceTo(topRight);
+    var height = topLeft.distanceTo(bottomLeft);
+    var diff = topRight.minus(topLeft);
+    var radians = Math.atan(diff.y / diff.x);
+    if (diff.x < 0) {
+        radians += Math.PI;
+    } else if (diff.y < 0) {
+        radians += 2 * Math.PI;
+    }
+    return new $.Rect(
+        topLeft.x,
+        topLeft.y,
+        width,
+        height,
+        radians / Math.PI * 180);
+};
+
 /** @lends OpenSeadragon.Rect.prototype */
 $.Rect.prototype = {
     /**
@@ -14171,10 +14238,136 @@ $.Rect.prototype = {
     },
 
     /**
+     * Returns the bounding box of the intersection of this rectangle with the
+     * given rectangle.
+     * @param {OpenSeadragon.Rect} rect
+     * @return {OpenSeadragon.Rect} the bounding box of the intersection
+     * or null if the rectangles don't intersect.
+     */
+    intersection: function(rect) {
+        // Simplified version of Weiler Atherton clipping algorithm
+        // https://en.wikipedia.org/wiki/Weiler%E2%80%93Atherton_clipping_algorithm
+        // Because we just want the bounding box of the intersection,
+        // we can just compute the bounding box of:
+        // 1. all the summits of this which are inside rect
+        // 2. all the summits of rect which are inside this
+        // 3. all the intersections of rect and this
+        var EPSILON = 0.0000000001;
+
+        var intersectionPoints = [];
+
+        var thisTopLeft = this.getTopLeft();
+        if (rect.containsPoint(thisTopLeft, EPSILON)) {
+            intersectionPoints.push(thisTopLeft);
+        }
+        var thisTopRight = this.getTopRight();
+        if (rect.containsPoint(thisTopRight, EPSILON)) {
+            intersectionPoints.push(thisTopRight);
+        }
+        var thisBottomLeft = this.getBottomLeft();
+        if (rect.containsPoint(thisBottomLeft, EPSILON)) {
+            intersectionPoints.push(thisBottomLeft);
+        }
+        var thisBottomRight = this.getBottomRight();
+        if (rect.containsPoint(thisBottomRight, EPSILON)) {
+            intersectionPoints.push(thisBottomRight);
+        }
+
+        var rectTopLeft = rect.getTopLeft();
+        if (this.containsPoint(rectTopLeft, EPSILON)) {
+            intersectionPoints.push(rectTopLeft);
+        }
+        var rectTopRight = rect.getTopRight();
+        if (this.containsPoint(rectTopRight, EPSILON)) {
+            intersectionPoints.push(rectTopRight);
+        }
+        var rectBottomLeft = rect.getBottomLeft();
+        if (this.containsPoint(rectBottomLeft, EPSILON)) {
+            intersectionPoints.push(rectBottomLeft);
+        }
+        var rectBottomRight = rect.getBottomRight();
+        if (this.containsPoint(rectBottomRight, EPSILON)) {
+            intersectionPoints.push(rectBottomRight);
+        }
+
+        var thisSegments = this._getSegments();
+        var rectSegments = rect._getSegments();
+        for (var i = 0; i < thisSegments.length; i++) {
+            var thisSegment = thisSegments[i];
+            for (var j = 0; j < rectSegments.length; j++) {
+                var rectSegment = rectSegments[j];
+                var intersect = getIntersection(thisSegment[0], thisSegment[1],
+                    rectSegment[0], rectSegment[1]);
+                if (intersect) {
+                    intersectionPoints.push(intersect);
+                }
+            }
+        }
+
+        // Get intersection point of segments [a,b] and [c,d]
+        function getIntersection(a, b, c, d) {
+            // http://stackoverflow.com/a/1968345/1440403
+            var abVector = b.minus(a);
+            var cdVector = d.minus(c);
+
+            var denom = -cdVector.x * abVector.y + abVector.x * cdVector.y;
+            if (denom === 0) {
+                return null;
+            }
+
+            var s = (abVector.x * (a.y - c.y) - abVector.y * (a.x - c.x)) / denom;
+            var t = (cdVector.x * (a.y - c.y) - cdVector.y * (a.x - c.x)) / denom;
+
+            if (-EPSILON <= s && s <= 1 - EPSILON &&
+                -EPSILON <= t && t <= 1 - EPSILON) {
+                return new $.Point(a.x + t * abVector.x, a.y + t * abVector.y);
+            }
+            return null;
+        }
+
+        if (intersectionPoints.length === 0) {
+            return null;
+        }
+
+        var minX = intersectionPoints[0].x;
+        var maxX = intersectionPoints[0].x;
+        var minY = intersectionPoints[0].y;
+        var maxY = intersectionPoints[0].y;
+        for (var k = 1; k < intersectionPoints.length; k++) {
+            var point = intersectionPoints[k];
+            if (point.x < minX) {
+                minX = point.x;
+            }
+            if (point.x > maxX) {
+                maxX = point.x;
+            }
+            if (point.y < minY) {
+                minY = point.y;
+            }
+            if (point.y > maxY) {
+                maxY = point.y;
+            }
+        }
+        return new $.Rect(minX, minY, maxX - minX, maxY - minY);
+    },
+
+    // private
+    _getSegments: function() {
+        var topLeft = this.getTopLeft();
+        var topRight = this.getTopRight();
+        var bottomLeft = this.getBottomLeft();
+        var bottomRight = this.getBottomRight();
+        return [[topLeft, topRight],
+            [topRight, bottomRight],
+            [bottomRight, bottomLeft],
+            [bottomLeft, topLeft]];
+    },
+
+    /**
      * Rotates a rectangle around a point.
      * @function
      * @param {Number} degrees The angle in degrees to rotate.
-     * @param {OpenSeadragon.Point} pivot The point about which to rotate.
+     * @param {OpenSeadragon.Point} [pivot] The point about which to rotate.
      * Defaults to the center of the rectangle.
      * @return {OpenSeadragon.Rect}
      */
@@ -14231,6 +14424,51 @@ $.Rect.prototype = {
     },
 
     /**
+     * Retrieves the smallest horizontal (degrees=0) rectangle which contains
+     * this rectangle and has integers x, y, width and height
+     * @returns {OpenSeadragon.Rect}
+     */
+    getIntegerBoundingBox: function() {
+        var boundingBox = this.getBoundingBox();
+        var x = Math.floor(boundingBox.x);
+        var y = Math.floor(boundingBox.y);
+        var width = Math.ceil(boundingBox.width + boundingBox.x - x);
+        var height = Math.ceil(boundingBox.height + boundingBox.y - y);
+        return new $.Rect(x, y, width, height);
+    },
+
+    /**
+     * Determines whether a point is inside this rectangle (edge included).
+     * @function
+     * @param {OpenSeadragon.Point} point
+     * @param {Number} [epsilon=0] the margin of error allowed
+     * @returns {Boolean} true if the point is inside this rectangle, false
+     * otherwise.
+     */
+    containsPoint: function(point, epsilon) {
+        epsilon = epsilon || 0;
+
+        // See http://stackoverflow.com/a/2752754/1440403 for explanation
+        var topLeft = this.getTopLeft();
+        var topRight = this.getTopRight();
+        var bottomLeft = this.getBottomLeft();
+        var topDiff = topRight.minus(topLeft);
+        var leftDiff = bottomLeft.minus(topLeft);
+
+        return ((point.x - topLeft.x) * topDiff.x +
+            (point.y - topLeft.y) * topDiff.y >= -epsilon) &&
+
+            ((point.x - topRight.x) * topDiff.x +
+            (point.y - topRight.y) * topDiff.y <= epsilon) &&
+
+            ((point.x - topLeft.x) * leftDiff.x +
+            (point.y - topLeft.y) * leftDiff.y >= -epsilon) &&
+
+            ((point.x - bottomLeft.x) * leftDiff.x +
+            (point.y - bottomLeft.y) * leftDiff.y <= epsilon);
+    },
+
+    /**
      * Provides a string representation of the rectangle which is useful for
      * debugging.
      * @function
@@ -14238,10 +14476,10 @@ $.Rect.prototype = {
      */
     toString: function() {
         return "[" +
-            (Math.round(this.x * 100) / 100) + "," +
-            (Math.round(this.y * 100) / 100) + "," +
+            (Math.round(this.x * 100) / 100) + ", " +
+            (Math.round(this.y * 100) / 100) + ", " +
             (Math.round(this.width * 100) / 100) + "x" +
-            (Math.round(this.height * 100) / 100) + "," +
+            (Math.round(this.height * 100) / 100) + ", " +
             (Math.round(this.degrees * 100) / 100) + "deg" +
             "]";
     }
@@ -15156,6 +15394,15 @@ $.Spring.prototype = {
         } else {
             this.current.value = currentValue;
         }
+    },
+
+    /**
+     * Returns whether the spring is at the target value
+     * @function
+     * @returns {Boolean} True if at target value, false otherwise
+     */
+    isAtTargetValue: function() {
+        return this.current.value === this.target.value;
     }
 };
 
@@ -15550,7 +15797,7 @@ $.Tile.prototype = {
 
     // private
     _hasTransparencyChannel: function() {
-        return this.context2D || this.url.match('.png');
+        return !!this.context2D || this.url.match('.png');
     },
 
     /**
@@ -15691,15 +15938,18 @@ $.Tile.prototype = {
      * @return {Float}
      */
     getScaleForEdgeSmoothing: function() {
-        if (!this.cacheImageRecord) {
+        var context;
+        if (this.cacheImageRecord) {
+            context = this.cacheImageRecord.getRenderedContext();
+        } else if (this.context2D) {
+            context = this.context2D;
+        } else {
             $.console.warn(
                 '[Tile.drawCanvas] attempting to get tile scale %s when tile\'s not cached',
                 this.toString());
             return 1;
         }
-
-        var rendered = this.cacheImageRecord.getRenderedContext();
-        return rendered.canvas.width / this.size.times($.pixelDensityRatio).x;
+        return context.canvas.width / (this.size.x * $.pixelDensityRatio);
     },
 
     /**
@@ -15781,14 +16031,17 @@ $.Tile.prototype = {
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-(function( $ ){
+(function($) {
 
     /**
      * An enumeration of positions that an overlay may be assigned relative to
      * the viewport.
+     * It is identical to OpenSeadragon.Placement but is kept for backward
+     * compatibility.
      * @member OverlayPlacement
      * @memberof OpenSeadragon
      * @static
+     * @readonly
      * @type {Object}
      * @property {Number} CENTER
      * @property {Number} TOP_LEFT
@@ -15800,17 +16053,26 @@ $.Tile.prototype = {
      * @property {Number} BOTTOM_LEFT
      * @property {Number} LEFT
      */
-    $.OverlayPlacement = {
-        CENTER:       0,
-        TOP_LEFT:     1,
-        TOP:          2,
-        TOP_RIGHT:    3,
-        RIGHT:        4,
-        BOTTOM_RIGHT: 5,
-        BOTTOM:       6,
-        BOTTOM_LEFT:  7,
-        LEFT:         8
-    };
+    $.OverlayPlacement = $.Placement;
+
+    /**
+     * An enumeration of possible ways to handle overlays rotation
+     * @member OverlayRotationMode
+     * @memberOf OpenSeadragon
+     * @static
+     * @readonly
+     * @property {Number} NO_ROTATION The overlay ignore the viewport rotation.
+     * @property {Number} EXACT The overlay use CSS 3 transforms to rotate with
+     * the viewport. If the overlay contains text, it will get rotated as well.
+     * @property {Number} BOUNDING_BOX The overlay adjusts for rotation by
+     * taking the size of the bounding box of the rotated bounds.
+     * Only valid for overlays with Rect location and scalable in both directions.
+     */
+    $.OverlayRotationMode = $.freezeObject({
+        NO_ROTATION: 1,
+        EXACT: 2,
+        BOUNDING_BOX: 3
+    });
 
     /**
      * @class Overlay
@@ -15821,19 +16083,27 @@ $.Tile.prototype = {
      * @param {Element} options.element
      * @param {OpenSeadragon.Point|OpenSeadragon.Rect} options.location - The
      * location of the overlay on the image. If a {@link OpenSeadragon.Point}
-     * is specified, the overlay will keep a constant size independently of the
-     * zoom. If a {@link OpenSeadragon.Rect} is specified, the overlay size will
-     * be adjusted when the zoom changes.
-     * @param {OpenSeadragon.OverlayPlacement} [options.placement=OpenSeadragon.OverlayPlacement.TOP_LEFT]
-     * Relative position to the viewport.
-     * Only used if location is a {@link OpenSeadragon.Point}.
+     * is specified, the overlay will be located at this location with respect
+     * to the placement option. If a {@link OpenSeadragon.Rect} is specified,
+     * the overlay will be placed at this location with the corresponding width
+     * and height and placement TOP_LEFT.
+     * @param {OpenSeadragon.Placement} [options.placement=OpenSeadragon.Placement.TOP_LEFT]
+     * Defines what part of the overlay should be at the specified options.location
      * @param {OpenSeadragon.Overlay.OnDrawCallback} [options.onDraw]
      * @param {Boolean} [options.checkResize=true] Set to false to avoid to
-     * check the size of the overlay everytime it is drawn when using a
-     * {@link OpenSeadragon.Point} as options.location. It will improve
-     * performances but will cause a misalignment if the overlay size changes.
+     * check the size of the overlay everytime it is drawn in the directions
+     * which are not scaled. It will improve performances but will cause a
+     * misalignment if the overlay size changes.
+     * @param {Number} [options.width] The width of the overlay in viewport
+     * coordinates. If specified, the width of the overlay will be adjusted when
+     * the zoom changes.
+     * @param {Number} [options.height] The height of the overlay in viewport
+     * coordinates. If specified, the height of the overlay will be adjusted when
+     * the zoom changes.
+     * @param {Boolean} [options.rotationMode=OpenSeadragon.OverlayRotationMode.EXACT]
+     * How to handle the rotation of the viewport.
      */
-    $.Overlay = function( element, location, placement ) {
+    $.Overlay = function(element, location, placement) {
 
         /**
          * onDraw callback signature used by {@link OpenSeadragon.Overlay}.
@@ -15846,7 +16116,7 @@ $.Tile.prototype = {
          */
 
         var options;
-        if ( $.isPlainObject( element ) ) {
+        if ($.isPlainObject(element)) {
             options = element;
         } else {
             options = {
@@ -15856,73 +16126,67 @@ $.Tile.prototype = {
             };
         }
 
-        this.element    = options.element;
-        this.scales     = options.location instanceof $.Rect;
-        this.bounds     = new $.Rect(
-            options.location.x,
-            options.location.y,
-            options.location.width,
-            options.location.height
-        );
-        this.position   = new $.Point(
-            options.location.x,
-            options.location.y
-        );
-        this.size       = new $.Point(
-            options.location.width,
-            options.location.height
-        );
-        this.style      = options.element.style;
-        // rects are always top-left
-        this.placement  = options.location instanceof $.Point ?
-            options.placement :
-            $.OverlayPlacement.TOP_LEFT;
-        this.onDraw = options.onDraw;
-        this.checkResize = options.checkResize === undefined ?
-            true : options.checkResize;
+        this.element = options.element;
+        this.style = options.element.style;
+        this._init(options);
     };
 
     /** @lends OpenSeadragon.Overlay.prototype */
     $.Overlay.prototype = {
 
+        // private
+        _init: function(options) {
+            this.location = options.location;
+            this.placement = options.placement === undefined ?
+                $.Placement.TOP_LEFT : options.placement;
+            this.onDraw = options.onDraw;
+            this.checkResize = options.checkResize === undefined ?
+                true : options.checkResize;
+
+            // When this.width is not null, the overlay get scaled horizontally
+            this.width = options.width === undefined ? null : options.width;
+
+            // When this.height is not null, the overlay get scaled vertically
+            this.height = options.height === undefined ? null : options.height;
+
+            this.rotationMode = options.rotationMode || $.OverlayRotationMode.EXACT;
+
+            // Having a rect as location is a syntactic sugar
+            if (this.location instanceof $.Rect) {
+                this.width = this.location.width;
+                this.height = this.location.height;
+                this.location = this.location.getTopLeft();
+                this.placement = $.Placement.TOP_LEFT;
+            }
+
+            // Deprecated properties kept for backward compatibility.
+            this.scales = this.width !== null && this.height !== null;
+            this.bounds = new $.Rect(
+                this.location.x, this.location.y, this.width, this.height);
+            this.position = this.location;
+        },
+
         /**
+         * Internal function to adjust the position of an overlay
+         * depending on it size and placement.
          * @function
-         * @param {OpenSeadragon.OverlayPlacement} position
+         * @param {OpenSeadragon.Point} position
          * @param {OpenSeadragon.Point} size
          */
-        adjust: function( position, size ) {
-            switch ( this.placement ) {
-                case $.OverlayPlacement.TOP_LEFT:
-                    break;
-                case $.OverlayPlacement.TOP:
-                    position.x -= size.x / 2;
-                    break;
-                case $.OverlayPlacement.TOP_RIGHT:
-                    position.x -= size.x;
-                    break;
-                case $.OverlayPlacement.RIGHT:
-                    position.x -= size.x;
-                    position.y -= size.y / 2;
-                    break;
-                case $.OverlayPlacement.BOTTOM_RIGHT:
-                    position.x -= size.x;
-                    position.y -= size.y;
-                    break;
-                case $.OverlayPlacement.BOTTOM:
-                    position.x -= size.x / 2;
-                    position.y -= size.y;
-                    break;
-                case $.OverlayPlacement.BOTTOM_LEFT:
-                    position.y -= size.y;
-                    break;
-                case $.OverlayPlacement.LEFT:
-                    position.y -= size.y / 2;
-                    break;
-                default:
-                case $.OverlayPlacement.CENTER:
-                    position.x -= size.x / 2;
-                    position.y -= size.y / 2;
-                    break;
+        adjust: function(position, size) {
+            var properties = $.Placement.properties[this.placement];
+            if (!properties) {
+                return;
+            }
+            if (properties.isHorizontallyCentered) {
+                position.x -= size.x / 2;
+            } else if (properties.isRight) {
+                position.x -= size.x;
+            }
+            if (properties.isVerticallyCentered) {
+                position.y -= size.y / 2;
+            } else if (properties.isBottom) {
+                position.y -= size.y;
             }
         },
 
@@ -15930,20 +16194,20 @@ $.Tile.prototype = {
          * @function
          */
         destroy: function() {
-            var element = this.element,
-                style   = this.style;
+            var element = this.element;
+            var style = this.style;
 
-            if ( element.parentNode ) {
-                element.parentNode.removeChild( element );
+            if (element.parentNode) {
+                element.parentNode.removeChild(element);
                 //this should allow us to preserve overlays when required between
                 //pages
-                if ( element.prevElementParent ) {
+                if (element.prevElementParent) {
                     style.display = 'none';
                     //element.prevElementParent.insertBefore(
                     //    element,
                     //    element.prevNextSibling
                     //);
-                    document.body.appendChild( element );
+                    document.body.appendChild(element);
                 }
             }
 
@@ -15954,9 +16218,19 @@ $.Tile.prototype = {
             style.left = "";
             style.position = "";
 
-            if ( this.scales ) {
+            if (this.width !== null) {
                 style.width = "";
+            }
+            if (this.height !== null) {
                 style.height = "";
+            }
+            var transformOriginProp = $.getCssPropertyWithVendorPrefix(
+                'transformOrigin');
+            var transformProp = $.getCssPropertyWithVendorPrefix(
+                'transform');
+            if (transformOriginProp && transformProp) {
+                style[transformOriginProp] = "";
+                style[transformProp] = "";
             }
         },
 
@@ -15964,115 +16238,241 @@ $.Tile.prototype = {
          * @function
          * @param {Element} container
          */
-        drawHTML: function( container, viewport ) {
-            var element = this.element,
-                style   = this.style,
-                scales  = this.scales,
-                degrees  = viewport.degrees,
-                position = viewport.pixelFromPoint(
-                    this.bounds.getTopLeft(),
-                    true
-                ),
-                size,
-                overlayCenter;
-
-            if ( element.parentNode != container ) {
+        drawHTML: function(container, viewport) {
+            var element = this.element;
+            if (element.parentNode !== container) {
                 //save the source parent for later if we need it
-                element.prevElementParent  = element.parentNode;
-                element.prevNextSibling    = element.nextSibling;
-                container.appendChild( element );
-                this.size = $.getElementSize( element );
+                element.prevElementParent = element.parentNode;
+                element.prevNextSibling = element.nextSibling;
+                container.appendChild(element);
+
+                // this.size is used by overlays which don't get scaled in at
+                // least one direction when this.checkResize is set to false.
+                this.size = $.getElementSize(element);
             }
 
-            if ( scales ) {
-                size = viewport.deltaPixelsFromPoints(
-                    this.bounds.getSize(),
-                    true
-                );
-            } else if ( this.checkResize ) {
-                size = $.getElementSize( element );
-            } else {
-                size = this.size;
-            }
+            var positionAndSize = this._getOverlayPositionAndSize(viewport);
 
-            this.position = position;
-            this.size     = size;
-
-            this.adjust( position, size );
-
-            position = position.apply( Math.round );
-            size     = size.apply( Math.round );
-
-            // rotate the position of the overlay
-            // TODO only rotate overlays if in canvas mode
-            // TODO replace the size rotation with CSS3 transforms
-            // TODO add an option to overlays to not rotate with the image
-            // Currently only rotates position and size
-            if( degrees !== 0 && this.scales ) {
-                overlayCenter = new $.Point( size.x / 2, size.y / 2 );
-
-                var drawerCenter = new $.Point(
-                    viewport.viewer.drawer.canvas.width / 2,
-                    viewport.viewer.drawer.canvas.height / 2
-                );
-                position = position.plus( overlayCenter ).rotate(
-                    degrees,
-                    drawerCenter
-                ).minus( overlayCenter );
-
-                size = size.rotate( degrees, new $.Point( 0, 0 ) );
-                size = new $.Point( Math.abs( size.x ), Math.abs( size.y ) );
-            }
+            var position = positionAndSize.position;
+            var size = this.size = positionAndSize.size;
+            var rotate = positionAndSize.rotate;
 
             // call the onDraw callback if it exists to allow one to overwrite
             // the drawing/positioning/sizing of the overlay
-            if ( this.onDraw ) {
-                this.onDraw( position, size, element );
+            if (this.onDraw) {
+                this.onDraw(position, size, this.element);
             } else {
-                style.left     = position.x + "px";
-                style.top      = position.y + "px";
+                var style = this.style;
+                style.left = position.x + "px";
+                style.top = position.y + "px";
+                if (this.width !== null) {
+                    style.width = size.x + "px";
+                }
+                if (this.height !== null) {
+                    style.height = size.y + "px";
+                }
+                var transformOriginProp = $.getCssPropertyWithVendorPrefix(
+                    'transformOrigin');
+                var transformProp = $.getCssPropertyWithVendorPrefix(
+                    'transform');
+                if (transformOriginProp && transformProp) {
+                    if (rotate) {
+                        style[transformOriginProp] = this._getTransformOrigin();
+                        style[transformProp] = "rotate(" + rotate + "deg)";
+                    } else {
+                        style[transformOriginProp] = "";
+                        style[transformProp] = "";
+                    }
+                }
                 style.position = "absolute";
 
-                if (style.display != 'none') {
-                    style.display  = 'block';
-                }
-
-                if ( scales ) {
-                    style.width  = size.x + "px";
-                    style.height = size.y + "px";
+                if (style.display !== 'none') {
+                    style.display = 'block';
                 }
             }
         },
 
-        /**
-         * @function
-         * @param {OpenSeadragon.Point|OpenSeadragon.Rect} location
-         * @param {OpenSeadragon.OverlayPlacement} position
-         */
-        update: function( location, placement ) {
-            this.scales     = location instanceof $.Rect;
-            this.bounds     = new $.Rect(
-                location.x,
-                location.y,
-                location.width,
-                location.height
-            );
-            // rects are always top-left
-            this.placement  = location instanceof $.Point ?
-                placement :
-                $.OverlayPlacement.TOP_LEFT;
+        // private
+        _getOverlayPositionAndSize: function(viewport) {
+            var position = viewport.pixelFromPoint(this.location, true);
+            var size = this._getSizeInPixels(viewport);
+            this.adjust(position, size);
+
+            var rotate = 0;
+            if (viewport.degrees &&
+                this.rotationMode !== $.OverlayRotationMode.NO_ROTATION) {
+                // BOUNDING_BOX is only valid if both directions get scaled.
+                // Get replaced by EXACT otherwise.
+                if (this.rotationMode === $.OverlayRotationMode.BOUNDING_BOX &&
+                    this.width !== null && this.height !== null) {
+                    var rect = new $.Rect(position.x, position.y, size.x, size.y);
+                    var boundingBox = this._getBoundingBox(rect, viewport.degrees);
+                    position = boundingBox.getTopLeft();
+                    size = boundingBox.getSize();
+                } else {
+                    rotate = viewport.degrees;
+                }
+            }
+
+            return {
+                position: position,
+                size: size,
+                rotate: rotate
+            };
+        },
+
+        // private
+        _getSizeInPixels: function(viewport) {
+            var width = this.size.x;
+            var height = this.size.y;
+            if (this.width !== null || this.height !== null) {
+                var scaledSize = viewport.deltaPixelsFromPointsNoRotate(
+                    new $.Point(this.width || 0, this.height || 0), true);
+                if (this.width !== null) {
+                    width = scaledSize.x;
+                }
+                if (this.height !== null) {
+                    height = scaledSize.y;
+                }
+            }
+            if (this.checkResize &&
+                (this.width === null || this.height === null)) {
+                var eltSize = this.size = $.getElementSize(this.element);
+                if (this.width === null) {
+                    width = eltSize.x;
+                }
+                if (this.height === null) {
+                    height = eltSize.y;
+                }
+            }
+            return new $.Point(width, height);
+        },
+
+        // private
+        _getBoundingBox: function(rect, degrees) {
+            var refPoint = this._getPlacementPoint(rect);
+            return rect.rotate(degrees, refPoint).getBoundingBox();
+        },
+
+        // private
+        _getPlacementPoint: function(rect) {
+            var result = new $.Point(rect.x, rect.y);
+            var properties = $.Placement.properties[this.placement];
+            if (properties) {
+                if (properties.isHorizontallyCentered) {
+                    result.x += rect.width / 2;
+                } else if (properties.isRight) {
+                    result.x += rect.width;
+                }
+                if (properties.isVerticallyCentered) {
+                    result.y += rect.height / 2;
+                } else if (properties.isBottom) {
+                    result.y += rect.height;
+                }
+            }
+            return result;
+        },
+
+        // private
+        _getTransformOrigin: function() {
+            var result = "";
+            var properties = $.Placement.properties[this.placement];
+            if (!properties) {
+                return result;
+            }
+            if (properties.isLeft) {
+                result = "left";
+            } else if (properties.isRight) {
+                result = "right";
+            }
+            if (properties.isTop) {
+                result += " top";
+            } else if (properties.isBottom) {
+                result += " bottom";
+            }
+            return result;
         },
 
         /**
+         * Changes the overlay settings.
          * @function
+         * @param {OpenSeadragon.Point|OpenSeadragon.Rect|Object} location
+         * If an object is specified, the options are the same than the constructor
+         * except for the element which can not be changed.
+         * @param {OpenSeadragon.Placement} position
+         */
+        update: function(location, placement) {
+            var options = $.isPlainObject(location) ? location : {
+                location: location,
+                placement: placement
+            };
+            this._init({
+                location: options.location || this.location,
+                placement: options.placement !== undefined ?
+                    options.placement : this.placement,
+                onDraw: options.onDraw || this.onDraw,
+                checkResize: options.checkResize || this.checkResize,
+                width: options.width !== undefined ? options.width : this.width,
+                height: options.height !== undefined ? options.height : this.height,
+                rotationMode: options.rotationMode || this.rotationMode
+            });
+        },
+
+        /**
+         * Returns the current bounds of the overlay in viewport coordinates
+         * @function
+         * @param {OpenSeadragon.Viewport} viewport the viewport
          * @returns {OpenSeadragon.Rect} overlay bounds
          */
-        getBounds: function() {
-            return this.bounds.clone();
+        getBounds: function(viewport) {
+            $.console.assert(viewport,
+                'A viewport must now be passed to Overlay.getBounds.');
+            var width = this.width;
+            var height = this.height;
+            if (width === null || height === null) {
+                var size = viewport.deltaPointsFromPixelsNoRotate(this.size, true);
+                if (width === null) {
+                    width = size.x;
+                }
+                if (height === null) {
+                    height = size.y;
+                }
+            }
+            var location = this.location.clone();
+            this.adjust(location, new $.Point(width, height));
+            return this._adjustBoundsForRotation(
+                viewport, new $.Rect(location.x, location.y, width, height));
+        },
+
+        // private
+        _adjustBoundsForRotation: function(viewport, bounds) {
+            if (!viewport ||
+                viewport.degrees === 0 ||
+                this.rotationMode === $.OverlayRotationMode.EXACT) {
+                return bounds;
+            }
+            if (this.rotationMode === $.OverlayRotationMode.BOUNDING_BOX) {
+                // If overlay not fully scalable, BOUNDING_BOX falls back to EXACT
+                if (this.width === null || this.height === null) {
+                    return bounds;
+                }
+                // It is easier to just compute the position and size and
+                // convert to viewport coordinates.
+                var positionAndSize = this._getOverlayPositionAndSize(viewport);
+                return viewport.viewerElementToViewportRectangle(new $.Rect(
+                    positionAndSize.position.x,
+                    positionAndSize.position.y,
+                    positionAndSize.size.x,
+                    positionAndSize.size.y));
+            }
+
+            // NO_ROTATION case
+            return bounds.rotate(-viewport.degrees,
+                this._getPlacementPoint(bounds));
         }
     };
 
-}( OpenSeadragon ));
+}(OpenSeadragon));
 
 /*
  * OpenSeadragon - Drawer
@@ -16335,13 +16735,17 @@ $.Drawer.prototype = {
         }
     },
 
-    _clear: function ( useSketch ) {
-        if ( !this.useCanvas ) {
+    _clear: function (useSketch, bounds) {
+        if (!this.useCanvas) {
             return;
         }
-        var context = this._getContext( useSketch );
-        var canvas = context.canvas;
-        context.clearRect( 0, 0, canvas.width, canvas.height );
+        var context = this._getContext(useSketch);
+        if (bounds) {
+            context.clearRect(bounds.x, bounds.y, bounds.width, bounds.height);
+        } else {
+            var canvas = context.canvas;
+            context.clearRect(0, 0, canvas.width, canvas.height);
+        }
     },
 
     /**
@@ -16458,47 +16862,80 @@ $.Drawer.prototype = {
 
     /**
      * Blends the sketch canvas in the main canvas.
-     * @param {Float} opacity The opacity of the blending.
-     * @param {Float} [scale=1] The scale at which tiles were drawn on the sketch. Default is 1.
-     *   Use scale to draw at a lower scale and then enlarge onto the main canvas.
-     * @param {OpenSeadragon.Point} [translate] A translation vector that was used to draw the tiles
-     * @param {String} [options.compositeOperation] - How the image is composited onto other images; see compositeOperation in {@link OpenSeadragon.Options} for possible values.
-     * @returns {undefined}
+     * @param {Object} options The options
+     * @param {Float} options.opacity The opacity of the blending.
+     * @param {Float} [options.scale=1] The scale at which tiles were drawn on
+     * the sketch. Default is 1.
+     * Use scale to draw at a lower scale and then enlarge onto the main canvas.
+     * @param {OpenSeadragon.Point} [options.translate] A translation vector
+     * that was used to draw the tiles
+     * @param {String} [options.compositeOperation] - How the image is
+     * composited onto other images; see compositeOperation in
+     * {@link OpenSeadragon.Options} for possible values.
+     * @param {OpenSeadragon.Rect} [options.bounds] The part of the sketch
+     * canvas to blend in the main canvas. If specified, options.scale and
+     * options.translate get ignored.
      */
     blendSketch: function(opacity, scale, translate, compositeOperation) {
+        var options = opacity;
+        if (!$.isPlainObject(options)) {
+            options = {
+                opacity: opacity,
+                scale: scale,
+                translate: translate,
+                compositeOperation: compositeOperation
+            };
+        }
         if (!this.useCanvas || !this.sketchCanvas) {
             return;
         }
-        scale = scale || 1;
-        var position = translate instanceof $.Point ?
-            translate :
-            new $.Point(0, 0);
-
-        var widthExt = 0;
-        var heightExt = 0;
-        if (translate) {
-            var widthDiff = this.sketchCanvas.width - this.canvas.width;
-            var heightDiff = this.sketchCanvas.height - this.canvas.height;
-            widthExt = Math.round(widthDiff / 2);
-            heightExt = Math.round(heightDiff / 2);
-        }
+        opacity = options.opacity;
+        compositeOperation = options.compositeOperation;
+        var bounds = options.bounds;
 
         this.context.save();
         this.context.globalAlpha = opacity;
         if (compositeOperation) {
             this.context.globalCompositeOperation = compositeOperation;
         }
-        this.context.drawImage(
-            this.sketchCanvas,
-            position.x - widthExt * scale,
-            position.y - heightExt * scale,
-            (this.canvas.width + 2 * widthExt) * scale,
-            (this.canvas.height  + 2 * heightExt) * scale,
-            -widthExt,
-            -heightExt,
-            this.canvas.width + 2 * widthExt,
-            this.canvas.height + 2 * heightExt
-        );
+        if (bounds) {
+            this.context.drawImage(
+                this.sketchCanvas,
+                bounds.x,
+                bounds.y,
+                bounds.width,
+                bounds.height,
+                bounds.x,
+                bounds.y,
+                bounds.width,
+                bounds.height
+            );
+        } else {
+            scale = options.scale || 1;
+            translate = options.translate;
+            var position = translate instanceof $.Point ?
+                translate : new $.Point(0, 0);
+
+            var widthExt = 0;
+            var heightExt = 0;
+            if (translate) {
+                var widthDiff = this.sketchCanvas.width - this.canvas.width;
+                var heightDiff = this.sketchCanvas.height - this.canvas.height;
+                widthExt = Math.round(widthDiff / 2);
+                heightExt = Math.round(heightDiff / 2);
+            }
+            this.context.drawImage(
+                this.sketchCanvas,
+                position.x - widthExt * scale,
+                position.y - heightExt * scale,
+                (this.canvas.width + 2 * widthExt) * scale,
+                (this.canvas.height  + 2 * heightExt) * scale,
+                -widthExt,
+                -heightExt,
+                this.canvas.width + 2 * widthExt,
+                this.canvas.height + 2 * heightExt
+            );
+        }
         this.context.restore();
     },
 
@@ -16901,6 +17338,17 @@ $.Viewport.prototype = {
      * @returns {OpenSeadragon.Rect} The home bounds in vewport coordinates.
      */
     getHomeBounds: function() {
+        return this.getHomeBoundsNoRotate().rotate(-this.getRotation());
+    },
+
+    /**
+     * Returns the home bounds in viewport coordinates.
+     * This method ignores the viewport rotation. Use
+     * {@link OpenSeadragon.Viewport#getHomeBounds} to take it into account.
+     * @function
+     * @returns {OpenSeadragon.Rect} The home bounds in vewport coordinates.
+     */
+    getHomeBoundsNoRotate: function() {
         var center = this._contentBounds.getCenter();
         var width  = 1.0 / this.getHomeZoom();
         var height = width / this.getAspectRatio();
@@ -16918,8 +17366,8 @@ $.Viewport.prototype = {
      * @param {Boolean} immediately
      * @fires OpenSeadragon.Viewer.event:home
      */
-    goHome: function( immediately ) {
-        if( this.viewer ){
+    goHome: function(immediately) {
+        if (this.viewer) {
             /**
              * Raised when the "home" operation occurs (see {@link OpenSeadragon.Viewport#goHome}).
              *
@@ -16930,11 +17378,11 @@ $.Viewport.prototype = {
              * @property {Boolean} immediately
              * @property {?Object} userData - Arbitrary subscriber-defined object.
              */
-            this.viewer.raiseEvent( 'home', {
+            this.viewer.raiseEvent('home', {
                 immediately: immediately
             });
         }
-        return this.fitBounds( this.getHomeBounds(), immediately );
+        return this.fitBounds(this.getHomeBounds(), immediately);
     },
 
     /**
@@ -16981,8 +17429,8 @@ $.Viewport.prototype = {
     },
 
     /**
-     * @function
      * The margins push the "home" region in from the sides by the specified amounts.
+     * @function
      * @returns {Object} Properties (Numbers, in screen coordinates): left, top, right, bottom.
      */
     getMargins: function() {
@@ -16990,8 +17438,8 @@ $.Viewport.prototype = {
     },
 
     /**
-     * @function
      * The margins push the "home" region in from the sides by the specified amounts.
+     * @function
      * @param {Object} margins - Properties (Numbers, in screen coordinates): left, top, right, bottom.
      */
     setMargins: function(margins) {
@@ -17005,7 +17453,9 @@ $.Viewport.prototype = {
         }, margins);
 
         this._updateContainerInnerSize();
-        this.viewer.forceRedraw();
+        if (this.viewer) {
+            this.viewer.forceRedraw();
+        }
     },
 
     /**
@@ -17014,14 +17464,26 @@ $.Viewport.prototype = {
      * @param {Boolean} current - Pass true for the current location; defaults to false (target location).
      * @returns {OpenSeadragon.Rect} The location you are zoomed/panned to, in viewport coordinates.
      */
-    getBounds: function( current ) {
-        var center = this.getCenter( current ),
-            width  = 1.0 / this.getZoom( current ),
-            height = width / this.getAspectRatio();
+    getBounds: function(current) {
+        return this.getBoundsNoRotate(current).rotate(-this.getRotation());
+    },
+
+    /**
+     * Returns the bounds of the visible area in viewport coordinates.
+     * This method ignores the viewport rotation. Use
+     * {@link OpenSeadragon.Viewport#getBounds} to take it into account.
+     * @function
+     * @param {Boolean} current - Pass true for the current location; defaults to false (target location).
+     * @returns {OpenSeadragon.Rect} The location you are zoomed/panned to, in viewport coordinates.
+     */
+    getBoundsNoRotate: function(current) {
+        var center = this.getCenter(current);
+        var width  = 1.0 / this.getZoom(current);
+        var height = width / this.getAspectRatio();
 
         return new $.Rect(
-            center.x - ( width / 2.0 ),
-            center.y - ( height / 2.0 ),
+            center.x - (width / 2.0),
+            center.y - (height / 2.0),
             width,
             height
         );
@@ -17033,8 +17495,19 @@ $.Viewport.prototype = {
      * @returns {OpenSeadragon.Rect} The location you are zoomed/panned to,
      * including the space taken by margins, in viewport coordinates.
      */
-    getBoundsWithMargins: function( current ) {
-        var bounds = this.getBounds(current);
+    getBoundsWithMargins: function(current) {
+        return this.getBoundsNoRotateWithMargins(current).rotate(
+            -this.getRotation(), this.getCenter(current));
+    },
+
+    /**
+     * @function
+     * @param {Boolean} current - Pass true for the current location; defaults to false (target location).
+     * @returns {OpenSeadragon.Rect} The location you are zoomed/panned to,
+     * including the space taken by margins, in viewport coordinates.
+     */
+    getBoundsNoRotateWithMargins: function(current) {
+        var bounds = this.getBoundsNoRotate(current);
         var factor = this._containerInnerSize.x * this.getZoom(current);
         bounds.x -= this._margins.left / factor;
         bounds.y -= this._margins.top / factor;
@@ -17102,6 +17575,13 @@ $.Viewport.prototype = {
         }
     },
 
+    // private
+    _applyZoomConstraints: function(zoom) {
+        return Math.max(
+            Math.min(zoom, this.getMaxZoom()),
+            this.getMinZoom());
+    },
+
     /**
      * @function
      * @private
@@ -17116,51 +17596,40 @@ $.Viewport.prototype = {
                 bounds.width,
                 bounds.height);
 
-        var horizontalThreshold = this.visibilityRatio * newBounds.width;
-        var verticalThreshold   = this.visibilityRatio * newBounds.height;
-
         if (this.wrapHorizontal) {
             //do nothing
         } else {
-            var dx = 0;
-            var thresholdLeft = newBounds.x + (newBounds.width - horizontalThreshold);
-            if (this._contentBoundsNoRotate.x > thresholdLeft) {
-                dx = this._contentBoundsNoRotate.x - thresholdLeft;
-            }
-
+            var horizontalThreshold = this.visibilityRatio * newBounds.width;
+            var boundsRight = newBounds.x + newBounds.width;
             var contentRight = this._contentBoundsNoRotate.x + this._contentBoundsNoRotate.width;
-            var thresholdRight = newBounds.x + horizontalThreshold;
-            if (contentRight < thresholdRight) {
-                var newDx = contentRight - thresholdRight;
-                if (dx) {
-                    dx = (dx + newDx) / 2;
-                } else {
-                    dx = newDx;
-                }
+            var leftDx = this._contentBoundsNoRotate.x - boundsRight + horizontalThreshold;
+            var rightDx = contentRight - newBounds.x - horizontalThreshold;
+
+            if (horizontalThreshold > this._contentBoundsNoRotate.width) {
+                newBounds.x += (leftDx + rightDx) / 2;
+            } else if (rightDx < 0) {
+                newBounds.x += rightDx;
+            } else if (leftDx > 0) {
+                newBounds.x += leftDx;
             }
-            newBounds.x += dx;
         }
 
         if (this.wrapVertical) {
             //do nothing
         } else {
-            var dy = 0;
-            var thresholdTop = newBounds.y + (newBounds.height - verticalThreshold);
-            if (this._contentBoundsNoRotate.y > thresholdTop) {
-                dy = this._contentBoundsNoRotate.y - thresholdTop;
-            }
-
+            var verticalThreshold   = this.visibilityRatio * newBounds.height;
+            var boundsBottom = newBounds.y + newBounds.height;
             var contentBottom = this._contentBoundsNoRotate.y + this._contentBoundsNoRotate.height;
-            var thresholdBottom = newBounds.y + verticalThreshold;
-            if (contentBottom < thresholdBottom) {
-                var newDy = contentBottom - thresholdBottom;
-                if (dy) {
-                    dy = (dy + newDy) / 2;
-                } else {
-                    dy = newDy;
-                }
+            var topDy = this._contentBoundsNoRotate.y - boundsBottom + verticalThreshold;
+            var bottomDy = contentBottom - newBounds.y - verticalThreshold;
+
+            if (verticalThreshold > this._contentBoundsNoRotate.height) {
+                newBounds.y += (topDy + bottomDy) / 2;
+            } else if (bottomDy < 0) {
+                newBounds.y += bottomDy;
+            } else if (topDy > 0) {
+                newBounds.y += topDy;
             }
-            newBounds.y += dy;
         }
 
         if (this.viewer) {
@@ -17183,40 +17652,44 @@ $.Viewport.prototype = {
     },
 
     /**
+     * Enforces the minZoom, maxZoom and visibilityRatio constraints by
+     * zooming and panning to the closest acceptable zoom and location.
      * @function
+     * @param {Boolean} [immediately=false]
      * @return {OpenSeadragon.Viewport} Chainable.
      * @fires OpenSeadragon.Viewer.event:constrain
      */
-    applyConstraints: function( immediately ) {
-        var actualZoom = this.getZoom(),
-            constrainedZoom = Math.max(
-                Math.min( actualZoom, this.getMaxZoom() ),
-                this.getMinZoom()
-            ),
-            bounds,
-            constrainedBounds;
+    applyConstraints: function(immediately) {
+        var actualZoom = this.getZoom();
+        var constrainedZoom = this._applyZoomConstraints(actualZoom);
 
-        if ( actualZoom != constrainedZoom ) {
-            this.zoomTo( constrainedZoom, this.zoomPoint, immediately );
+        if (actualZoom !== constrainedZoom) {
+            this.zoomTo(constrainedZoom, this.zoomPoint, immediately);
         }
 
-        bounds = this.getBounds();
+        var bounds = this.getBoundsNoRotate();
+        var constrainedBounds = this._applyBoundaryConstraints(
+            bounds, immediately);
 
-        constrainedBounds = this._applyBoundaryConstraints( bounds, immediately );
-
-        if ( bounds.x !== constrainedBounds.x || bounds.y !== constrainedBounds.y || immediately ){
-            this.fitBounds( constrainedBounds, immediately );
+        if (bounds.x !== constrainedBounds.x ||
+            bounds.y !== constrainedBounds.y ||
+            immediately) {
+            this.fitBounds(
+                constrainedBounds.rotate(-this.getRotation()),
+                immediately);
         }
-
         return this;
     },
 
     /**
+     * Equivalent to {@link OpenSeadragon.Viewport#applyConstraints}
      * @function
-     * @param {Boolean} immediately
+     * @param {Boolean} [immediately=false]
+     * @return {OpenSeadragon.Viewport} Chainable.
+     * @fires OpenSeadragon.Viewer.event:constrain
      */
-    ensureVisible: function( immediately ) {
-        return this.applyConstraints( immediately );
+    ensureVisible: function(immediately) {
+        return this.applyConstraints(immediately);
     },
 
     /**
@@ -17226,41 +17699,37 @@ $.Viewport.prototype = {
      * @param {Object} options (immediately=false, constraints=false)
      * @return {OpenSeadragon.Viewport} Chainable.
      */
-    _fitBounds: function( bounds, options ) {
+    _fitBounds: function(bounds, options) {
         options = options || {};
         var immediately = options.immediately || false;
         var constraints = options.constraints || false;
 
         var aspect = this.getAspectRatio();
         var center = bounds.getCenter();
+
+        // Compute width and height of bounding box.
         var newBounds = new $.Rect(
             bounds.x,
             bounds.y,
             bounds.width,
-            bounds.height
-        );
+            bounds.height,
+            bounds.degrees + this.getRotation())
+            .getBoundingBox();
 
-        if ( newBounds.getAspectRatio() >= aspect ) {
-            newBounds.height = bounds.width / aspect;
-            newBounds.y      = center.y - newBounds.height / 2;
+        if (newBounds.getAspectRatio() >= aspect) {
+            newBounds.height = newBounds.width / aspect;
         } else {
-            newBounds.width = bounds.height * aspect;
-            newBounds.x     = center.x - newBounds.width / 2;
+            newBounds.width = newBounds.height * aspect;
         }
 
-        this.panTo( this.getCenter( true ), true );
-        this.zoomTo( this.getZoom( true ), null, true );
-
-        var oldBounds = this.getBounds();
-        var oldZoom   = this.getZoom();
-        var newZoom   = 1.0 / newBounds.width;
+        // Compute x and y from width, height and center position
+        newBounds.x = center.x - newBounds.width / 2;
+        newBounds.y = center.y - newBounds.height / 2;
+        var newZoom = 1.0 / newBounds.width;
 
         if (constraints) {
             var newBoundsAspectRatio = newBounds.getAspectRatio();
-            var newConstrainedZoom = Math.max(
-                Math.min(newZoom, this.getMaxZoom() ),
-                this.getMinZoom()
-            );
+            var newConstrainedZoom = this._applyZoomConstraints(newZoom);
 
             if (newZoom !== newConstrainedZoom) {
                 newZoom = newConstrainedZoom;
@@ -17270,58 +17739,70 @@ $.Viewport.prototype = {
                 newBounds.y = center.y - newBounds.height / 2;
             }
 
-            newBounds = this._applyBoundaryConstraints( newBounds, immediately );
+            newBounds = this._applyBoundaryConstraints(newBounds, immediately);
             center = newBounds.getCenter();
         }
 
         if (immediately) {
-            this.panTo( center, true );
+            this.panTo(center, true);
             return this.zoomTo(newZoom, null, true);
         }
 
-        if (Math.abs(newZoom - oldZoom) < 0.00000001 ||
-                Math.abs(newBounds.width - oldBounds.width) < 0.00000001) {
-            return this.panTo( center, immediately );
+        this.panTo(this.getCenter(true), true);
+        this.zoomTo(this.getZoom(true), null, true);
+
+        var oldBounds = this.getBounds();
+        var oldZoom   = this.getZoom();
+
+        if (oldZoom === 0 || Math.abs(newZoom / oldZoom - 1) < 0.00000001) {
+            this.zoomTo(newZoom, true);
+            return this.panTo(center, immediately);
         }
 
-        var referencePoint = oldBounds.getTopLeft().times(
-            this._containerInnerSize.x / oldBounds.width
-        ).minus(
-            newBounds.getTopLeft().times(
-                this._containerInnerSize.x / newBounds.width
-            )
-        ).divide(
-            this._containerInnerSize.x / oldBounds.width -
-            this._containerInnerSize.x / newBounds.width
-        );
+        newBounds = newBounds.rotate(-this.getRotation());
+        var referencePoint = newBounds.getTopLeft().times(newZoom)
+            .minus(oldBounds.getTopLeft().times(oldZoom))
+            .divide(newZoom - oldZoom);
 
-        return this.zoomTo( newZoom, referencePoint, immediately );
+        return this.zoomTo(newZoom, referencePoint, immediately);
     },
 
     /**
+     * Makes the viewport zoom and pan so that the specified bounds take
+     * as much space as possible in the viewport.
+     * Note: this method ignores the constraints (minZoom, maxZoom and
+     * visibilityRatio).
+     * Use {@link OpenSeadragon.Viewport#fitBoundsWithConstraints} to enforce
+     * them.
      * @function
      * @param {OpenSeadragon.Rect} bounds
-     * @param {Boolean} immediately
+     * @param {Boolean} [immediately=false]
      * @return {OpenSeadragon.Viewport} Chainable.
      */
-    fitBounds: function( bounds, immediately ) {
-        return this._fitBounds( bounds, {
+    fitBounds: function(bounds, immediately) {
+        return this._fitBounds(bounds, {
             immediately: immediately,
             constraints: false
-        } );
+        });
     },
 
     /**
+     * Makes the viewport zoom and pan so that the specified bounds take
+     * as much space as possible in the viewport while enforcing the constraints
+     * (minZoom, maxZoom and visibilityRatio).
+     * Note: because this method enforces the constraints, part of the
+     * provided bounds may end up outside of the viewport.
+     * Use {@link OpenSeadragon.Viewport#fitBounds} to ignore them.
      * @function
      * @param {OpenSeadragon.Rect} bounds
-     * @param {Boolean} immediately
+     * @param {Boolean} [immediately=false]
      * @return {OpenSeadragon.Viewport} Chainable.
      */
-    fitBoundsWithConstraints: function( bounds, immediately ) {
-        return this._fitBounds( bounds, {
+    fitBoundsWithConstraints: function(bounds, immediately) {
+        return this._fitBounds(bounds, {
             immediately: immediately,
             constraints: true
-        } );
+        });
     },
 
     /**
@@ -17416,7 +17897,12 @@ $.Viewport.prototype = {
     },
 
     /**
+     * Zooms to the specified zoom level
      * @function
+     * @param {Number} zoom The zoom level to zoom to.
+     * @param {OpenSeadragon.Point} [refPoint] The point which will stay at
+     * the same screen location. Defaults to the viewport center.
+     * @param {Boolean} [immediately=false]
      * @return {OpenSeadragon.Viewport} Chainable.
      * @fires OpenSeadragon.Viewer.event:zoom
      */
@@ -17506,7 +17992,7 @@ $.Viewport.prototype = {
      * @fires OpenSeadragon.Viewer.event:resize
      */
     resize: function( newContainerSize, maintain ) {
-        var oldBounds = this.getBounds(),
+        var oldBounds = this.getBoundsNoRotate(),
             newBounds = oldBounds,
             widthDeltaFactor;
 
@@ -17552,37 +18038,37 @@ $.Viewport.prototype = {
     },
 
     /**
+     * Update the zoom and center (X and Y) springs.
      * @function
+     * @returns {Boolean} True if any change has been made, false otherwise.
      */
     update: function() {
-        var oldZoomPixel,
-            newZoomPixel,
-            deltaZoomPixels,
-            deltaZoomPoints;
 
         if (this.zoomPoint) {
-            oldZoomPixel = this.pixelFromPoint( this.zoomPoint, true );
-        }
+            var oldZoomPixel = this.pixelFromPoint(this.zoomPoint, true);
+            this.zoomSpring.update();
+            var newZoomPixel = this.pixelFromPoint(this.zoomPoint, true);
 
-        this.zoomSpring.update();
+            var deltaZoomPixels = newZoomPixel.minus(oldZoomPixel);
+            var deltaZoomPoints = this.deltaPointsFromPixels(
+                deltaZoomPixels, true);
 
-        if (this.zoomPoint && this.zoomSpring.current.value != this._oldZoom) {
-            newZoomPixel    = this.pixelFromPoint( this.zoomPoint, true );
-            deltaZoomPixels = newZoomPixel.minus( oldZoomPixel );
-            deltaZoomPoints = this.deltaPointsFromPixels( deltaZoomPixels, true );
+            this.centerSpringX.shiftBy(deltaZoomPoints.x);
+            this.centerSpringY.shiftBy(deltaZoomPoints.y);
 
-            this.centerSpringX.shiftBy( deltaZoomPoints.x );
-            this.centerSpringY.shiftBy( deltaZoomPoints.y );
+            if (this.zoomSpring.isAtTargetValue()) {
+                this.zoomPoint = null;
+            }
         } else {
-            this.zoomPoint = null;
+            this.zoomSpring.update();
         }
 
         this.centerSpringX.update();
         this.centerSpringY.update();
 
-        var changed = this.centerSpringX.current.value != this._oldCenterX ||
-            this.centerSpringY.current.value != this._oldCenterY ||
-            this.zoomSpring.current.value != this._oldZoom;
+        var changed = this.centerSpringX.current.value !== this._oldCenterX ||
+            this.centerSpringY.current.value !== this._oldCenterY ||
+            this.zoomSpring.current.value !== this._oldZoom;
 
         this._oldCenterX = this.centerSpringX.current.value;
         this._oldCenterY = this.centerSpringY.current.value;
@@ -17658,7 +18144,8 @@ $.Viewport.prototype = {
      * @returns {OpenSeadragon.Point}
      */
     pixelFromPointNoRotate: function(point, current) {
-        return this._pixelFromPointNoRotate(point, this.getBounds(current));
+        return this._pixelFromPointNoRotate(
+            point, this.getBoundsNoRotate(current));
     },
 
     /**
@@ -17669,7 +18156,7 @@ $.Viewport.prototype = {
      * @returns {OpenSeadragon.Point}
      */
     pixelFromPoint: function(point, current) {
-        return this._pixelFromPoint(point, this.getBounds(current));
+        return this._pixelFromPoint(point, this.getBoundsNoRotate(current));
     },
 
     // private
@@ -17700,7 +18187,7 @@ $.Viewport.prototype = {
      * @returns {OpenSeadragon.Point}
      */
     pointFromPixelNoRotate: function(pixel, current) {
-        var bounds = this.getBounds( current );
+        var bounds = this.getBoundsNoRotate(current);
         return pixel.minus(
             new $.Point(this._margins.left, this._margins.top)
         ).divide(
@@ -17749,8 +18236,18 @@ $.Viewport.prototype = {
             return this.viewportToImageCoordinates(viewerX.x, viewerX.y);
         }
 
-        if (this.viewer && this.viewer.world.getItemCount() > 1) {
-            $.console.error('[Viewport.viewportToImageCoordinates] is not accurate with multi-image; use TiledImage.viewportToImageCoordinates instead.');
+        if (this.viewer) {
+            var count = this.viewer.world.getItemCount();
+            if (count > 1) {
+                $.console.error('[Viewport.viewportToImageCoordinates] is not accurate ' +
+                    'with multi-image; use TiledImage.viewportToImageCoordinates instead.');
+            } else if (count === 1) {
+                // It is better to use TiledImage.viewportToImageCoordinates
+                // because this._contentBoundsNoRotate can not be relied on
+                // with clipping.
+                var item = this.viewer.world.getItemAt(0);
+                return item.viewportToImageCoordinates(viewerX, viewerY, true);
+            }
         }
 
         return this._viewportToImageDelta(
@@ -17783,8 +18280,18 @@ $.Viewport.prototype = {
             return this.imageToViewportCoordinates(imageX.x, imageX.y);
         }
 
-        if (this.viewer && this.viewer.world.getItemCount() > 1) {
-            $.console.error('[Viewport.imageToViewportCoordinates] is not accurate with multi-image; use TiledImage.imageToViewportCoordinates instead.');
+        if (this.viewer) {
+            var count = this.viewer.world.getItemCount();
+            if (count > 1) {
+                $.console.error('[Viewport.imageToViewportCoordinates] is not accurate ' +
+                    'with multi-image; use TiledImage.imageToViewportCoordinates instead.');
+            } else if (count === 1) {
+                // It is better to use TiledImage.viewportToImageCoordinates
+                // because this._contentBoundsNoRotate can not be relied on
+                // with clipping.
+                var item = this.viewer.world.getItemAt(0);
+                return item.imageToViewportCoordinates(imageX, imageY, true);
+            }
         }
 
         var point = this._imageToViewportDelta(imageX, imageY);
@@ -17812,6 +18319,21 @@ $.Viewport.prototype = {
         if (!(rect instanceof $.Rect)) {
             //they passed individual components instead of a rectangle
             rect = new $.Rect(imageX, imageY, pixelWidth, pixelHeight);
+        }
+
+        if (this.viewer) {
+            var count = this.viewer.world.getItemCount();
+            if (count > 1) {
+                $.console.error('[Viewport.imageToViewportRectangle] is not accurate ' +
+                    'with multi-image; use TiledImage.imageToViewportRectangle instead.');
+            } else if (count === 1) {
+                // It is better to use TiledImage.imageToViewportRectangle
+                // because this._contentBoundsNoRotate can not be relied on
+                // with clipping.
+                var item = this.viewer.world.getItemAt(0);
+                return item.imageToViewportRectangle(
+                    imageX, imageY, pixelWidth, pixelHeight, true);
+            }
         }
 
         var coordA = this.imageToViewportCoordinates(rect.x, rect.y);
@@ -17845,6 +18367,21 @@ $.Viewport.prototype = {
         if (!(rect instanceof $.Rect)) {
             //they passed individual components instead of a rectangle
             rect = new $.Rect(viewerX, viewerY, pointWidth, pointHeight);
+        }
+
+        if (this.viewer) {
+            var count = this.viewer.world.getItemCount();
+            if (count > 1) {
+                $.console.error('[Viewport.viewportToImageRectangle] is not accurate ' +
+                    'with multi-image; use TiledImage.viewportToImageRectangle instead.');
+            } else if (count === 1) {
+                // It is better to use TiledImage.viewportToImageCoordinates
+                // because this._contentBoundsNoRotate can not be relied on
+                // with clipping.
+                var item = this.viewer.world.getItemAt(0);
+                return item.viewportToImageRectangle(
+                    viewerX, viewerY, pointWidth, pointHeight, true);
+            }
         }
 
         var coordA = this.viewportToImageCoordinates(rect.x, rect.y);
@@ -17888,10 +18425,12 @@ $.Viewport.prototype = {
      * @param {OpenSeadragon.Point} pixel
      * @returns {OpenSeadragon.Point}
      */
-    windowToImageCoordinates: function( pixel ) {
+    windowToImageCoordinates: function(pixel) {
+        $.console.assert(this.viewer,
+            "[Viewport.windowToImageCoordinates] the viewport must have a viewer.");
         var viewerCoordinates = pixel.minus(
-                OpenSeadragon.getElementPosition( this.viewer.element ));
-        return this.viewerElementToImageCoordinates( viewerCoordinates );
+                $.getElementPosition(this.viewer.element));
+        return this.viewerElementToImageCoordinates(viewerCoordinates);
     },
 
     /**
@@ -17900,10 +18439,12 @@ $.Viewport.prototype = {
      * @param {OpenSeadragon.Point} pixel
      * @returns {OpenSeadragon.Point}
      */
-    imageToWindowCoordinates: function( pixel ) {
-        var viewerCoordinates = this.imageToViewerElementCoordinates( pixel );
+    imageToWindowCoordinates: function(pixel) {
+        $.console.assert(this.viewer,
+            "[Viewport.imageToWindowCoordinates] the viewport must have a viewer.");
+        var viewerCoordinates = this.imageToViewerElementCoordinates(pixel);
         return viewerCoordinates.plus(
-                OpenSeadragon.getElementPosition( this.viewer.element ));
+                $.getElementPosition(this.viewer.element));
     },
 
     /**
@@ -17927,14 +18468,44 @@ $.Viewport.prototype = {
     },
 
     /**
+     * Convert a rectangle in pixel coordinates relative to the viewer element
+     * to viewport coordinates.
+     * @param {OpenSeadragon.Rect} rectangle the rectangle to convert
+     * @returns {OpenSeadragon.Rect} the converted rectangle
+     */
+    viewerElementToViewportRectangle: function(rectangle) {
+        return $.Rect.fromSummits(
+            this.pointFromPixel(rectangle.getTopLeft(), true),
+            this.pointFromPixel(rectangle.getTopRight(), true),
+            this.pointFromPixel(rectangle.getBottomLeft(), true)
+        );
+    },
+
+    /**
+     * Convert a rectangle in viewport coordinates to pixel coordinates relative
+     * to the viewer element.
+     * @param {OpenSeadragon.Rect} rectangle the rectangle to convert
+     * @returns {OpenSeadragon.Rect} the converted rectangle
+     */
+    viewportToViewerElementRectangle: function(rectangle) {
+        return $.Rect.fromSummits(
+            this.pixelFromPoint(rectangle.getTopLeft(), true),
+            this.pixelFromPoint(rectangle.getTopRight(), true),
+            this.pixelFromPoint(rectangle.getBottomLeft(), true)
+        );
+    },
+
+    /**
      * Convert pixel coordinates relative to the window to viewport coordinates.
      * @param {OpenSeadragon.Point} pixel
      * @returns {OpenSeadragon.Point}
      */
-    windowToViewportCoordinates: function( pixel ) {
+    windowToViewportCoordinates: function(pixel) {
+        $.console.assert(this.viewer,
+            "[Viewport.windowToViewportCoordinates] the viewport must have a viewer.");
         var viewerCoordinates = pixel.minus(
-                OpenSeadragon.getElementPosition( this.viewer.element ));
-        return this.viewerElementToViewportCoordinates( viewerCoordinates );
+                $.getElementPosition(this.viewer.element));
+        return this.viewerElementToViewportCoordinates(viewerCoordinates);
     },
 
     /**
@@ -17942,10 +18513,12 @@ $.Viewport.prototype = {
      * @param {OpenSeadragon.Point} point
      * @returns {OpenSeadragon.Point}
      */
-    viewportToWindowCoordinates: function( point ) {
-        var viewerCoordinates = this.viewportToViewerElementCoordinates( point );
+    viewportToWindowCoordinates: function(point) {
+        $.console.assert(this.viewer,
+            "[Viewport.viewportToWindowCoordinates] the viewport must have a viewer.");
+        var viewerCoordinates = this.viewportToViewerElementCoordinates(point);
         return viewerCoordinates.plus(
-                OpenSeadragon.getElementPosition( this.viewer.element ));
+                $.getElementPosition(this.viewer.element));
     },
 
     /**
@@ -17960,9 +18533,19 @@ $.Viewport.prototype = {
      * target zoom.
      * @returns {Number} imageZoom The image zoom
      */
-    viewportToImageZoom: function( viewportZoom ) {
-        if (this.viewer && this.viewer.world.getItemCount() > 1) {
-            $.console.error('[Viewport.viewportToImageZoom] is not accurate with multi-image.');
+    viewportToImageZoom: function(viewportZoom) {
+        if (this.viewer) {
+            var count = this.viewer.world.getItemCount();
+            if (count > 1) {
+                $.console.error('[Viewport.viewportToImageZoom] is not ' +
+                    'accurate with multi-image.');
+            } else if (count === 1) {
+                // It is better to use TiledImage.viewportToImageZoom
+                // because this._contentBoundsNoRotate can not be relied on
+                // with clipping.
+                var item = this.viewer.world.getItemAt(0);
+                return item.viewportToImageZoom(viewportZoom);
+            }
         }
 
         var imageWidth = this._contentSizeNoRotate.x;
@@ -17984,9 +18567,19 @@ $.Viewport.prototype = {
      * target zoom.
      * @returns {Number} viewportZoom The viewport zoom
      */
-    imageToViewportZoom: function( imageZoom ) {
-        if (this.viewer && this.viewer.world.getItemCount() > 1) {
-            $.console.error('[Viewport.imageToViewportZoom] is not accurate with multi-image.');
+    imageToViewportZoom: function(imageZoom) {
+        if (this.viewer) {
+            var count = this.viewer.world.getItemCount();
+            if (count > 1) {
+                $.console.error('[Viewport.imageToViewportZoom] is not accurate ' +
+                    'with multi-image.');
+            } else if (count === 1) {
+                // It is better to use TiledImage.imageToViewportZoom
+                // because this._contentBoundsNoRotate can not be relied on
+                // with clipping.
+                var item = this.viewer.world.getItemAt(0);
+                return item.imageToViewportZoom(imageZoom);
+            }
         }
 
         var imageWidth = this._contentSizeNoRotate.x;
@@ -18053,6 +18646,10 @@ $.Viewport.prototype = {
  * @param {Number} [options.y=0] - Top position, in viewport coordinates.
  * @param {Number} [options.width=1] - Width, in viewport coordinates.
  * @param {Number} [options.height] - Height, in viewport coordinates.
+ * @param {OpenSeadragon.Rect} [options.fitBounds] The bounds in viewport coordinates
+ * to fit the image into. If specified, x, y, width and height get ignored.
+ * @param {OpenSeadragon.Placement} [options.fitBoundsPlacement=OpenSeadragon.Placement.CENTER]
+ * How to anchor the image in the bounds if options.fitBounds is set.
  * @param {OpenSeadragon.Rect} [options.clip] - An area, in image pixels, to clip to
  * (portions of the image outside of this area will not be visible). Only works on
  * browsers that support the HTML5 canvas.
@@ -18066,6 +18663,7 @@ $.Viewport.prototype = {
  * @param {Boolean} [options.alwaysBlend] - See {@link OpenSeadragon.Options}.
  * @param {Number} [options.minPixelRatio] - See {@link OpenSeadragon.Options}.
  * @param {Number} [options.smoothTileEdgesMinZoom] - See {@link OpenSeadragon.Options}.
+ * @param {Boolean} [options.iOSDevice] - See {@link OpenSeadragon.Options}.
  * @param {Number} [options.opacity=1] - Opacity the tiled image should be drawn at.
  * @param {String} [options.compositeOperation] - How the image is composited onto other images; see compositeOperation in {@link OpenSeadragon.Options} for possible values.
  * @param {Boolean} [options.debugMode] - See {@link OpenSeadragon.Options}.
@@ -18123,6 +18721,11 @@ $.TiledImage = function( options ) {
         delete options.height;
     }
 
+    var fitBounds = options.fitBounds;
+    delete options.fitBounds;
+    var fitBoundsPlacement = options.fitBoundsPlacement || OpenSeadragon.Placement.CENTER;
+    delete options.fitBoundsPlacement;
+
     $.extend( true, this, {
 
         //internal state properties
@@ -18145,6 +18748,7 @@ $.TiledImage = function( options ) {
         alwaysBlend:            $.DEFAULT_SETTINGS.alwaysBlend,
         minPixelRatio:          $.DEFAULT_SETTINGS.minPixelRatio,
         smoothTileEdgesMinZoom: $.DEFAULT_SETTINGS.smoothTileEdgesMinZoom,
+        iOSDevice:              $.DEFAULT_SETTINGS.iOSDevice,
         debugMode:              $.DEFAULT_SETTINGS.debugMode,
         crossOriginPolicy:      $.DEFAULT_SETTINGS.crossOriginPolicy,
         placeholderFillStyle:   $.DEFAULT_SETTINGS.placeholderFillStyle,
@@ -18172,6 +18776,10 @@ $.TiledImage = function( options ) {
     });
 
     this._updateForScale();
+
+    if (fitBounds) {
+        this.fitBounds(fitBounds, fitBoundsPlacement, true);
+    }
 
     // We need a callback to give image manipulation a chance to happen
     this._drawingHandler = function(args) {
@@ -18273,6 +18881,26 @@ $.extend($.TiledImage.prototype, $.EventSource.prototype, /** @lends OpenSeadrag
     getWorldBounds: function() {
         $.console.error('[TiledImage.getWorldBounds] is deprecated; use TiledImage.getBounds instead');
         return this.getBounds();
+    },
+
+    /**
+     * Get the bounds of the displayed part of the tiled image.
+     * @param {Boolean} [current=false] Pass true for the current location,
+     * false for the target location.
+     * @returns {$.Rect} The clipped bounds in viewport coordinates.
+     */
+    getClippedBounds: function(current) {
+        var bounds = this.getBounds(current);
+        if (this._clip) {
+            var ratio = this._worldWidthCurrent / this.source.dimensions.x;
+            var clip = this._clip.times(ratio);
+            bounds = new $.Rect(
+                bounds.x + clip.x,
+                bounds.y + clip.y,
+                clip.width,
+                clip.height);
+        }
+        return bounds;
     },
 
     /**
@@ -18545,6 +19173,67 @@ $.extend($.TiledImage.prototype, $.EventSource.prototype, /** @lends OpenSeadrag
     },
 
     /**
+     * Positions and scales the TiledImage to fit in the specified bounds.
+     * Note: this method fires OpenSeadragon.TiledImage.event:bounds-change
+     * twice
+     * @param {OpenSeadragon.Rect} bounds The bounds to fit the image into.
+     * @param {OpenSeadragon.Placement} [anchor=OpenSeadragon.Placement.CENTER]
+     * How to anchor the image in the bounds.
+     * @param {Boolean} [immediately=false] Whether to animate to the new size
+     * or snap immediately.
+     * @fires OpenSeadragon.TiledImage.event:bounds-change
+     */
+    fitBounds: function(bounds, anchor, immediately) {
+        anchor = anchor || $.Placement.CENTER;
+        var anchorProperties = $.Placement.properties[anchor];
+        var aspectRatio = this.contentAspectX;
+        var xOffset = 0;
+        var yOffset = 0;
+        var displayedWidthRatio = 1;
+        var displayedHeightRatio = 1;
+        if (this._clip) {
+            aspectRatio = this._clip.getAspectRatio();
+            displayedWidthRatio = this._clip.width / this.source.dimensions.x;
+            displayedHeightRatio = this._clip.height / this.source.dimensions.y;
+            if (bounds.getAspectRatio() > aspectRatio) {
+                xOffset = this._clip.x / this._clip.height * bounds.height;
+                yOffset = this._clip.y / this._clip.height * bounds.height;
+            } else {
+                xOffset = this._clip.x / this._clip.width * bounds.width;
+                yOffset = this._clip.y / this._clip.width * bounds.width;
+            }
+        }
+
+        if (bounds.getAspectRatio() > aspectRatio) {
+            // We will have margins on the X axis
+            var height = bounds.height / displayedHeightRatio;
+            var marginLeft = 0;
+            if (anchorProperties.isHorizontallyCentered) {
+                marginLeft = (bounds.width - bounds.height * aspectRatio) / 2;
+            } else if (anchorProperties.isRight) {
+                marginLeft = bounds.width - bounds.height * aspectRatio;
+            }
+            this.setPosition(
+                new $.Point(bounds.x - xOffset + marginLeft, bounds.y - yOffset),
+                immediately);
+            this.setHeight(height, immediately);
+        } else {
+            // We will have margins on the Y axis
+            var width = bounds.width / displayedWidthRatio;
+            var marginTop = 0;
+            if (anchorProperties.isVerticallyCentered) {
+                marginTop = (bounds.height - bounds.width / aspectRatio) / 2;
+            } else if (anchorProperties.isBottom) {
+                marginTop = bounds.height - bounds.width / aspectRatio;
+            }
+            this.setPosition(
+                new $.Point(bounds.x - xOffset, bounds.y - yOffset + marginTop),
+                immediately);
+            this.setWidth(width, immediately);
+        }
+    },
+
+    /**
      * @returns {OpenSeadragon.Rect|null} The TiledImage's current clip rectangle,
      * in image pixels, or null if none.
      */
@@ -18694,7 +19383,6 @@ function updateViewport( tiledImage ) {
                 Math.log( 2 )
             ))
         ),
-        degrees         = tiledImage.viewport.degrees,
         renderPixelRatioC,
         renderPixelRatioT,
         zeroRatioT,
@@ -18702,26 +19390,23 @@ function updateViewport( tiledImage ) {
         levelOpacity,
         levelVisibility;
 
-    viewportBounds.x -= tiledImage._xSpring.current.value;
-    viewportBounds.y -= tiledImage._ySpring.current.value;
-
     // Reset tile's internal drawn state
-    while ( tiledImage.lastDrawn.length > 0 ) {
+    while (tiledImage.lastDrawn.length > 0) {
         tile = tiledImage.lastDrawn.pop();
         tile.beingDrawn = false;
     }
 
-    //Change bounds for rotation
-    if (degrees === 90 || degrees === 270) {
-        viewportBounds = viewportBounds.rotate( degrees );
-    } else if (degrees !== 0 && degrees !== 180) {
-        // This is just an approximation.
-        var orthBounds = viewportBounds.rotate(90);
-        viewportBounds.x -= orthBounds.width / 2;
-        viewportBounds.y -= orthBounds.height / 2;
-        viewportBounds.width += orthBounds.width;
-        viewportBounds.height += orthBounds.height;
+    if (!tiledImage.wrapHorizontal && !tiledImage.wrapVertical) {
+        var tiledImageBounds = tiledImage.getClippedBounds(true);
+        var intersection = viewportBounds.intersection(tiledImageBounds);
+        if (intersection === null) {
+            return;
+        }
+        viewportBounds = intersection;
     }
+    viewportBounds = viewportBounds.getBoundingBox();
+    viewportBounds.x -= tiledImage._xSpring.current.value;
+    viewportBounds.y -= tiledImage._ySpring.current.value;
 
     var viewportTL = viewportBounds.getTopLeft();
     var viewportBR = viewportBounds.getBottomRight();
@@ -19345,9 +20030,10 @@ function drawTiles( tiledImage, lastDrawn ) {
 
     var zoom = tiledImage.viewport.getZoom(true);
     var imageZoom = tiledImage.viewportToImageZoom(zoom);
-    if (imageZoom > tiledImage.smoothTileEdgesMinZoom) {
+    if (imageZoom > tiledImage.smoothTileEdgesMinZoom && !tiledImage.iOSDevice) {
         // When zoomed in a lot (>100%) the tile edges are visible.
         // So we have to composite them at ~100% and scale them up together.
+        // Note: Disabled on iOS devices per default as it causes a native crash
         useSketch = true;
         sketchScale = tile.getScaleForEdgeSmoothing();
         sketchTranslate = tile.getTranslationForEdgeSmoothing(sketchScale,
@@ -19355,8 +20041,17 @@ function drawTiles( tiledImage, lastDrawn ) {
             tiledImage._drawer.getCanvasSize(true));
     }
 
-    if ( useSketch ) {
-        tiledImage._drawer._clear( true );
+    var bounds;
+    if (useSketch) {
+        if (!sketchScale) {
+            // Except when edge smoothing, we only clean the part of the
+            // sketch canvas we are going to use for performance reasons.
+            bounds = tiledImage.viewport.viewportToViewerElementRectangle(
+                tiledImage.getClippedBounds(true))
+                .getIntegerBoundingBox()
+                .times($.pixelDensityRatio);
+        }
+        tiledImage._drawer._clear(true, bounds);
     }
 
     // When scaling, we must rotate only when blending the sketch canvas to avoid
@@ -19439,7 +20134,13 @@ function drawTiles( tiledImage, lastDrawn ) {
         if (offsetForRotation) {
             tiledImage._drawer._offsetForRotation(tiledImage.viewport.degrees, false);
         }
-        tiledImage._drawer.blendSketch(tiledImage.opacity, sketchScale, sketchTranslate, tiledImage.compositeOperation);
+        tiledImage._drawer.blendSketch({
+            opacity: tiledImage.opacity,
+            scale: sketchScale,
+            translate: sketchTranslate,
+            compositeOperation: tiledImage.compositeOperation,
+            bounds: bounds
+        });
         if (offsetForRotation) {
             tiledImage._drawer._restoreRotationChanges(false);
         }
@@ -20113,34 +20814,40 @@ $.extend( $.World.prototype, $.EventSource.prototype, /** @lends OpenSeadragon.W
         var oldContentSize = this._contentSize ? this._contentSize.clone() : null;
         var oldContentFactor = this._contentFactor || 0;
 
-        if ( !this._items.length ) {
+        if (!this._items.length) {
             this._homeBounds = new $.Rect(0, 0, 1, 1);
             this._contentSize = new $.Point(1, 1);
             this._contentFactor = 1;
         } else {
-            var bounds = this._items[0].getBounds();
-            this._contentFactor = this._items[0].getContentSize().x / bounds.width;
-            var left = bounds.x;
-            var top = bounds.y;
-            var right = bounds.x + bounds.width;
-            var bottom = bounds.y + bounds.height;
-            var box;
-            for ( var i = 1; i < this._items.length; i++ ) {
-                box = this._items[i].getBounds();
-                this._contentFactor = Math.max(this._contentFactor, this._items[i].getContentSize().x / box.width);
-                left = Math.min( left, box.x );
-                top = Math.min( top, box.y );
-                right = Math.max( right, box.x + box.width );
-                bottom = Math.max( bottom, box.y + box.height );
+            var item = this._items[0];
+            var bounds = item.getBounds();
+            this._contentFactor = item.getContentSize().x / bounds.width;
+            var clippedBounds = item.getClippedBounds();
+            var left = clippedBounds.x;
+            var top = clippedBounds.y;
+            var right = clippedBounds.x + clippedBounds.width;
+            var bottom = clippedBounds.y + clippedBounds.height;
+            for (var i = 1; i < this._items.length; i++) {
+                item = this._items[i];
+                bounds = item.getBounds();
+                this._contentFactor = Math.max(this._contentFactor,
+                    item.getContentSize().x / bounds.width);
+                clippedBounds = item.getClippedBounds();
+                left = Math.min(left, clippedBounds.x);
+                top = Math.min(top, clippedBounds.y);
+                right = Math.max(right, clippedBounds.x + clippedBounds.width);
+                bottom = Math.max(bottom, clippedBounds.y + clippedBounds.height);
             }
 
-            this._homeBounds = new $.Rect( left, top, right - left, bottom - top );
-            this._contentSize = new $.Point(this._homeBounds.width * this._contentFactor,
+            this._homeBounds = new $.Rect(left, top, right - left, bottom - top);
+            this._contentSize = new $.Point(
+                this._homeBounds.width * this._contentFactor,
                 this._homeBounds.height * this._contentFactor);
         }
 
-        if (this._contentFactor !== oldContentFactor || !this._homeBounds.equals(oldHomeBounds) ||
-                !this._contentSize.equals(oldContentSize)) {
+        if (this._contentFactor !== oldContentFactor ||
+            !this._homeBounds.equals(oldHomeBounds) ||
+            !this._contentSize.equals(oldContentSize)) {
             /**
              * Raised when the home bounds or content factor change.
              * @event metrics-change

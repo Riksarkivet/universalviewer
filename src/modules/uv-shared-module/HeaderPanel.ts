@@ -8,7 +8,6 @@ import InformationFactory = require("../uv-shared-module/InformationFactory");
 import SettingsDialogue = require("../uv-dialogues-module/SettingsDialogue");
 import RiksarkivetPrint = require("../../modules/uv-shared-module/RiksarkivetPrint");
 import ISeadragonExtension = require("../../Extensions/uv-seadragon-extension/ISeadragonExtension");
-import ISeadragonProvider = require("../../Extensions/uv-seadragon-extension/ISeadragonProvider");
 
 class HeaderPanel extends BaseView {
 
@@ -69,7 +68,7 @@ class HeaderPanel extends BaseView {
         //this.$helpButton = $('<a href="#" class="action help">' + this.content.help + '</a>');
         //this.$rightOptions.append(this.$helpButton);
 
-        this.$localeToggleButton = $('<a class="localeToggle"></a>');
+        this.$localeToggleButton = $('<a class="localeToggle" tabindex="0"></a>');
         this.$rightOptions.append(this.$localeToggleButton);
 
         //Temporary code for Beta viewer
@@ -94,7 +93,7 @@ class HeaderPanel extends BaseView {
         }
         //END Temporary code for Beta viewer
 
-        this.$settingsButton = $('<a class="settings" tabindex="3" title="' + this.content.settings + '"><span /></a>');
+        this.$settingsButton = $('<a class="imageBtn settings" tabindex="0"><span /></a>');
         this.$settingsButton.attr('title', this.content.settings);
         this.$rightOptions.append(this.$settingsButton);
 
@@ -134,7 +133,7 @@ class HeaderPanel extends BaseView {
         this.updateLocaleToggle();
 
         this.$localeToggleButton.on('click', () => {
-            this.provider.changeLocale(String(this.$localeToggleButton.data('locale')));
+            this.extension.changeLocale(String(this.$localeToggleButton.data('locale')));
         });
 
         this.$settingsButton.onPressed(() => {
@@ -142,15 +141,15 @@ class HeaderPanel extends BaseView {
         });
 
         this.$printButton.onPressed(() => {
-            var canvas = this.provider.getCurrentCanvas();
+            var canvas = this.extension.helper.getCurrentCanvas();
             var viewer = (<ISeadragonExtension>this.extension).getViewer();
-            var imageUri = (<ISeadragonProvider>this.provider).getCroppedImageUri(canvas, viewer);
+            var imageUri = (<ISeadragonExtension>this.extension).getCroppedImageUri(canvas, viewer);
             var imageUriTmp = imageUri.substring(0, imageUri.indexOf('/0/default.jpg'));
             imageUri = imageUri.substring(0, imageUriTmp.lastIndexOf('/')) + '/full/0/default.jpg';
-            var title = this.extension.provider.getTitle();
+            var title = this.extension.helper.getLabel();
             var ra: RiksarkivetPrint = new RiksarkivetPrint();
             ra.printImage(imageUri, title, canvas);
-            });        
+            });
 
         this.$downloadButton.on('click', (e) => {
             e.preventDefault();
@@ -173,7 +172,7 @@ class HeaderPanel extends BaseView {
             return;
         }
 
-        var alternateLocale = this.provider.getAlternateLocale();
+        var alternateLocale = this.extension.getAlternateLocale();
         var text = alternateLocale.name.split('-')[0].toUpperCase();
 
         this.$localeToggleButton.data('locale', alternateLocale.name);
@@ -182,12 +181,12 @@ class HeaderPanel extends BaseView {
     }
 
     localeToggleIsVisible(): boolean {
-        return this.provider.getLocales().length > 1 && this.options.localeToggleEnabled;
+        return this.extension.getLocales().length > 1 && this.options.localeToggleEnabled;
     }
 
     showInformation(args: InformationArgs): void {
 
-        var informationFactory: InformationFactory = new InformationFactory(this.provider);
+        var informationFactory: InformationFactory = new InformationFactory(this.extension);
 
         this.information = informationFactory.Get(args);
         var $message = this.$informationBox.find('.message');
@@ -216,11 +215,11 @@ class HeaderPanel extends BaseView {
     }
 
     getSettings(): ISettings {
-        return this.provider.getSettings();
+        return this.extension.getSettings();
     }
 
     updateSettings(settings: ISettings): void {
-        this.provider.updateSettings(settings);
+        this.extension.updateSettings(settings);
 
         $.publish(BaseCommands.UPDATE_SETTINGS, [settings]);
     }
@@ -245,7 +244,7 @@ class HeaderPanel extends BaseView {
         }
 
         // hide toggle buttons below minimum width
-        if (this.extension.width() < this.provider.config.options.minWidthBreakPoint){
+        if (this.extension.width() < this.extension.config.options.minWidthBreakPoint){
             if (this.localeToggleIsVisible()) this.$localeToggleButton.hide();
         } else {
             if (this.localeToggleIsVisible()) this.$localeToggleButton.show();
@@ -253,11 +252,11 @@ class HeaderPanel extends BaseView {
     }
 
     updateFullScreenButton(): void {
-        if (!Utils.Documents.SupportsFullscreen() || !Utils.Bools.GetBool(this.options.fullscreenEnabled, true)) {
+        if (!Utils.Documents.supportsFullscreen() || !Utils.Bools.getBool(this.options.fullscreenEnabled, true)) {
             this.$fullScreenBtn.hide();
         }
 
-        if (this.provider.isLightbox) {
+        if (this.extension.isLightbox) {
             this.$fullScreenBtn.addClass('lightbox');
         }
 
@@ -281,7 +280,7 @@ class HeaderPanel extends BaseView {
     }
 
     updateButton($button, buttonEnabled) {
-        var configEnabled = Utils.Bools.GetBool(this.options[buttonEnabled], true);
+        var configEnabled = Utils.Bools.getBool(this.options[buttonEnabled], true);
 
         if (configEnabled) {
            $button.show();

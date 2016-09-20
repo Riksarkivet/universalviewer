@@ -53,17 +53,9 @@
         "pagingNote": "Please turn off Two Page View for additional options.",
         "preview": "Preview",
         "title": "Download",
-        "wholeImageHighRes": "Whole image ({2})",
-        "wholeImageLowResAsJpg": "Whole image (jpg)"
-      }
-    },
-    "embedDialogue": {
-      "content": {
-        "customSize": "Custom Size",
-        "height": "Height",
-        "instructions": "To embed this item in your own website, copy and paste the code below.",
-        "title": "Share",
-        "width": "Width"
+        "wholeImageHighRes": "Whole image {0} x {1}px ({2})",
+        "wholeImagesHighRes": "Whole images ({0})",
+        "wholeImageLowResAsJpg": "Whole image {0} x {1}px (jpg)"
       }
     },
     "headerPanel": {
@@ -84,7 +76,8 @@
         "feedback": "Feedback",
         "exitFullScreen": "Exit Full Screen",
         "fullScreen": "Full Screen",
-        "open": "Open"
+        "open": "Open",
+        "share": "Share"
       }
     },
     "genericDialogue": {
@@ -140,6 +133,7 @@
         "firstImage": "First Image",
         "firstPage": "First Page",
         "folio": "Folio",
+        "gallery": "Gallery",
         "go": "Go",
         "help": "Help",
         "image": "Image",
@@ -163,9 +157,9 @@
     },
     "seadragonCenterPanel": {
       "content": {
-        "acknowledgements": "Attribution",
         "adjust": "Adjust image",
         "goHome": "Show entire page",
+        "attribution": "Attribution",
         "imageUnavailable": "Image Unavailable",
         "next": "Next",
         "previous": "Previous",
@@ -195,6 +189,7 @@
         "page": "page",
         "pageCaps": "Page",
         "previousResult": "Previous Result",
+        "print": "Print",
         "resultFoundFor": "result found for",
         "resultsFoundFor": "results found for",
         "searchWithin": "Search within this item:"
@@ -217,6 +212,17 @@
         "contrast": "Contrast",
         "brightness": "Brightness",
         "reset": "Reset"
+      }
+    },
+    "shareDialogue": {
+      "content": {
+        "customSize": "custom",
+        "height": "Height",
+        "instructions": "To embed this item in your own website, copy and paste the code below.",
+        "share": "Share",
+        "embed": "Embed",
+        "width": "Width",
+        "size": "Size:"
       }
     }
   }

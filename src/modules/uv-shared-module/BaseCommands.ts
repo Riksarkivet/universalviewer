@@ -31,6 +31,7 @@ class Commands {
     static HIDE_RESTRICTED_DIALOGUE: string         = Commands.namespace + 'onHideRestrictedDialogue';
     static HIDE_SETTINGS_DIALOGUE: string           = Commands.namespace + 'onHideSettingsDialogue';
     static HIDE_ADJUST_DIALOGUE: string             = Commands.namespace + 'onHideAdjustDialogue';
+    static HIDE_SHARE_DIALOGUE: string              = Commands.namespace + 'onHideShareDialogue';
     static HOME: string                             = Commands.namespace + 'onHome';
     static LEFT_ARROW: string                       = Commands.namespace + 'onLeftArrow';
     static LEFTPANEL_COLLAPSE_FULL_FINISH: string   = Commands.namespace + 'onLeftPanelCollapseFullFinish';
@@ -77,7 +78,10 @@ class Commands {
     static SHOW_RESTRICTED_DIALOGUE: string         = Commands.namespace + 'onShowRestrictedDialogue';
     static SHOW_SETTINGS_DIALOGUE: string           = Commands.namespace + 'onShowSettingsDialogue';
     static SHOW_ADJUST_DIALOGUE: string             = Commands.namespace + 'onShowAdjustDialogue';
+    static SHOW_SHARE_DIALOGUE: string              = Commands.namespace + 'onShowShareDialogue';
     static THUMB_SELECTED: string                   = Commands.namespace + 'onThumbSelected';
+    static TOGGLE_EXPAND_LEFT_PANEL: string         = Commands.namespace + 'onToggleExpandLeftPanel';
+    static TOGGLE_EXPAND_RIGHT_PANEL: string        = Commands.namespace + 'onToggleExpandRightPanel';
     static TOGGLE_FULLSCREEN: string                = Commands.namespace + 'onToggleFullScreen';
     static UP_ARROW: string                         = Commands.namespace + 'onUpArrow';
     static UPDATE_SETTINGS: string                  = Commands.namespace + 'onUpdateSettings';

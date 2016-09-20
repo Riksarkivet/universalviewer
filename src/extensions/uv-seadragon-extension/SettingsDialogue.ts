@@ -1,6 +1,5 @@
 import BaseSettingsDialogue = require("../../modules/uv-dialogues-module/SettingsDialogue");
 import ISeadragonExtension = require("./ISeadragonExtension");
-import ISeadragonProvider = require("./ISeadragonProvider");
 
 class SettingsDialogue extends BaseSettingsDialogue {
 
@@ -34,7 +33,7 @@ class SettingsDialogue extends BaseSettingsDialogue {
         this.$scroll.append(this.$navigatorEnabled);
 
         // todo: use .checkboxButton jquery extension
-        this.$navigatorEnabledCheckbox = $('<input id="navigatorEnabled" type="checkbox" />');
+        this.$navigatorEnabledCheckbox = $('<input id="navigatorEnabled" type="checkbox" tabindex="0" />');
         this.$navigatorEnabled.append(this.$navigatorEnabledCheckbox);
 
         this.$navigatorEnabledLabel = $('<label for="navigatorEnabled">' + this.content.navigatorEnabled + '</label>');
@@ -43,7 +42,7 @@ class SettingsDialogue extends BaseSettingsDialogue {
         this.$pagingEnabled = $('<div class="setting pagingEnabled"></div>');
         this.$scroll.append(this.$pagingEnabled);
 
-        this.$pagingEnabledCheckbox = $('<input id="pagingEnabled" type="checkbox" />');
+        this.$pagingEnabledCheckbox = $('<input id="pagingEnabled" type="checkbox" tabindex="0" />');
         this.$pagingEnabled.append(this.$pagingEnabledCheckbox);
 
         this.$pagingEnabledLabel = $('<label for="pagingEnabled">' + this.content.pagingEnabled + '</label>');
@@ -61,7 +60,7 @@ class SettingsDialogue extends BaseSettingsDialogue {
         this.$preserveViewport = $('<div class="setting preserveViewport"></div>');
         this.$scroll.append(this.$preserveViewport);
 
-        this.$preserveViewportCheckbox = $('<input id="preserveViewport" type="checkbox" />');
+        this.$preserveViewportCheckbox = $('<input id="preserveViewport" type="checkbox" tabindex="0" />');
         this.$preserveViewport.append(this.$preserveViewportCheckbox);
 
         this.$preserveViewportLabel = $('<label for="preserveViewport">' + this.content.preserveViewport + '</label>');
@@ -135,7 +134,7 @@ class SettingsDialogue extends BaseSettingsDialogue {
             this.$zoomPerClickEnabledCheckbox.removeAttr("checked");
         }        
 
-        if (!(<ISeadragonProvider>this.provider).isPagingAvailable()){
+        if (!this.extension.helper.isPagingAvailable()){
             this.$pagingEnabled.hide();
         } else {
             if (settings.pagingEnabled){

@@ -5,6 +5,9 @@
     "bookmarkThumbWidth": 90,
     "brightnessPercent": 50,
     "contrastPercent": 50,
+    "dropEnabled": true,
+    "footerPanelEnabled": true,
+    "headerPanelEnabled": true,
     "leftPanelEnabled": true,
     "limitLocales": false,
     "minWidthBreakPoint": 610,
@@ -12,8 +15,10 @@
     "openTemplate": "http://universalviewer.io?manifest={0}",
     "overrideFullScreen": false,
     "pagingEnabled": true,
+    "pagingOptionEnabled": true,
     "pessimisticAccessControl": false,
     "preserveViewport": false,
+    "printMimeType": "application/pdf",
     "rightPanelEnabled": true,
     "saveUserSettings": false,
     "zoomPerClickEnabled": true,
@@ -62,14 +67,9 @@
       {
         "confinedImageSize": 1000,
         "showInBottomCorner": true,
-        "maxImageWidth": 1000
-      }
-    },
-    "embedDialogue":
-    {
-      "options":
-      {
-        "embedTemplate": "<div class=\"uv\" data-locale=\"{0}\" data-config=\"{1}\" data-uri=\"{2}\" data-collectionindex=\"{3}\" data-manifestindex=\"{4}\" data-sequenceindex=\"{5}\" data-canvasindex=\"{6}\" data-zoom=\"{7}\" data-rotation=\"{8}\" style=\"width:{9}px; height:{10}px; background-color: #000\"></div>\n<script type=\"text/javascript\" id=\"embedUV\" src=\"{11}\"></script><script type=\"text/javascript\">/* wordpress fix */</script>"
+        "currentViewDisabledPercentage": 90,
+        "maxImageWidth": 1000,
+        "selectionEnabled": false
       }
     },
     "footerPanel":
@@ -77,11 +77,13 @@
       "options":{
         "bookmarkEnabled": false,
         "downloadEnabled": true,
-        "embedEnabled": true,
+        "embedEnabled": false,
         "feedbackEnabled": false,
         "fullscreenEnabled": true,
         "minimiseButtons": true,
-        "openEnabled": false
+        "openEnabled": false,
+        "printEnabled": false,
+        "shareEnabled": true
       }
     },
     "genericDialogue":
@@ -114,6 +116,7 @@
       "options":
       {
         "autoCompleteBoxEnabled": true,
+        "galleryButtonEnabled": true,
         "imageSelectionBoxEnabled": false,
         "localeToggleEnabled": false,
         "pageModeEnabled": true,
@@ -131,6 +134,7 @@
       {
         "animationTime": 0.15,
         "autoHideControls": true,
+        "attributionEnabled": true,
         "blendTime": 0,
         "constrainDuringPan": false,
         "controlsFadeAfterInactive": 1500,
@@ -140,7 +144,7 @@
         "immediateRender": false,
         "maxZoomLevel": 8,
         "navigatorPosition": "BOTTOM_RIGHT",
-        "pageGap": 0.01,
+        "pageGap": 50,
         "showHomeControl": false,
         "trimAttributionCount": 150,
         "visibilityRatio": 0.5,
@@ -152,7 +156,8 @@
       "options":{
         "elideDetailsTermsCount": 20,
         "elideResultsTermsCount": 10,
-        "pageModeEnabled": true
+        "pageModeEnabled": true,
+        "positionMarkerEnabled": true
       }
     },
     "settingsDialogue":
@@ -161,30 +166,10 @@
     "adjustDialogue":
     {
     },
-    "treeViewLeftPanel":
-    {
-      "options":
-      {
-        "elideCount": 40,
-        "expandFullEnabled": true,
-        "galleryThumbHeight": 320,
-        "galleryThumbWidth": 200,
-        "oneColThumbHeight": 320,
-        "oneColThumbWidth": 200,
-        "pageModeEnabled": true,
-        "panelAnimationDuration": 250,
-        "panelCollapsedWidth": 30,
-        "panelExpandedWidth": 255,
-        "panelOpen": true,
-        "tabOrder": "",
-        "thumbsEnabled": true,
-        "thumbsExtraHeight": 8,
-        "thumbsImageFadeInDuration": 300,
-        "thumbsLoadRange": 15,
-        "treeEnabled": true,
-        "twoColThumbHeight": 150,
-        "twoColThumbWidth": 90,
-        "enableExpandFullButton": true
+    "shareDialogue": {
+      "options": {
+        "embedTemplate": "<div class=\"uv\" data-locale=\"{0}\" data-config=\"{1}\" data-uri=\"{2}\" data-collectionindex=\"{3}\" data-manifestindex=\"{4}\" data-sequenceindex=\"{5}\" data-canvasindex=\"{6}\" data-zoom=\"{7}\" data-rotation=\"{8}\" style=\"width:{9}px; height:{10}px; background-color: #000\"></div>\n<script type=\"text/javascript\" id=\"embedUV\" src=\"{11}\"></script><script type=\"text/javascript\">/* wordpress fix */</script>",
+        "shareFrameEnabled": true
       }
     }
   }

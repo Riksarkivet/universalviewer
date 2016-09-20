@@ -1,5 +1,5 @@
 import BaseCommands = require("../uv-shared-module/BaseCommands");
-import IMetadataItem = require("../uv-shared-module/IMetadataItem");
+import IMetadataItem = Manifold.IMetadataItem;
 import RightPanel = require("../uv-shared-module/RightPanel");
 
 class MoreInfoRightPanel extends RightPanel {
@@ -35,8 +35,8 @@ class MoreInfoRightPanel extends RightPanel {
             this.limit = this.config.options.textLimit ? this.config.options.textLimit : 130;
         }
         
-        this.aggregateValuesConfig = this.readConfig(this.options.aggregateValues);
-        this.canvasExcludeConfig = this.readConfig(this.options.canvasExclude);
+        this.aggregateValuesConfig = this.readCSV(this.options.aggregateValues);
+        this.canvasExcludeConfig = this.readCSV(this.options.canvasExclude);
         this.manifestData = this.getManifestData();
         this.canvasData = [];
 
@@ -57,13 +57,10 @@ class MoreInfoRightPanel extends RightPanel {
         this.$noData = $('<div class="noData">' + this.content.noData + '</div>');
         this.$main.append(this.$noData);
 
-        this.$expandButton.attr('tabindex', '4');
-        this.$collapseButton.attr('tabindex', '4');
-
         this.setTitle(this.content.title);
 
         $.subscribe(BaseCommands.CANVAS_INDEX_CHANGED, (e, canvasIndex) => {
-            this.canvasData = this.getCanvasData(this.provider.getCanvasByIndex(canvasIndex));
+            this.canvasData = this.getCanvasData(this.extension.helper.getCanvasByIndex(canvasIndex));
             this.displayInfo();
         });
 
@@ -79,21 +76,29 @@ class MoreInfoRightPanel extends RightPanel {
     }
     
     getManifestData() {
-        var data = this.provider.getMetadata();
         
+        var data: Manifold.IMetadataItem[];
+
+        // todo
+        // if (this.extension.config.licenseMap){
+        //     data = this.extension.helper.getMetadata(new Manifold.UriLabeller(this.extension.config.licenseMap));
+        // } else {
+            data = this.extension.helper.getMetadata();
+        //}
+
         if (this.options.displayOrder) {
-            data = this.sort(data, this.readConfig(this.options.displayOrder));
+            data = this.sort(data, this.readCSV(this.options.displayOrder));
         }
         
         if (this.options.manifestExclude) {
-            data = this.exclude(data, this.readConfig(this.options.manifestExclude));
+            data = this.exclude(data, this.readCSV(this.options.manifestExclude));
         }
         
         return this.flatten(data);
     }
     
     getCanvasData(canvas: Manifesto.ICanvas) {
-        var data = this.provider.getCanvasMetadata(canvas);
+        var data = this.extension.helper.getCanvasMetadata(canvas);
             
         if (this.canvasExcludeConfig.length !== 0) {
             data = this.exclude(data, this.canvasExcludeConfig);
@@ -102,13 +107,12 @@ class MoreInfoRightPanel extends RightPanel {
         return this.flatten(data);
     }
     
-    readConfig(config: string) {
+    readCSV(config: string): string[] {
         if (config) {
             return _.map(config.toLowerCase().split(','), x => _.trim(x));
         }
-        else {
-            return [];
-        }
+
+        return [];
     }
 
     toggleFinish(): void {
@@ -230,7 +234,7 @@ class MoreInfoRightPanel extends RightPanel {
 
     buildHeader(label: string): JQuery {
         var $header = $('<div class="header"></div>');
-        $header.html(this.provider.sanitize(label));
+        $header.html(this.extension.sanitize(label));
 
         return $header;
     }
@@ -240,8 +244,8 @@ class MoreInfoRightPanel extends RightPanel {
         var $header = $elem.find('.header');
         var $text = $elem.find('.text');
 
-        item.label = this.provider.sanitize(item.label);
-        item.value = this.provider.sanitize(<string>item.value);
+        item.label = this.extension.sanitize(item.label);
+        item.value = this.extension.sanitize(<string>item.value);
 
         if (item.isRootLevel) {
             switch (item.label.toLowerCase()) {
@@ -272,7 +276,7 @@ class MoreInfoRightPanel extends RightPanel {
 
         $elem.addClass(item.label.toCssClass());
 
-        if (this.config.options.showCopyToClipboard && Utils.Clipboard.SupportsCopy() && $text.text() && $header.text())
+        if (this.config.options.copyToClipboardEnabled && Utils.Clipboard.supportsCopy() && $text.text() && $header.text())
             this.addCopyButton($elem, $header);
         
         return $elem;
@@ -311,7 +315,7 @@ class MoreInfoRightPanel extends RightPanel {
         var text = $matchingItems.map(function (i, md: any) { return md.value; }).get().join('');
         if (!text)
             return;
-        Utils.Clipboard.Copy(text);
+        Utils.Clipboard.copy(text);
         var $copiedText = $('.items .item .header:contains(' + label + ') .copiedText');
         $copiedText.show();
         setTimeout(function() {

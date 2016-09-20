@@ -1,5 +1,5 @@
 define(function() {
     return {
-        dependencies: ['openseadragon-filtering', 'openseadragon', "rangeslider"]
+        dependencies: ['iiif-tree-component', 'openseadragon-filtering', 'openseadragon', "rangeslider"]
     };
 });

@@ -6,6 +6,7 @@ class FooterPanel extends BaseView {
     $feedbackButton: JQuery;
     $bookmarkButton: JQuery;
     $downloadButton: JQuery;
+    $shareButton: JQuery;
     $embedButton: JQuery;
     $openButton: JQuery;
     $fullScreenBtn: JQuery;
@@ -31,25 +32,26 @@ class FooterPanel extends BaseView {
         this.$options = $('<div class="options"></div>');
         this.$element.append(this.$options);
 
-        this.$feedbackButton = $('<a class="feedback" title="' + this.content.feedback + '">' + this.content.feedback + '</a>');
+        this.$feedbackButton = $('<a class="feedback" title="' + this.content.feedback + '" tabindex="0">' + this.content.feedback + '</a>');
         this.$options.prepend(this.$feedbackButton);
 
-        this.$openButton = $('<a class="open" title="' + this.content.open + '">' + this.content.open + '</a>');
+        this.$openButton = $('<a class="open" title="' + this.content.open + '" tabindex="0">' + this.content.open + '</a>');
         this.$options.prepend(this.$openButton);
 
-        this.$bookmarkButton = $('<a class="bookmark" title="' + this.content.bookmark + '">' + this.content.bookmark + '</a>');
+        this.$bookmarkButton = $('<a class="bookmark" title="' + this.content.bookmark + '" tabindex="0">' + this.content.bookmark + '</a>');
         this.$options.prepend(this.$bookmarkButton);
 
-        this.$embedButton = $('<a href="#" class="embed" title="' + this.content.embed + '">' + this.content.embed + '</a>');
-        this.$options.append(this.$embedButton);
-        this.$embedButton.attr('tabindex', '6');
+        this.$shareButton = $('<a href="#" class="share" title="' + this.content.share + '" tabindex="0">' + this.content.share + '</a>');
+        this.$options.append(this.$shareButton);
 
-        this.$downloadButton = $('<a class="download" title="' + this.content.download + '">' + this.content.download + '</a>');
+        this.$embedButton = $('<a href="#" class="embed" title="' + this.content.embed + '" tabindex="0">' + this.content.embed + '</a>');
+        this.$options.append(this.$embedButton);
+
+        this.$downloadButton = $('<a class="download" title="' + this.content.download + '" tabindex="0">' + this.content.download + '</a>');
         this.$options.prepend(this.$downloadButton);
 
-        this.$fullScreenBtn = $('<a href="#" class="fullScreen" title="' + this.content.fullScreen + '">' + this.content.fullScreen + '</a>');
+        this.$fullScreenBtn = $('<a href="#" class="fullScreen" title="' + this.content.fullScreen + '" tabindex="0">' + this.content.fullScreen + '</a>');
         this.$options.append(this.$fullScreenBtn);
-        this.$fullScreenBtn.attr('tabindex', '5');
 
         this.$openButton.onPressed(() => {
             $.publish(BaseCommands.OPEN);
@@ -63,13 +65,16 @@ class FooterPanel extends BaseView {
             $.publish(BaseCommands.BOOKMARK);
         });
 
+        this.$shareButton.onPressed(() => {
+            $.publish(BaseCommands.SHOW_SHARE_DIALOGUE);
+        });
+
         this.$embedButton.onPressed(() => {
             $.publish(BaseCommands.SHOW_EMBED_DIALOGUE);
         });
 
-        this.$downloadButton.on('click', (e) => {
-            e.preventDefault();
-
+        this.$downloadButton.onPressed(() => {
+            //e.preventDefault(); why was on click and preventDefault needed?
             $.publish(BaseCommands.SHOW_DOWNLOAD_DIALOGUE);
         });
 
@@ -78,25 +83,27 @@ class FooterPanel extends BaseView {
             $.publish(BaseCommands.TOGGLE_FULLSCREEN);
         });
 
-        if (!Utils.Bools.GetBool(this.options.embedEnabled, true)){
+        if (!Utils.Bools.getBool(this.options.embedEnabled, true)){
             this.$embedButton.hide();
         }
 
         this.updateOpenButton();
         this.updateFeedbackButton();
         this.updateBookmarkButton();
+        this.updateEmbedButton();
         this.updateDownloadButton();
         this.updateFullScreenButton();
+        this.updateShareButton();
 
-        if (Utils.Bools.GetBool(this.options.minimiseButtons, false)){
+        if (Utils.Bools.getBool(this.options.minimiseButtons, false)){
             this.$options.addClass('minimiseButtons');
         }
     }
 
     updateOpenButton(): void {
-        var configEnabled = Utils.Bools.GetBool(this.options.openEnabled, false);
+        var configEnabled = Utils.Bools.getBool(this.options.openEnabled, false);
 
-        if (configEnabled && !this.provider.isHomeDomain){
+        if (configEnabled && !this.extension.isHomeDomain){
             this.$openButton.show();
         } else {
             this.$openButton.hide();
@@ -104,11 +111,11 @@ class FooterPanel extends BaseView {
     }
 
     updateFullScreenButton(): void {
-        if (!Utils.Documents.SupportsFullscreen() || !Utils.Bools.GetBool(this.options.fullscreenEnabled, true)) {
+        if (!Utils.Documents.supportsFullscreen() || !Utils.Bools.getBool(this.options.fullscreenEnabled, true)) {
             this.$fullScreenBtn.hide();
         }
 
-        if (this.provider.isLightbox){
+        if (this.extension.isLightbox){
             this.$fullScreenBtn.addClass('lightbox');
         }
 
@@ -123,8 +130,24 @@ class FooterPanel extends BaseView {
         }
     }
 
+    updateEmbedButton(): void {
+        if (this.extension.helper.isUIEnabled('embed') && Utils.Bools.getBool(this.options.embedEnabled, false)){
+            this.$embedButton.show();
+        } else {
+            this.$embedButton.hide();
+        }
+    }
+
+    updateShareButton(): void {
+        if (this.extension.helper.isUIEnabled('share') && Utils.Bools.getBool(this.options.shareEnabled, true)){
+            this.$shareButton.show();
+        } else {
+            this.$shareButton.hide();
+        }
+    }
+
     updateDownloadButton(): void {
-        var configEnabled = Utils.Bools.GetBool(this.options.downloadEnabled, true);
+        var configEnabled = Utils.Bools.getBool(this.options.downloadEnabled, true);
 
         if (configEnabled){
             this.$downloadButton.show();
@@ -134,7 +157,7 @@ class FooterPanel extends BaseView {
     }
 
     updateFeedbackButton(): void {
-        var configEnabled = Utils.Bools.GetBool(this.options.feedbackEnabled, false);
+        var configEnabled = Utils.Bools.getBool(this.options.feedbackEnabled, false);
 
         if (configEnabled){
             this.$feedbackButton.show();
@@ -144,7 +167,7 @@ class FooterPanel extends BaseView {
     }
 
     updateBookmarkButton(): void {
-        var configEnabled = Utils.Bools.GetBool(this.options.bookmarkEnabled, false);
+        var configEnabled = Utils.Bools.getBool(this.options.bookmarkEnabled, false);
 
         if (configEnabled){
             this.$bookmarkButton.show();

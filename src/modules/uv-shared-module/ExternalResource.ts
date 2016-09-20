@@ -1,16 +1,20 @@
 class ExternalResource implements Manifesto.IExternalResource {
+    //public profile: Manifesto.ServiceProfile;
     public clickThroughService: Manifesto.IService;
-    public restrictedService: Manifesto.IService;
     public data: any;
     public dataUri: string;
     public error: any;
+    public height: number;
     public isResponseHandled: boolean = false;
     public loginService: Manifesto.IService;
     public logoutService: Manifesto.IService;
-    //public profile: Manifesto.ServiceProfile;
+    public restrictedService: Manifesto.IService;
     public status: number;
     public tokenService: Manifesto.IService;
     public isCORSEnabled = false;
+    public width: number;
+    public x: number;
+    public y: number;
 
     constructor(resource: Manifesto.IManifestResource, dataUriFunc: (r: Manifesto.IManifestResource) => string, isCORSEnabled: boolean) {
         resource.externalResource = this;
@@ -56,7 +60,7 @@ class ExternalResource implements Manifesto.IExternalResource {
             var type: string = 'GET';
 
             // todo: use manifesto.hasServiceDescriptor
-            if (!_.endsWith(that.dataUri, 'info.json')){
+            if (!that.dataUri.endsWith('info.json')){
                 // If access control is unnecessary, short circuit the process.
                 // Note that isAccessControlled check for short-circuiting only
                 // works in the "binary resource" context, since in that case,
@@ -94,7 +98,7 @@ class ExternalResource implements Manifesto.IExternalResource {
                     }
                     resolve(that);
 
-                }); 
+                });
             }
             else {
                 $.ajax(<JQueryAjaxSettings>{
