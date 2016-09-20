@@ -72,20 +72,11 @@ class PagingHeaderPanel extends HeaderPanel {
         this.$prevOptions = $('<div class="prevOptions"></div>');
         this.$centerOptions.append(this.$prevOptions);
 
-<<<<<<< HEAD
-        this.$firstButton = $('<a class="imageBtn first" tabindex="15"><span /></a>');
+        this.$firstButton = $('<a class="imageBtn first" tabindex="0"><span /></a>');
         this.$prevOptions.append(this.$firstButton);
-
-        this.$prevFiveButton = $('<a class="imageBtn prev-five" tabindex="16"><span /></a>');
+        this.$prevFiveButton = $('<a class="imageBtn prev-five" tabindex="0"><span /></a>');
         this.$prevOptions.append(this.$prevFiveButton);
-
-        this.$prevButton = $('<a class="imageBtn prev" tabindex="17"><span /></a>');
-=======
-        this.$firstButton = $('<a class="imageBtn first" tabindex="0"></a>');
-        this.$prevOptions.append(this.$firstButton);
-
-        this.$prevButton = $('<a class="imageBtn prev" tabindex="0"></a>');
->>>>>>> uv/master
+        this.$prevButton = $('<a class="imageBtn prev" tabindex="0"><span /></a>');
         this.$prevOptions.append(this.$prevButton);
 
         this.$modeOptions = $('<div class="mode"></div>');
@@ -93,30 +84,18 @@ class PagingHeaderPanel extends HeaderPanel {
 
         this.$imageModeLabel = $('<label for="image">' + this.content.image + '</label>');
         this.$modeOptions.append(this.$imageModeLabel);
-<<<<<<< HEAD
-        this.$imageModeOption = $('<input type="radio" id="image" name="mode" tabindex="18"/>');
-=======
         this.$imageModeOption = $('<input type="radio" id="image" name="mode" tabindex="0"/>');
->>>>>>> uv/master
         this.$modeOptions.append(this.$imageModeOption);
 
         this.$pageModeLabel = $('<label for="page"></label>');
         this.$modeOptions.append(this.$pageModeLabel);
-<<<<<<< HEAD
-        this.$pageModeOption = $('<input type="radio" id="page" name="mode" tabindex="19"/>');
-=======
         this.$pageModeOption = $('<input type="radio" id="page" name="mode" tabindex="0"/>');
->>>>>>> uv/master
         this.$modeOptions.append(this.$pageModeOption);
 
         this.$search = $('<div class="search"></div>');
         this.$centerOptions.append(this.$search);
 
-<<<<<<< HEAD
-        this.$searchText = $('<input class="searchText" maxlength="50" type="text" tabindex="20"/>');
-=======
         this.$searchText = $('<input class="searchText" maxlength="50" type="text" tabindex="0"/>');
->>>>>>> uv/master
         this.$search.append(this.$searchText);
 
         if (this.options.autoCompleteBoxEnabled === true) {
@@ -184,20 +163,11 @@ class PagingHeaderPanel extends HeaderPanel {
         this.$nextOptions = $('<div class="nextOptions"></div>');
         this.$centerOptions.append(this.$nextOptions);
 
-<<<<<<< HEAD
-        this.$nextButton = $('<a class="imageBtn next" tabindex="1"><span /></a>');
+        this.$nextButton = $('<a class="imageBtn next" tabindex="0"><span /></a>');
         this.$nextOptions.append(this.$nextButton);
-
-        this.$nextFiveButton = $('<a class="imageBtn next-five" tabindex="2"><span /></a>');
+        this.$nextFiveButton = $('<a class="imageBtn next-five" tabindex="0"><span /></a>');
         this.$nextOptions.append(this.$nextFiveButton);
-
-        this.$lastButton = $('<a class="imageBtn last" tabindex="3"><span /></a>');
-=======
-        this.$nextButton = $('<a class="imageBtn next" tabindex="0"></a>');
-        this.$nextOptions.append(this.$nextButton);
-
-        this.$lastButton = $('<a class="imageBtn last" tabindex="0"></a>');
->>>>>>> uv/master
+        this.$lastButton = $('<a class="imageBtn last" tabindex="0"><span /></a>');
         this.$nextOptions.append(this.$lastButton);
         
         
@@ -327,7 +297,7 @@ class PagingHeaderPanel extends HeaderPanel {
 
         // If page mode is disabled, we don't need to show radio buttons since
         // there is only one option:
-        if (!this.config.options.pageModeEnabled || this.provider.hasNoPageNumbers) {
+        if (!this.config.options.pageModeEnabled || this.extension.hasNoPageNumbers) {
             this.$imageModeOption.hide();
             this.$pageModeLabel.hide();
             this.$pageModeOption.hide();
@@ -361,21 +331,7 @@ class PagingHeaderPanel extends HeaderPanel {
             }
         });
 
-<<<<<<< HEAD
-        this.$lastButton.onPressed(() => {
-            switch (viewingDirection.toString()){
-                case manifesto.ViewingDirection.leftToRight().toString():
-                    $.publish(Commands.LAST);
-                    break;
-                case manifesto.ViewingDirection.rightToLeft().toString() :
-                    $.publish(Commands.FIRST);
-                    break;
-            }
-        });
-
         //Mode options are shown as default
-=======
->>>>>>> uv/master
         if (this.options.modeOptionsEnabled === false){
             this.$modeOptions.hide();
             this.$centerOptions.addClass('modeOptionsDisabled');
@@ -423,7 +379,7 @@ class PagingHeaderPanel extends HeaderPanel {
     }
 
     isPageModeEnabled(): boolean {
-        return this.config.options.pageModeEnabled && !this.provider.hasNoPageNumbers && (<ISeadragonExtension>this.extension).getMode().toString() === Mode.page.toString();
+        return this.config.options.pageModeEnabled && !this.extension.hasNoPageNumbers && (<ISeadragonExtension>this.extension).getMode().toString() === Mode.page.toString();
     }
 
     setTitles(): void {
