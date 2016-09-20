@@ -94,7 +94,7 @@ class AdjustDialogue extends Dialogue {
         this.$element.hide();
         
         
-        var settings = this.provider.getSettings();
+        var settings = this.extension.getSettings();
         this.setValues(
             settings.contrastPercent ? settings.contrastPercent : 50, 
             settings.brightnessPercent ? settings.brightnessPercent : 50)
@@ -122,12 +122,12 @@ class AdjustDialogue extends Dialogue {
     
     adjustContrast(value: number) {
         $.publish(BaseCommands.ADJUST_CONTRAST, [value]);
-        this.provider.updateSettings({ contrastPercent: value});
+        this.extension.updateSettings({ contrastPercent: value});
     }
     
     adjustBrightness(value: number) {
         $.publish(BaseCommands.ADJUST_BRIGHTNESS, [value]);
-        this.provider.updateSettings({ brightnessPercent: value});
+        this.extension.updateSettings({ brightnessPercent: value});
     }
 
     open(): void {

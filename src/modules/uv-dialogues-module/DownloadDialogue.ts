@@ -116,7 +116,7 @@ class DownloadDialogue extends Dialogue {
     }
 
     resize(): void {
-        if (Utils.Bools.GetBool(this.options.showInBottomCorner, true)) {
+        if (Utils.Bools.getBool(this.options.showInBottomCorner, true)) {
             this.$element.css({
                 'top': Math.floor(this.extension.height() - this.$element.outerHeight(true))
             });

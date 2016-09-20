@@ -50,7 +50,7 @@ class CenterPanel extends BaseView {
             this.$title.hide();
         }
         
-        var settings = this.provider.getSettings();
+        var settings = this.extension.getSettings();
         this.contrastPercent = settings.contrastPercent ? settings.contrastPercent : 50;
         this.brightnessPercent = settings.brightnessPercent ? settings.brightnessPercent : 50;
     }
