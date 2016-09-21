@@ -83,7 +83,7 @@ class HeaderPanel extends BaseView {
                 checkMobile = true;
             }
             var checkOnlyUVViewer = false;
-            if (url.contains("Folk_")) {
+            if (url.contains("Folk_") || url.contains("Sdhk_") || url.contains("BRFV_") || url.contains("Brev_")) {
                 checkOnlyUVViewer = true;
             }
             if (!checkMobile && !checkOnlyUVViewer) {
