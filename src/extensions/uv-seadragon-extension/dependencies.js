@@ -1,5 +1,5 @@
-define(function() {
+define(['openseadragon.min'], function() {
     return {
-        dependencies: ['iiif-tree-component', 'openseadragon-filtering', 'openseadragon', "rangeslider"]
+        dependencies: ['iiif-tree-component', 'openseadragon-filtering']
     };
 });

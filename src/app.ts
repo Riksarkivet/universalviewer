@@ -1,33 +1,9 @@
-require.config({
-    paths: {
-        'jquery': 'lib/jquery-1.10.2.min',
-        'rangeslider' : 'lib/rangeslider'
-    },
-    shim: {
-        jquery: {
-            exports: '$'
-        },
-        'openseadragon': {
-            exports: 'OpenSeadragon'
-        },
-        'openseadragon-filtering': {
-            deps: ['openseadragon']
-        },
-        'rangeslider' : {
-            deps: ['jquery']
-        }
-    }
-
-});
-
 require([
     'Bootstrapper',
     'extensions/uv-mediaelement-extension/Extension',
     'extensions/uv-pdf-extension/Extension',
     'extensions/uv-seadragon-extension/Extension',
-    'extensions/uv-virtex-extension/Extension',
-    'jquery',
-    'rangeslider'
+    'extensions/uv-virtex-extension/Extension'
 ], (
     bootstrapper,
     mediaelementExtension,

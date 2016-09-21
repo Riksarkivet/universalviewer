@@ -53,7 +53,7 @@ module.exports = function (grunt) {
 
         concat: {
             bundle: {
-                src: grunt.file.expand('src/lib/*').concat(config.deps).concat(['!src/lib/embed.js']),
+                src: grunt.file.expand('src/lib/*').concat(config.deps).concat(['!src/lib/embed.js']).concat(['!src/lib/jquery-1.10.2.min.js']).concat(['!src/lib/rangeslider.css']),
                 dest: 'src/lib/bundle.js'
             }
         },
@@ -224,12 +224,15 @@ module.exports = function (grunt) {
                             'lib/easyxdm.swf', 
                             'lib/embed.js', 
                             'lib/json2.min.js',
+                            'lib/iiif-tree-component.js',
                             'lib/openseadragon.js',
+                            'lib/openseadragon.min.js',
                             'lib/openseadragon-filtering.js',
                             'lib/require.js', 
                             'lib/uv-seadragon-extension.en-GB.config.json',
                             'lib/uv-seadragon-extension.sv-SE.config.json',
                             'lib/uv-seadragon-extension-dependencies.js',
+                            'lib/bundle.min.js',
                             'lib/rangeslider.js',
                             'lib/rangeslider.css'
                         ],
@@ -583,6 +586,9 @@ module.exports = function (grunt) {
 
         refresh();
         grunt.task.run(
+            'clean:bundle',
+            'concat:bundle',
+            'uglify:bundle',
             'typescript:dist',
             'clean:extension',
             'configure:apply',
@@ -596,9 +602,8 @@ module.exports = function (grunt) {
             'theme:dist',
             'replace:moduleimages',
             'replace:themeimages',
-
-            //'build',
-            //'copy:app_rename',
+            'replace:versions',
+            'dist',
             'clean:apphtml',
             'copy:soktjanst'
         );
