@@ -146,6 +146,7 @@
         "navigatorPosition": "BOTTOM_RIGHT",
         "pageGap": 50,
         "showHomeControl": false,
+        "showAdjustControl":  true,
         "trimAttributionCount": 150,
         "visibilityRatio": 0.5,
         "showNavigationToTheRight": false
