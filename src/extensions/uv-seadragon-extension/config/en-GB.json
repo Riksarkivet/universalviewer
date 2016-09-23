@@ -106,9 +106,7 @@
         "panelExpandedWidth": 255,
         "panelOpen": false,
         "textLimit": 4,
-        "textLimitType": "lines",
-        "aggregateValues": "",
-        "showCopyToClipboard": false
+        "textLimitType": "lines"
       }
     },
     "pagingHeaderPanel":

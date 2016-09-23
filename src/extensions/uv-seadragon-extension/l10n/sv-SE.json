@@ -6,14 +6,33 @@
   },
   "content": {
     "authCORSError": "Din webbläsare stödjer inte CORS, vänligen uppgradera för att se detta innehåll.",
+    "authorisationFailedMessage": "Din inloggning misslyckades. Var snäll och försök igen.",
     "canvasIndexOutOfRange": "Bildnummer utanför intervall.",
     "degradedResourceMessage": "Logga in för att se bilden i full kvalitet.",
-    "degradedResourceLogin": "logga in"
+    "degradedResourceLogin": "logga in",
+    "forbiddenResourceMessage": "Du har inte behörighet att se den här bilden."
   },
   "modules": {
     "clickThroughDialogue": {
       "content": {
         "viewTerms": "Läs villkor"
+      }
+    },
+    "contentLeftPanel": {
+      "content": {
+        "collapse": "Minimera innehåll",
+        "collapseFull": "Minimera galleri",
+        "date": "datum",
+        "expand": "Öppna innehåll",
+        "expandFull": "Öppna Galleri",
+        "index": "Index",
+        "select": "Välj",
+        "selectAll": "Välj alla",
+        "selection": "Urval",
+        "sortBy": "Sortera efter:",
+        "thumbnails": "Tumnaglar",
+        "title": "Innehåll",
+        "volume": "volym"
       }
     },
     "dialogue": {
@@ -25,6 +44,8 @@
       "content": {
         "currentViewAsJpg": "Aktuell vy (jpg)",
         "download": "Ladda ner",
+        "downloadSelection": "Ladda ner valt område",
+        "downloadSelectionButton": "Ladda ner PDF",
         "editSettings": "Ändra inställningar",
         "entireDocument": "Hela dokumentet ({0})",
         "entireFileAsOriginal": "Hela filen ({0})",
@@ -33,6 +54,7 @@
         "preview": "Förhandsgranska",
         "title": "Ladda ner",
         "wholeImageHighRes": "Hela bilden hög upplösning ({2})",
+        "wholeImagesHighRes": "Hela bilder ({0})",
         "wholeImageLowResAsJpg": "Hela bilden låg upplösning (jpg)"
       }
     },
@@ -57,10 +79,14 @@
     },
     "footerPanel": {
       "content": {
+        "bookmark": "Lägg till som bokmärke",
         "download": "Ladda ner",
         "embed": "Inbädda",
+        "feedback": "Feedback",
         "exitFullScreen": "Lämna fullskärmsläge",
-        "fullScreen": "Fullskärmsläge"
+        "fullScreen": "Fullskärmsläge",
+        "open": "Öppna",
+        "share": "Dela"
       }
     },
     "genericDialogue": {
@@ -81,7 +107,9 @@
     },
     "loginDialogue": {
       "content": {
-        "login": "Logga in"
+        "login": "Logga in",
+        "logout": "Logga ut",
+        "cancel": "Avbryt"
       }
     },
     "moreInfoRightPanel": {
@@ -95,6 +123,7 @@
         "holdingText": "Your module goes here!",
         "less": "mindre",
         "license": "Licens",
+        "logo": "Logo",
         "more": "mer",
         "noData": "Ingen information finns att visa",
         "title": "Information",
@@ -113,6 +142,7 @@
         "firstImage": "Första bilden",
         "firstPage": "Första sidan",
         "folio": "Folio",
+        "gallery": "Galleri",
         "go": "Gå",
         "help": "Hjälp",
         "image": "Bild",
@@ -147,6 +177,11 @@
         "zoomOut": "Zooma ut"
       }
     },
+    "restrictedDialogue": {
+      "content": {
+        "cancel": "Avbryt"
+      }
+    },    
     "searchFooterPanel": {
       "content": {
         "clearSearch": "Rensa sökning",
@@ -185,19 +220,16 @@
         "reset": "Återställ"
       }
     },
-    "treeViewLeftPanel": {
+    "shareDialogue": {
       "content": {
-        "collapse": "Minimera innehåll",
-        "collapseFull": "Minimera galleri",
-        "date": "date",
-        "expand": "Öppna innehåll",
-        "expandFull": "Utvidga galleri",
-        "index": "Index",
-        "sortBy": "Sortera efter",
-        "thumbnails": "Tumnaglar",
-        "title": "Innehåll",
-        "volume": "volume"
+        "customSize": "Anpassad",
+        "height": "Höjd",
+        "instructions": "För att inbädda bildvisningen i din webbsida, klipp och klistra koden nedanför.",
+        "share": "Dela",
+        "embed": "Inbädda",
+        "width": "Bredd",
+        "size": "Storlek:"
       }
-    }
+    }    
   }
 }
