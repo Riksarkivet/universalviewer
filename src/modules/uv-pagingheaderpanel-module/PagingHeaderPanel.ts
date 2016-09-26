@@ -251,7 +251,6 @@ class PagingHeaderPanel extends HeaderPanel {
         });
 
         this.$prevButton.onPressed(() => {
-            alert(viewingDirection);
             switch (viewingDirection.toString()){
                 case manifesto.ViewingDirection.leftToRight().toString() :
                 case manifesto.ViewingDirection.bottomToTop().toString() :
