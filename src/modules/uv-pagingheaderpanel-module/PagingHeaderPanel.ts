@@ -429,7 +429,7 @@ class PagingHeaderPanel extends HeaderPanel {
     }
 
     galleryIsVisible(): boolean {
-        return this.extension.isLeftPanelEnabled();
+        return Utils.Bools.getBool(this.options.galleryButtonEnabled, true) && this.extension.isLeftPanelEnabled();
     }
 
     setTotal(): void {
