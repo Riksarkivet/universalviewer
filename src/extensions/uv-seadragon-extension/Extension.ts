@@ -845,6 +845,10 @@ class Extension extends BaseExtension implements ISeadragonExtension {
             index = this.tryDecrementIndex(canvasIndex, 5);
         }
 
+        if (canvasIndex == index) {
+            return - 1
+        }
+
         return index;
     }
 
@@ -864,6 +868,10 @@ class Extension extends BaseExtension implements ISeadragonExtension {
 
         } else {
             index = this.tryIncrementIndex(canvasIndex, 5);
+        }
+
+        if (canvasIndex == index) {
+            return - 1
         }
 
         return index;

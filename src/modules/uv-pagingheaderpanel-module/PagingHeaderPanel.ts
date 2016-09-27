@@ -37,6 +37,8 @@ class PagingHeaderPanel extends HeaderPanel {
     lastButtonEnabled: boolean = false;
     nextButtonEnabled: boolean = false;
     prevButtonEnabled: boolean = false;
+    nextFiveButtonEnabled: boolean = false;
+    prevFiveButtonEnabled: boolean = false;
 
     constructor($element: JQuery) {
         super($element);
@@ -429,7 +431,7 @@ class PagingHeaderPanel extends HeaderPanel {
     }
 
     galleryIsVisible(): boolean {
-        return this.extension.isLeftPanelEnabled();
+        return Utils.Bools.getBool(this.options.galleryButtonEnabled, true) && this.extension.isLeftPanelEnabled();
     }
 
     setTotal(): void {
@@ -523,33 +525,41 @@ class PagingHeaderPanel extends HeaderPanel {
             if (this.extension.helper.isFirstCanvas()){
                 this.disableLastButton();
                 this.disableNextButton();
+                this.disableNextFiveButton();
             } else {
                 this.enableLastButton();
                 this.enableNextButton();
+                this.enableNextFiveButton();
             }
 
             if (this.extension.helper.isLastCanvas()){
                 this.disableFirstButton();
                 this.disablePrevButton();
+                this.disablePrevFiveButton();
             } else {
                 this.enableFirstButton();
                 this.enablePrevButton();
+                this.enablePrevFievButton();
             }
         } else {
             if (this.extension.helper.isFirstCanvas()){
                 this.disableFirstButton();
                 this.disablePrevButton();
+                this.disablePrevFiveButton();
             } else {
                 this.enableFirstButton();
                 this.enablePrevButton();
+                this.enablePrevFievButton();
             }
 
             if (this.extension.helper.isLastCanvas()){
                 this.disableLastButton();
                 this.disableNextButton();
+                this.disableNextFiveButton();
             } else {
                 this.enableLastButton();
                 this.enableNextButton();
+                this.enableNextFiveButton();
             }
         }
     }
@@ -592,6 +602,26 @@ class PagingHeaderPanel extends HeaderPanel {
     enableNextButton(): void {
         this.nextButtonEnabled = true;
         this.$nextButton.enable();
+    }
+
+    disablePrevFiveButton(): void {
+        this.prevFiveButtonEnabled = false;
+        this.$prevFiveButton.disable();
+    }
+
+    enablePrevFievButton(): void {
+        this.prevFiveButtonEnabled = true;
+        this.$prevFiveButton.enable();
+    }
+
+    disableNextFiveButton(): void {
+        this.nextFiveButtonEnabled = false;
+        this.$nextFiveButton.disable();
+    }
+
+    enableNextFiveButton(): void {
+        this.nextFiveButtonEnabled = true;
+        this.$nextFiveButton.enable();
     }
 
     modeChanged(): void {
