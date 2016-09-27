@@ -69,7 +69,8 @@
         "showInBottomCorner": true,
         "currentViewDisabledPercentage": 90,
         "maxImageWidth": 1000,
-        "selectionEnabled": false
+        "selectionEnabled": false,
+        "orderOptionsBySize":  true
       }
     },
     "footerPanel":

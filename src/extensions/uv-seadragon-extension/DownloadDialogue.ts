@@ -297,32 +297,34 @@ class DownloadDialogue extends BaseDownloadDialogue {
         // order by image area
         var $options: any = this.$imageOptions.find('li.single');
 
-        $options = $options.sort((a, b) => {
-            var aWidth: any = $(a).data('width');
-            aWidth ? aWidth = parseInt(aWidth.toString()) : 0;
+        if (this.options.orderOptionsBySize) {
+            $options = $options.sort((a, b) => {
+                var aWidth: any = $(a).data('width');
+                aWidth ? aWidth = parseInt(aWidth.toString()) : 0;
 
-            var aHeight: any = $(a).data('height');
-            aHeight ? aHeight = parseInt(aHeight.toString()) : 0;
+                var aHeight: any = $(a).data('height');
+                aHeight ? aHeight = parseInt(aHeight.toString()) : 0;
 
-            var bWidth: any = $(b).data('width');
-            bWidth ? bWidth = parseInt(bWidth.toString()) : 0;
+                var bWidth: any = $(b).data('width');
+                bWidth ? bWidth = parseInt(bWidth.toString()) : 0;
 
-            var bHeight: any = $(b).data('height');
-            bHeight ? bHeight = parseInt(bHeight.toString()) : 0;
-            
-            var aArea: number = aWidth * aHeight;
-            var bArea: number = bWidth * bHeight;
+                var bHeight: any = $(b).data('height');
+                bHeight ? bHeight = parseInt(bHeight.toString()) : 0;
 
-            if (aArea < bArea) {
-                return -1;
-            }
+                var aArea: number = aWidth * aHeight;
+                var bArea: number = bWidth * bHeight;
 
-            if (aArea > bArea) {
-                return 1;
-            }
+                if (aArea < bArea) {
+                    return -1;
+                }
 
-            return 0; 
-        });
+                if (aArea > bArea) {
+                    return 1;
+                }
+
+                return 0; 
+            });
+        }
 
         $options.detach().appendTo(this.$imageOptions);
 
