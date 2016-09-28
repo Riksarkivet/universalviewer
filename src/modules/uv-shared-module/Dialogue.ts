@@ -56,9 +56,6 @@ class Dialogue extends BaseView {
         
         this.$header = $('<div class="header"></div>');
         this.$middle.append(this.$header);
-        
-        this.$closeButton = $('<a href="#" class="close">' + this.content.close + '</a>');
-        this.$header.append(this.$closeButton);
 
         this.$content = $('<div class="content"></div>');
         this.$middle.append(this.$content);
