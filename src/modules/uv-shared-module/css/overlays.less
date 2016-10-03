@@ -16,6 +16,17 @@
         .top{
             width: 100%;
             overflow: auto;
+
+                .close{
+                    .hide-text();
+                    //.icon-right(url('@{img-path}close.png'), 24px, 30px);
+                    background-image: url('@{img-path}close.png');
+                    width: 24px;
+                    height: 24px;
+                    float: right;
+                    background-color: @brand-primary;
+                    margin: 1px 1px 0 0;
+                }
         }
 
         .middle{
@@ -36,16 +47,6 @@
                     margin: 2px 0 0 10px;
                 }
                 
-                .close{
-                    .hide-text();
-                    //.icon-right(url('@{img-path}close.png'), 24px, 30px);
-                    background-image: url('@{img-path}close.png');
-                    width: 24px;
-                    height: 24px;
-                    float: right;
-                    background-color: @brand-primary;
-                    margin: 1px 1px 0 0;
-                }
             }
 
             .content{
