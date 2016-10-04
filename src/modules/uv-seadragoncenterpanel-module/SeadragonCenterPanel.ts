@@ -167,7 +167,7 @@ class SeadragonCenterPanel extends CenterPanel {
         this.$rotateButton.prop('title', this.content.rotateRight);
         this.$rotateButton.addClass('rotate');
         
-        if (this.config.options.showAdjustControl) {
+        if (this.config.options.showAdjustControl && Modernizr.canvas) {
             this.$adjustButton = $('<div id="adjust"><img src="' + prefixUrl + 'contrast.png"></div>');
        	    this.$adjustButton.attr('tabindex', 15);
             this.$adjustButton.prop('title', this.content.adjust);
