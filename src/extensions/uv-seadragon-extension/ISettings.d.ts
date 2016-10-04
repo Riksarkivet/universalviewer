@@ -4,7 +4,7 @@ interface ISettings {
     panelOpenLeftPanel?: boolean;
     panelOpenRightPanel?: boolean;
     preserveViewport?: boolean;
-    zoomPerClickEnabled?: boolean;
+    clickToZoomEnabled?: boolean;
     contrastPercent?: number;
     brightnessPercent?: number;
 }

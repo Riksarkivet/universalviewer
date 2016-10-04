@@ -21,7 +21,7 @@
     "printMimeType": "application/pdf",
     "rightPanelEnabled": true,
     "saveUserSettings": false,
-    "zoomPerClickEnabled": true,
+    "clickToZoomEnabled": true,
     "searchWithinEnabled": true,
     "theme": "uv-en-GB-theme",
     "tokenStorage": "session",

@@ -7,9 +7,9 @@ class SettingsDialogue extends BaseSettingsDialogue {
     $navigatorEnabledCheckbox: JQuery;
     $navigatorEnabledLabel: JQuery;
 
-    $zoomPerClickEnabled: JQuery;
-    $zoomPerClickEnabledCheckbox: JQuery;
-    $zoomPerClickEnabledLabel: JQuery;
+    $clickToZoomEnabled: JQuery;
+    $clickToZoomEnabledCheckbox: JQuery;
+    $clickToZoomEnabledLabel: JQuery;
 
 
 
@@ -48,14 +48,14 @@ class SettingsDialogue extends BaseSettingsDialogue {
         this.$pagingEnabledLabel = $('<label for="pagingEnabled">' + this.content.pagingEnabled + '</label>');
         this.$pagingEnabled.append(this.$pagingEnabledLabel);
 
-        this.$zoomPerClickEnabled = $('<div class="setting zoomClick"></div>');
-        this.$scroll.append(this.$zoomPerClickEnabled);
+        this.$clickToZoomEnabled = $('<div class="setting zoomClick"></div>');
+        this.$scroll.append(this.$clickToZoomEnabled);
 
-        this.$zoomPerClickEnabledCheckbox = $('<input id="zoomPerClickEnabled" type="checkbox" />');
-        this.$zoomPerClickEnabled.append(this.$zoomPerClickEnabledCheckbox);
+        this.$clickToZoomEnabledCheckbox = $('<input id="clickToZoomEnabled" type="checkbox" />');
+        this.$clickToZoomEnabled.append(this.$clickToZoomEnabledCheckbox);
 
-        this.$zoomPerClickEnabledLabel = $('<label for="zoomPerClickEnabled">' + this.content.zoomPerClickEnabled + '</label>');
-        this.$zoomPerClickEnabled.append(this.$zoomPerClickEnabledLabel);     
+        this.$clickToZoomEnabledLabel = $('<label for="clickToZoomEnabled">' + this.content.clickToZoomEnabled + '</label>');
+        this.$clickToZoomEnabled.append(this.$clickToZoomEnabledLabel);
 
         this.$preserveViewport = $('<div class="setting preserveViewport"></div>');
         this.$scroll.append(this.$preserveViewport);
@@ -77,20 +77,20 @@ class SettingsDialogue extends BaseSettingsDialogue {
 
             this.updateSettings(settings);
         });
-        
-        this.$zoomPerClickEnabledCheckbox.change(() => {
+
+        this.$clickToZoomEnabledCheckbox.change(() => {
             var settings: ISettings = {};
 
-            if(this.$zoomPerClickEnabledCheckbox.is(":checked")) {
-                settings.zoomPerClickEnabled = true;
+            if (this.$clickToZoomEnabledCheckbox.is(":checked")) {
+                settings.clickToZoomEnabled = true;
             } else {
-                settings.zoomPerClickEnabled = false;
+                settings.clickToZoomEnabled = false;
             }
 
             this.updateSettings(settings);
             var viewer = (<ISeadragonExtension>this.extension).getViewer();
-            viewer.zoomPerClick = settings.zoomPerClickEnabled ? 2.0 : 1.0;
-        });        
+            viewer.gestureSettingsMouse.clickToZoom = settings.clickToZoomEnabled;
+        });
 
         this.$pagingEnabledCheckbox.change(() => {
             var settings: ISettings = {};
@@ -128,11 +128,11 @@ class SettingsDialogue extends BaseSettingsDialogue {
             this.$navigatorEnabledCheckbox.removeAttr("checked");
         }
         
-        if (settings.zoomPerClickEnabled){
-            this.$zoomPerClickEnabledCheckbox.prop("checked", true);
+        if (settings.clickToZoomEnabled){
+            this.$clickToZoomEnabledCheckbox.prop("checked", true);
         } else {
-            this.$zoomPerClickEnabledCheckbox.removeAttr("checked");
-        }        
+            this.$clickToZoomEnabledCheckbox.removeAttr("checked");
+        }
 
         if (!this.extension.helper.isPagingAvailable()){
             this.$pagingEnabled.hide();

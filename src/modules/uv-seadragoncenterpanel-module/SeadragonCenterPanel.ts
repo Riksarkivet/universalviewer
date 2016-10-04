@@ -83,7 +83,6 @@ class SeadragonCenterPanel extends CenterPanel {
             showRotationControl: true,
             showHomeControl: this.config.options.showHomeControl || false,
             showFullPageControl: false,
-            zoomPerClick: this.extension.config.options.zoomPerClickEnabled ? 2.0 : 1.0,
             defaultZoomLevel: this.config.options.defaultZoomLevel || 0,
             controlsFadeDelay: this.config.options.controlsFadeDelay || 250,
             controlsFadeLength: this.config.options.controlsFadeLength || 250,
@@ -97,6 +96,11 @@ class SeadragonCenterPanel extends CenterPanel {
             prefixUrl: prefixUrl,
             minScrollDeltaTime: 10,
             crossOriginPolicy: 'use-credentials',
+
+            gestureSettingsMouse: {
+                clickToZoom: this.extension.config.options.clickToZoomEnabled
+            },
+
             navImages: {
                 zoomIn: {
                     REST:   'zoom_in.png',
