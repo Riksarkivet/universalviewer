@@ -12,6 +12,7 @@ class RiksarkivetPrint {
     printSourceText: string;
     imageUri: string;
     riksarkivet: Riksarkivet;
+    $img;
 
 
     constructor() {
@@ -35,18 +36,24 @@ class RiksarkivetPrint {
         this.imageUri = imageUri;
 
         var img = new Image();
+        img.crossOrigin = "use-credentials";
+        img.id = this.printImageId;
         //The callback function is declared as an ordinary js-function in order to access the image element with "this". The current object is accessed with "that".
         img.onload = function () {
+            if (!this.complete || typeof this.naturalWidth === "undefined" || this.naturalWidth === 0) {
+                alert('broken image!');
+            }
             var imageWidth = this.width + that.printSourceLeftMarginsInPixels;
             var imageHeight = this.height + that.printSourceTextHeightInPixels + that.printSourceTopMarginsInPixels + that.printSourceBottomMarginsInPixels;
             var containerDivHeight = imageHeight + that.printSourceTextHeightInPixels;
             var whRatio = parseFloat(imageWidth) / parseFloat(imageHeight);
             var widthPercentageLandscape = that.calculateWidthPercentageForLandscape(whRatio);
             var widthPercentagePortrait = that.calculateWidthPercentageForPortrait(whRatio);
-            that.printIframe(widthPercentageLandscape, widthPercentagePortrait)
-        }
+            that.printIframe(widthPercentageLandscape, widthPercentagePortrait);
+        };
 
         img.src = imageUri;
+        this.$img = $(img);
 
     };
 
@@ -71,46 +78,24 @@ class RiksarkivetPrint {
         else
             styleArray.push('<style type="text/css">@media print { ' + portraitStyle + ' } ' + pageStyle + '</style>');
 
-        //styleArray.push('<style type="text/css">@media print and (orientation:landscape) { ' + landscapeStyle + ' }</style>');
-        //styleArray.push('<style type="text/css">@media print and (orientation:portrait) { ' + portraitStyle + ' }</style>');
-
         return styleArray.join("");
 
     }
 
-    public getHtmlContent(objFrame) {
+    public getHtmlContent() {
 
         var printContainerId = 'invisibleImageDiv';
         var printContainerIdWithHash = '#' + printContainerId;
         var printContainerClassName = 'invisible-screen';
         var printSourceTextId = 'printSourceText';
-        var printImageId = "printImage";
 
         if ($(printContainerIdWithHash).length > 0) {
             $(printContainerIdWithHash).remove();
         }
 
-        var img = $('<img id="' + printImageId + '" crossorigin="use-credentials" />').attr('src', this.imageUri)
-            .on('load', function () {
-                if (!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0) {
-                    alert('broken image!');
-                }
-                else {
-                    var ua = window.navigator.userAgent;
-                    if (ua.indexOf("MSIE ") > 0 || ua.indexOf("rv:11") > 0 || ua.indexOf("Edge") > 0)
-                    {
-                        objFrame.document.execCommand('print', false, null);
-                    }
-                    else {
-                        objFrame.focus();
-                        objFrame.print();
-                    }
-                }
-            });
-
         var img_div = $('<div id="' + printContainerId + '" class="' + printContainerClassName + '" >');
         img_div.append('<div id="' + printSourceTextId + '"><h5>' + this.printSourceText + '</h5></div>')
-        img_div.append(img);
+        img_div.append(this.$img);
 
         return img_div;
     };
@@ -124,22 +109,75 @@ class RiksarkivetPrint {
         }
 
         var strFrameName = ("printer-" + (new Date()).getTime());
-        var jFrame = $("<iframe id='" + strFrameId + "' name='" + strFrameName + "'>");
-        jFrame
-            .css("width", "auto")
-            .css("height", "auto")
-            .css("position", "absolute")
-            .css("left", "-9999px")
-            .css("margin-left", "20px")
-            .css("margin-bottom", "0px")
-            .appendTo($("body:first"))
-        ;
-        var objFrame = window.frames[strFrameName];
-        var objDoc = objFrame.document;
+        var jFrame = this.createIframeElement(strFrameId, strFrameName);
 
         var printStyles = this.getPrintStyles(widthPercentageLandscape, widthPercentagePortrait);
-        var htmlContent = this.getHtmlContent(objFrame)[0].outerHTML;
+        var htmlContent = this.getHtmlContent()[0].outerHTML;
+        var iframeContent = this.getIframeContent(document.title, printStyles, htmlContent);
 
+        document.body.appendChild(jFrame);
+
+        jFrame.onload = function() {
+            var ua = window.navigator.userAgent;
+            if (ua.indexOf("MSIE ") > 0 || ua.indexOf("rv:11") > 0 || ua.indexOf("Edge") > 0) {
+                jFrame.contentWindow.document.execCommand('print', false, null);
+            }
+            else {
+                jFrame.contentWindow.focus();
+                jFrame.contentWindow.print();
+            }
+        };
+
+        jFrame.contentWindow.document.open();
+        jFrame.contentWindow.document.write(iframeContent);
+        jFrame.contentWindow.document.close();
+
+
+        // var objFrame = window.frames[strFrameName];
+        // var objDoc = objFrame.document;
+
+
+        // objDoc.open();
+        // objDoc.write(iframeContent);
+        // objDoc.close();
+
+        // $jFrame.load(function(){
+        //     var ua = window.navigator.userAgent;
+        //     if (ua.indexOf("MSIE ") > 0 || ua.indexOf("rv:11") > 0 || ua.indexOf("Edge") > 0) {
+        //         objFrame.document.execCommand('print', false, null);
+        //     }
+        //     else {
+        //         objFrame.focus();
+        //         objFrame.print();
+        //     }
+        // });
+
+    }
+
+    private createIframeElement(strFrameId, strFrameName) {
+        var ifrm = document.createElement('iframe');
+        ifrm.id = strFrameId;
+        ifrm.name = strFrameName;
+        ifrm.style.width = "auto";
+        ifrm.style.height = "auto";
+        ifrm.style.position = "absolute";
+        ifrm.style.left = "-9999px";
+        ifrm.style.marginLeft = "20px";
+        ifrm.style.marginBottom = "0px";
+        return ifrm;
+
+        // var jFrame = $("<iframe id='" + strFrameId + "' name='" + strFrameName + "'>");
+        // jFrame
+        //     .css("width", "auto")
+        //     .css("height", "auto")
+        //     .css("position", "absolute")
+        //     .css("left", "-9999px")
+        //     .css("margin-left", "20px")
+        //     .css("margin-bottom", "0px");
+        // return jFrame;
+    }
+
+    private getIframeContent(title: string, printStyles: string, htmlContent: string) {
         var htmlArray = new Array();
         htmlArray.push("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
         htmlArray.push("<html>");
@@ -154,9 +192,7 @@ class RiksarkivetPrint {
         htmlArray.push("</body>");
         htmlArray.push("</html>");
 
-        objDoc.open();
-        objDoc.write(htmlArray.join(""));
-        objDoc.close();
+        return htmlArray.join("");
     }
 
     private calculateWidthPercentageForLandscape(WHRatio): number {
