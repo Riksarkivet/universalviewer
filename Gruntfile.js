@@ -53,7 +53,7 @@ module.exports = function (grunt) {
 
         concat: {
             bundle: {
-                src: grunt.file.expand('src/lib/*').concat(config.deps).concat(['!src/lib/embed.js']).concat(['!src/lib/jquery-1.10.2.min.js']).concat(['!src/lib/rangeslider.css']),
+                src: grunt.file.expand('src/lib/*').concat(config.deps).concat(['!src/lib/embed.js']).concat(['!src/lib/jquery-1.10.2.min.js']).concat(['!src/lib/rangeslider.js']).concat(['!src/lib/rangeslider.css']),
                 dest: 'src/lib/bundle.js'
             }
         },

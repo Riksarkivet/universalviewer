@@ -1278,7 +1278,7 @@ declare namespace Manifold {
         width: number;
         x: number;
         y: number;
-        constructor(resource: Manifesto.IManifestResource, dataUriFunc: (r: Manifesto.IManifestResource) => string);
+        constructor(resource: Manifesto.IManifestResource, dataUriFunc: (r: Manifesto.IManifestResource) => string, isCORSEnabled: boolean);
         private _parseAuthServices(resource);
         isAccessControlled(): boolean;
         hasServiceDescriptor(): boolean;

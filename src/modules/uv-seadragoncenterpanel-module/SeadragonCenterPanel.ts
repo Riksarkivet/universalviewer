@@ -83,7 +83,6 @@ class SeadragonCenterPanel extends CenterPanel {
             showRotationControl: true,
             showHomeControl: this.config.options.showHomeControl || false,
             showFullPageControl: false,
-            zoomPerClick: this.extension.config.options.zoomPerClickEnabled ? 2.0 : 1.0,
             defaultZoomLevel: this.config.options.defaultZoomLevel || 0,
             controlsFadeDelay: this.config.options.controlsFadeDelay || 250,
             controlsFadeLength: this.config.options.controlsFadeLength || 250,
@@ -97,6 +96,11 @@ class SeadragonCenterPanel extends CenterPanel {
             prefixUrl: prefixUrl,
             minScrollDeltaTime: 10,
             crossOriginPolicy: 'use-credentials',
+
+            gestureSettingsMouse: {
+                clickToZoom: this.extension.config.options.clickToZoomEnabled
+            },
+
             navImages: {
                 zoomIn: {
                     REST:   'zoom_in.png',
@@ -163,7 +167,7 @@ class SeadragonCenterPanel extends CenterPanel {
         this.$rotateButton.prop('title', this.content.rotateRight);
         this.$rotateButton.addClass('rotate');
         
-        if (this.config.options.showAdjustControl) {
+        if (this.config.options.showAdjustControl && Modernizr.canvas) {
             this.$adjustButton = $('<div id="adjust"><img src="' + prefixUrl + 'contrast.png"></div>');
        	    this.$adjustButton.attr('tabindex', 15);
             this.$adjustButton.prop('title', this.content.adjust);

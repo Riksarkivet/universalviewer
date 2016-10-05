@@ -925,7 +925,7 @@ class BaseExtension implements IExtension {
 
         _.each(indices, (index) => {
             var canvas: Manifesto.ICanvas = this.helper.getCanvasByIndex(index);
-            var r: Manifesto.IExternalResource = new Manifold.ExternalResource(canvas, this.helper.getInfoUri);
+            var r: Manifesto.IExternalResource = new Manifold.ExternalResource(canvas, this.helper.getInfoUri, this.bootstrapper.isCORSEnabled());
 
             // used to reload resources with isResponseHandled = true.
             if (resources){

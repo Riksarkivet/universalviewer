@@ -1,3 +1,7 @@
+define('jquery', [], function() {
+    return jQuery;
+});
+
 require([
     'Bootstrapper',
     'extensions/uv-mediaelement-extension/Extension',
