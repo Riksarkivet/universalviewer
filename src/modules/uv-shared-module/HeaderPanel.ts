@@ -6,6 +6,7 @@ import InformationAction = require("../uv-shared-module/InformationAction");
 import InformationArgs = require("../uv-shared-module/InformationArgs");
 import InformationFactory = require("../uv-shared-module/InformationFactory");
 import SettingsDialogue = require("../uv-dialogues-module/SettingsDialogue");
+import CroppedImageDimensions = require("../../extensions/uv-seadragon-extension/CroppedImageDimensions");
 import RiksarkivetPrint = require("../../modules/uv-shared-module/RiksarkivetPrint");
 import ISeadragonExtension = require("../../Extensions/uv-seadragon-extension/ISeadragonExtension");
 
@@ -143,9 +144,16 @@ class HeaderPanel extends BaseView {
         this.$printButton.onPressed(() => {
             var canvas = this.extension.helper.getCurrentCanvas();
             var viewer = (<ISeadragonExtension>this.extension).getViewer();
+            var dimensions: CroppedImageDimensions = (<ISeadragonExtension>this.extension).getCroppedImageDimensions(canvas, viewer);
             var imageUri = (<ISeadragonExtension>this.extension).getCroppedImageUri(canvas, viewer);
-            var imageUriTmp = imageUri.substring(0, imageUri.indexOf('/0/default.jpg'));
-            imageUri = imageUri.substring(0, imageUriTmp.lastIndexOf('/')) + '/full/0/default.jpg';
+            var imageUriTmp = imageUri.substring(0, imageUri.indexOf('/0/default.jpg'));                     
+            if (dimensions.size.width > canvas.getWidth() - 10 && dimensions.size.height > canvas.getHeight() - 10) {
+                 imageUriTmp = imageUri.substring(0, imageUriTmp.lastIndexOf('/'));
+                 imageUri = imageUri.substring(0, imageUriTmp.lastIndexOf('/')) + '/full/full/0/default.jpg';                 
+            }
+            else {            
+                imageUri = imageUri.substring(0, imageUriTmp.lastIndexOf('/')) + '/full/0/default.jpg';
+            }
             var title = this.extension.helper.getLabel();
             var ra: RiksarkivetPrint = new RiksarkivetPrint();
             ra.printImage(imageUri, title, canvas);
