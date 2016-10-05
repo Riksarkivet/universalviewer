@@ -131,27 +131,6 @@ class RiksarkivetPrint {
         jFrame.contentWindow.document.open();
         jFrame.contentWindow.document.write(iframeContent);
         jFrame.contentWindow.document.close();
-
-
-        // var objFrame = window.frames[strFrameName];
-        // var objDoc = objFrame.document;
-
-
-        // objDoc.open();
-        // objDoc.write(iframeContent);
-        // objDoc.close();
-
-        // $jFrame.load(function(){
-        //     var ua = window.navigator.userAgent;
-        //     if (ua.indexOf("MSIE ") > 0 || ua.indexOf("rv:11") > 0 || ua.indexOf("Edge") > 0) {
-        //         objFrame.document.execCommand('print', false, null);
-        //     }
-        //     else {
-        //         objFrame.focus();
-        //         objFrame.print();
-        //     }
-        // });
-
     }
 
     private createIframeElement(strFrameId, strFrameName) {
@@ -165,16 +144,6 @@ class RiksarkivetPrint {
         ifrm.style.marginLeft = "20px";
         ifrm.style.marginBottom = "0px";
         return ifrm;
-
-        // var jFrame = $("<iframe id='" + strFrameId + "' name='" + strFrameName + "'>");
-        // jFrame
-        //     .css("width", "auto")
-        //     .css("height", "auto")
-        //     .css("position", "absolute")
-        //     .css("left", "-9999px")
-        //     .css("margin-left", "20px")
-        //     .css("margin-bottom", "0px");
-        // return jFrame;
     }
 
     private getIframeContent(title: string, printStyles: string, htmlContent: string) {
