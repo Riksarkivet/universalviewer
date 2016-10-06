@@ -1,6 +1,8 @@
-define('jquery', [], function() {
-    return jQuery;
-});
+if (typeof jQuery == "function") {
+    define('jquery', [], function() {
+        return jQuery;
+    });
+}
 
 require([
     'Bootstrapper',
