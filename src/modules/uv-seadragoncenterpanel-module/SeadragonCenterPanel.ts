@@ -168,18 +168,15 @@ class SeadragonCenterPanel extends CenterPanel {
         this.$rotateButton.addClass('rotate');
         
         if (this.config.options.showAdjustControl && Modernizr.canvas) {
-            this.$adjustButton = $('<div id="adjust"><img src="' + prefixUrl + 'contrast.png"></div>');
-       	    this.$adjustButton.attr('tabindex', 15);
-            this.$adjustButton.prop('title', this.content.adjust);
+            this.$adjustButton = $('<a class="adjust" title="' + this.content.adjust + '" tabindex="0" style="background-image:url(' + prefixUrl + 'contrast.png)"><span/></a>');
+            this.$adjustButton.attr('tabindex', 15);
             this.$adjustButton.insertAfter(this.$rotateButton);
         
-            this.$adjustButton.on('click', (e) => {
-                e.preventDefault();
+            this.$adjustButton.onPressed(() => {
                 $.publish(BaseCommands.SHOW_ADJUST_DIALOGUE);
-            });
-        }
-        
-        
+            });        
+        }  
+
         this.$navigator = this.$viewer.find(".navigator");
         this.setNavigatorVisible();
 
