@@ -144,20 +144,17 @@ class HeaderPanel extends BaseView {
         this.$printButton.onPressed(() => {
             var canvas = this.extension.helper.getCurrentCanvas();
             var viewer = (<ISeadragonExtension>this.extension).getViewer();
-            var dimensions: CroppedImageDimensions = (<ISeadragonExtension>this.extension).getCroppedImageDimensions(canvas, viewer);
-            var imageUri = (<ISeadragonExtension>this.extension).getCroppedImageUri(canvas, viewer);
-            var imageUriTmp = imageUri.substring(0, imageUri.indexOf('/0/default.jpg'));                     
-            if (dimensions.size.width > canvas.getWidth() - 10 && dimensions.size.height > canvas.getHeight() - 10) {
-                 imageUriTmp = imageUri.substring(0, imageUriTmp.lastIndexOf('/'));
-                 imageUri = imageUri.substring(0, imageUriTmp.lastIndexOf('/')) + '/full/full/0/default.jpg';                 
+            var imageUri;
+            if (this.isImageZoomed(canvas, viewer)) {
+                imageUri = (<ISeadragonExtension>this.extension).getCroppedImageUri(canvas, viewer);
             }
-            else {            
-                imageUri = imageUri.substring(0, imageUriTmp.lastIndexOf('/')) + '/full/0/default.jpg';
+            else {
+                imageUri = canvas.getCanonicalImageUri(canvas.getWidth());
             }
             var title = this.extension.helper.getLabel();
             var ra: RiksarkivetPrint = new RiksarkivetPrint();
             ra.printImage(imageUri, title, canvas);
-            });
+        });
 
         this.$downloadButton.on('click', (e) => {
             e.preventDefault();
@@ -171,6 +168,31 @@ class HeaderPanel extends BaseView {
 
         if (this.options.localeToggleEnabled === false){
             this.$localeToggleButton.hide();
+        }
+    }
+
+    private isImageZoomed(canvas: Manifesto.ICanvas, viewer: any): boolean {
+        var dimensions: CroppedImageDimensions = (<ISeadragonExtension>this.extension).getCroppedImageDimensions(canvas, viewer);
+        var currentWidth: number = dimensions.size.width;
+        var currentHeight: number = dimensions.size.height;
+        var wholeWidth: number = canvas.getWidth();
+        var wholeHeight: number = canvas.getHeight();
+
+        var percentageWidth: number = (currentWidth / wholeWidth) * 100;
+        var percentageHeight: number = (currentHeight / wholeHeight) * 100;
+
+        var disabledPercentage: number = 90;
+        if (this.extension.config.modules.downloadDialogue &&
+            this.extension.config.modules.downloadDialogue.options &&
+            this.extension.config.modules.downloadDialogue.options.currentViewDisabledPercentage) {
+            disabledPercentage = this.extension.config.modules.downloadDialogue.options.currentViewDisabledPercentage;
+        }
+
+        // if over disabledPercentage of the size of whole image then not zoomed
+        if (percentageWidth >= disabledPercentage && percentageHeight >= disabledPercentage) {
+            return false;
+        } else {
+            return true;
         }
     }
 
