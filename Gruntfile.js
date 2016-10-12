@@ -95,7 +95,6 @@ module.exports = function (grunt) {
                         cwd: '<%= config.dirs.lib %>',
                         src: [
                             'embed.js',
-                            'openseadragon-filtering.js',
                             'rangeslider.js',
                             'rangeslider.css',
                             'bundle.min.js'
