@@ -54,7 +54,6 @@ class BaseExtension implements IExtension {
     shell: Shell;
     shifted: boolean = false;
     tabbing: boolean = false;
-    hasNoPageNumbers: boolean;
     riksarkivet: Riksarkivet;
 
     constructor(bootstrapper: BootStrapper) {
@@ -70,7 +69,6 @@ class BaseExtension implements IExtension {
         this.embedScriptUri = this.bootstrapper.params.embedScriptUri;
         this.domain = this.bootstrapper.params.domain;
         this.isLightbox = this.bootstrapper.params.isLightbox;
-        this.hasNoPageNumbers = this.bootstrapper.params.hasNoPageNumbers;
     }
 
     public create(overrideDependencies?: any): void {
