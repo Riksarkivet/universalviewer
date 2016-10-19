@@ -64,15 +64,7 @@ class MoreInfoRightPanel extends RightPanel {
             this.displayInfo();
         });
 
-        $.subscribe(BaseCommands.COPY_SOURCE_REFERENCE, (e) => {
-            var label = this.content.sourceReference;
-            var $copyBtn = $('.items .item .header:contains(' + label + ') .copyText');
-            $copyBtn.show();
-            this.copyValueForLabel(label);
-            setTimeout(function() {
-                $copyBtn.hide();
-            }, 2000);
-        });
+        this.riksarkivetSetupCopySourceRef();
     }
     
     getManifestData() {
@@ -328,6 +320,20 @@ class MoreInfoRightPanel extends RightPanel {
 
         this.$main.height(this.$element.height() - this.$top.height() - this.$main.verticalMargins());
     }
+
+    riksarkivetSetupCopySourceRef() {
+        $.subscribe(RiksarkivetCommands.COPY_SOURCE_REFERENCE, (e) => {
+            var label = this.content.sourceReference;
+            var $copyBtn = $('.items .item .header:contains(' + label + ') .copyText');
+            $copyBtn.show();
+            this.copyValueForLabel(label);
+            setTimeout(function() {
+                $copyBtn.hide();
+            }, 2000);
+        });
+    }
 }
+
+import RiksarkivetCommands = require("../uv-shared-module/RiksarkivetCommands");
 
 export = MoreInfoRightPanel;
