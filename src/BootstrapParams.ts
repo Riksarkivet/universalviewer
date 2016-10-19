@@ -7,7 +7,6 @@ class BootstrapParams {
     domain: string;
     embedDomain: string;
     embedScriptUri: string;
-    hasNoPageNumbers: boolean;
     isHomeDomain: boolean;
     isLightbox: boolean;
     isOnlyInstance: boolean;
@@ -26,7 +25,6 @@ class BootstrapParams {
         this.domain = Utils.Urls.getQuerystringParameter('domain');
         this.embedDomain = Utils.Urls.getQuerystringParameter('embedDomain');
         this.embedScriptUri = Utils.Urls.getQuerystringParameter('embedScriptUri');
-        this.hasNoPageNumbers = Utils.Urls.getQuerystringParameter('hasNoPageNumbers') === 'true';
         this.isHomeDomain = Utils.Urls.getQuerystringParameter('isHomeDomain') === 'true';
         this.isLightbox = Utils.Urls.getQuerystringParameter('isLightbox') === 'true';
         this.isOnlyInstance = Utils.Urls.getQuerystringParameter('isOnlyInstance') === 'true';
