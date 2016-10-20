@@ -54,7 +54,6 @@ class BaseExtension implements IExtension {
     shell: Shell;
     shifted: boolean = false;
     tabbing: boolean = false;
-    hasNoPageNumbers: boolean;
     riksarkivet: Riksarkivet;
 
     constructor(bootstrapper: BootStrapper) {
@@ -70,7 +69,6 @@ class BaseExtension implements IExtension {
         this.embedScriptUri = this.bootstrapper.params.embedScriptUri;
         this.domain = this.bootstrapper.params.domain;
         this.isLightbox = this.bootstrapper.params.isLightbox;
-        this.hasNoPageNumbers = this.bootstrapper.params.hasNoPageNumbers;
     }
 
     public create(overrideDependencies?: any): void {
@@ -203,7 +201,9 @@ class BaseExtension implements IExtension {
                         if (e.keyCode === KeyCodes.KeyDown.DownArrow) event = BaseCommands.DOWN_ARROW;
                     }
                 }
-                if (e.ctrlKey && e.shiftKey && e.keyCode === KeyCodes.KeyDown.c) event = BaseCommands.COPY_SOURCE_REFERENCE;
+                
+                if (!event)
+                    event = this.riksarkivet.GetShortcutEvent(e);
 
                 if (event){
                     if (preventDefault) {

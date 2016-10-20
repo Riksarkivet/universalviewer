@@ -209,15 +209,12 @@ docReady(function() {
         }
 
         function app(element, isHomeDomain, isOnlyInstance) {
-            var socket, $app, $img, $appFrame, manifestUri, collectionIndex, manifestIndex, sequenceIndex, canvasIndex, defaultToFullScreen, isLightbox, zoom, rotation, config, jsonp, locale, isFullScreen, dimensions, top, left, lastScroll, reload, hasNoPageNumbers;
+            var socket, $app, $img, $appFrame, manifestUri, collectionIndex, manifestIndex, sequenceIndex, canvasIndex, defaultToFullScreen, isLightbox, zoom, rotation, config, jsonp, locale, isFullScreen, dimensions, top, left, lastScroll, reload;
 
             $app = $(element);
 
             // Default to fullscreen
             defaultToFullScreen = $app.attr('data-fullscreen') === 'true';
-
-            // If PageNumbers are missing
-            hasNoPageNumbers = $app.attr('data-haspagenumbers') === 'false';
 
             // Lightbox behaviour
             isLightbox = $app.attr('data-lightbox') === 'true';
@@ -483,8 +480,7 @@ docReady(function() {
                     "&embedDomain=" + document.domain +
                     "&domain=" + domain +
                     "&isLightbox=" + isLightbox +
-                    "&locale=" + locale + 
-                    "&hasNoPageNumbers=" + hasNoPageNumbers;
+                    "&locale=" + locale;
 
                 if (reload) uri += "&reload=true";
                 if (config) uri += "&config=" + config;

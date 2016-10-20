@@ -9,7 +9,6 @@ class Commands {
     static CLOSE_ACTIVE_DIALOGUE: string            = Commands.namespace + 'onCloseActiveDialogue';
     static CLOSE_LEFT_PANEL: string                 = Commands.namespace + 'onCloseLeftPanel';
     static CLOSE_RIGHT_PANEL: string                = Commands.namespace + 'onCloseRightPanel';
-    static COPY_SOURCE_REFERENCE: string            = Commands.namespace + 'onCopySourceReference';
     static CREATED: string                          = Commands.namespace + 'onCreated';
     static DOWN_ARROW: string                       = Commands.namespace + 'onDownArrow';
     static DOWNLOAD: string                         = Commands.namespace + 'onDownload';

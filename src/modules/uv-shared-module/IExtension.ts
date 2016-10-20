@@ -30,7 +30,6 @@ interface IExtension{
     getShareUrl(): string;
     height(): number;
     helper: Manifold.IHelper;
-    hasNoPageNumbers: boolean;
     isCreated: boolean;
     isDeepLinkingEnabled(): boolean;
     isFooterPanelEnabled(): boolean;
