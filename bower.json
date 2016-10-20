@@ -21,7 +21,7 @@
     "uv-cy-GB-theme": "universalviewer/uv-cy-GB-theme",
     "uv-en-GB-theme": "universalviewer/uv-en-GB-theme",
     "uv-sv-SE-theme": "riksarkivet/uv-sv-SE-theme",
-    "openseadragon-filtering": "usnistgov/OpenSeadragonFiltering#v1.0.*",
+    "openseadragon-filtering": "usnistgov/OpenSeadragonFiltering#master",
     "rangeslider.js": "^2.1.1"
   }
 }
