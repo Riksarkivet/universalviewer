@@ -56,7 +56,8 @@
     "requirejs": "2.2.0",
     "three.js": "^0.73.0",
     "units": "git://github.com/edsilv/Units.git",
-    "utils": "git://github.com/riksarkivet/utils.git",
+    "utils": "git://github.com/edsilv/utils.git",
+    "uv-custom":"https://github.com/Riksarkivet/uv-custom.git",
     "virtex3d": "^0.2.6"
   }
 }

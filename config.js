@@ -10,7 +10,8 @@ var Config = (function () {
             'node_modules/key-codes/dist/key-codes.js',
             'node_modules/manifold/dist/manifold.bundle.js',
             'node_modules/units/Length.min.js',
-            'node_modules/utils/dist/utils.js'
+            'node_modules/utils/dist/utils.js',
+            'node_modules/uv-custom/dist/ra-uv-custom.js'
         ],
         this.dirs = {
             bower: './lib',

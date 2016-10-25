@@ -1006,7 +1006,7 @@ class BaseExtension implements IExtension {
 
     SetUrlAfter(searchvalue: string, value: string): void {
         if (this.isDeepLinkingEnabled()) {
-            Utils.Urls.setUrlAfter(searchvalue, value, parent.document);
+            RaUvCustom.SetUrlAfter(searchvalue, value, parent.document);
         }
     }
 

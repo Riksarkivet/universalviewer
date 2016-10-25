@@ -1501,7 +1501,6 @@ declare module Utils {
     class Urls {
         static getHashParameter(key: string, doc?: Document): string;
         static setHashParameter(key: string, value: any, doc?: Document): void;
-        static setUrlAfter(searchvalue: string, value: string, doc?: Document): void;
         static getQuerystringParameter(key: string, w?: Window): string;
         static getQuerystringParameterFromString(key: string, querystring: string): string;
         static setQuerystringParameter(key: string, value: any, doc?: Document): void;
