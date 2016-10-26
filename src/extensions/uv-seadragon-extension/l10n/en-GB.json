@@ -42,7 +42,7 @@
     },
     "downloadDialogue": {
       "content": {
-        "currentViewAsJpg": "Current view {0} x {1}px (jpg)",
+        "currentViewAsJpg": "Current view (jpg)",
         "download": "Download",
         "downloadSelection": "Download Selection",
         "downloadSelectionButton": "Download PDF",
@@ -53,9 +53,9 @@
         "pagingNote": "Please turn off Two Page View for additional options.",
         "preview": "Preview",
         "title": "Download",
-        "wholeImageHighRes": "Whole image {0} x {1}px ({2})",
-        "wholeImagesHighRes": "Whole images ({0})",
-        "wholeImageLowResAsJpg": "Whole image {0} x {1}px (jpg)"
+        "wholeImageHighRes": "Whole image high res ({0})",
+        "wholeImagesHighRes": "Whole images high res ({0})",
+        "wholeImageLowResAsJpg": "Whole image low res (jpg)"
       }
     },
     "headerPanel": {
