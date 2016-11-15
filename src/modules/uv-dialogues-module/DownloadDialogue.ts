@@ -8,7 +8,7 @@ class DownloadDialogue extends Dialogue {
     $noneAvailable: JQuery;
     $title: JQuery;
     $footer: JQuery;
-    $termsOfUseButton: JQuery;    
+    $termsOfUseButton: JQuery;
 
     constructor($element: JQuery) {
         super($element);
@@ -75,7 +75,7 @@ class DownloadDialogue extends Dialogue {
                 renderingFound = true;
             });
 
-            if (!renderingFound){
+            if (!renderingFound) {
                 this.addEntireFileDownloadOption(canvas.id, null, null);
             }
         }
@@ -113,7 +113,7 @@ class DownloadDialogue extends Dialogue {
         } else {
             this.$termsOfUseButton.hide();
         }
-    }    
+    }
 
     getFileExtension(fileUri: string): string{
         return fileUri.split('.').pop();

@@ -15,7 +15,6 @@ class Dialogue extends BaseView {
     $content: JQuery;
     $middle: JQuery;
     $top: JQuery;
-    $title: JQuery;
 
     constructor($element: JQuery) {
         super($element, false, false);

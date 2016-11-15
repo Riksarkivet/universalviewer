@@ -32,8 +32,8 @@ class ClickThroughDialogue extends Dialogue {
             this.close();
         });
 
-        // this.$title = $('<h1></h1>');
-        // this.$content.append(this.$title);
+        this.$title = $('<h1></h1>');
+        this.$content.append(this.$title);
 
         this.$content.append('\
             <div>\
