@@ -15,7 +15,6 @@ class Dialogue extends BaseView {
     $content: JQuery;
     $middle: JQuery;
     $top: JQuery;
-    $header: JQuery;
     $title: JQuery;
 
     constructor($element: JQuery) {
@@ -53,9 +52,6 @@ class Dialogue extends BaseView {
 
         this.$middle = $('<div class="middle"></div>');
         this.$element.append(this.$middle);
-        
-        this.$header = $('<div class="header"></div>');
-        this.$middle.append(this.$header);
 
         this.$content = $('<div class="content"></div>');
         this.$middle.append(this.$content);
@@ -70,17 +66,6 @@ class Dialogue extends BaseView {
         });
 
         this.returnFunc = this.close;
-    }
-    
-    setTitle(text: string) {
-        //if (this.$header.has(".title").length == 0) {
-        if (this.$title) {
-            this.$title.val(text);
-        }
-        else {
-            this.$title = $('<div class="title">' + text + '</div>');
-            this.$header.append(this.$title);
-        }
     }
 
     enableClose(): void {

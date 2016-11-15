@@ -65,6 +65,7 @@ class Commands {
     static RIGHTPANEL_EXPAND_FULL_START: string     = Commands.namespace + 'onRightPanelExpandFullStart';
     static SEQUENCE_INDEX_CHANGED: string           = Commands.namespace + 'onSequenceIndexChanged';
     static SETTINGS_CHANGED: string                 = Commands.namespace + 'onSettingsChanged';
+    static SHOW_ADJUST_DIALOGUE: string             = Commands.namespace + 'onShowAdjustDialogue';    
     static SHOW_CLICKTHROUGH_DIALOGUE: string       = Commands.namespace + 'onShowClickThroughDialogue';
     static SHOW_DOWNLOAD_DIALOGUE: string           = Commands.namespace + 'onShowDownloadDialogue';
     static SHOW_EMBED_DIALOGUE: string              = Commands.namespace + 'onShowEmbedDialogue';
@@ -76,8 +77,8 @@ class Commands {
     static SHOW_OVERLAY: string                     = Commands.namespace + 'onShowOverlay';
     static SHOW_RESTRICTED_DIALOGUE: string         = Commands.namespace + 'onShowRestrictedDialogue';
     static SHOW_SETTINGS_DIALOGUE: string           = Commands.namespace + 'onShowSettingsDialogue';
-    static SHOW_ADJUST_DIALOGUE: string             = Commands.namespace + 'onShowAdjustDialogue';
     static SHOW_SHARE_DIALOGUE: string              = Commands.namespace + 'onShowShareDialogue';
+    static SHOW_TERMS_OF_USE: string                = Commands.namespace + 'onShowTermsOfUse';    
     static THUMB_SELECTED: string                   = Commands.namespace + 'onThumbSelected';
     static TOGGLE_EXPAND_LEFT_PANEL: string         = Commands.namespace + 'onToggleExpandLeftPanel';
     static TOGGLE_EXPAND_RIGHT_PANEL: string        = Commands.namespace + 'onToggleExpandRightPanel';

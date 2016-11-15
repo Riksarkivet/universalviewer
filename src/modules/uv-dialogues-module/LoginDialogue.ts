@@ -39,8 +39,8 @@ class LoginDialogue extends Dialogue {
             this.close();
         });
 
-        // this.$title = $('<h1></h1>');
-        // this.$content.append(this.$title);
+        this.$title = $('<h1></h1>');
+        this.$content.append(this.$title);
 
         this.$content.append('\
             <div>\
@@ -89,7 +89,7 @@ class LoginDialogue extends Dialogue {
     open(): void {
         super.open();
 
-        this.setTitle(this.resource.loginService.getProperty('label'));
+        this.$title.text(this.resource.loginService.getProperty('label'));
 
         var message: string = this.resource.loginService.getProperty('description');
         if (this.options.warningMessage){
