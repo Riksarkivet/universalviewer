@@ -130,15 +130,17 @@ class AdjustDialogue extends Dialogue {
     }
 
     open(): void {
+        Shell.$overlays.css('background', 'none');
         super.open();
     }
     
     close(): void {
-        if (!this.isSliding) {
+        Shell.$overlays.css('background', '');          
+        if (!this.isSliding) {            
             super.close();
             
             $.publish(BaseCommands.ADJUST_FINALIZE);
-        }
+        }              
     }
 
     resize(): void {
