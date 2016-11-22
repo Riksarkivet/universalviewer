@@ -3,6 +3,7 @@ import Commands = require("../../extensions/uv-seadragon-extension/Commands");
 import CenterPanel = require("../uv-shared-module/CenterPanel");
 import ISeadragonExtension = require("../../extensions/uv-seadragon-extension/ISeadragonExtension");
 import ExternalResource = Manifesto.IExternalResource;
+import Metrics = require("../uv-shared-module/Metrics");
 import Params = require("../../Params");
 import Point = require("../../modules/uv-shared-module/Point");
 import SearchResult = require("../../extensions/uv-seadragon-extension/SearchResult");
@@ -27,15 +28,17 @@ class SeadragonCenterPanel extends CenterPanel {
     viewer: any;
 
     $goHomeButton: JQuery;
+    $navigator: JQuery;
     $nextButton: JQuery;
     $prevButton: JQuery;
     $rotateButton: JQuery;
     $adjustButton: JQuery;
     $spinner: JQuery;
     $viewer: JQuery;
+    $viewportNavButtonsContainer: JQuery;
+    $viewportNavButtons: JQuery;
     $zoomInButton: JQuery;
     $zoomOutButton: JQuery;
-    $navigator: JQuery;
     $toolbar: JQuery;
 
     constructor($element: JQuery) {
@@ -60,6 +63,62 @@ class SeadragonCenterPanel extends CenterPanel {
                 this.openMedia(resources);
             });
         });
+
+        $.subscribe(Commands.ZOOM_IN, () => {
+            Utils.Async.waitFor(() => {
+                return this.isCreated;
+            }, () => {
+                this.zoomIn();
+            });
+        });
+
+        $.subscribe(Commands.ZOOM_OUT, () => {
+            Utils.Async.waitFor(() => {
+                return this.isCreated;
+            }, () => {
+                this.zoomOut();
+            });
+        });
+
+        $.subscribe(Commands.ROTATE, () => {
+            Utils.Async.waitFor(() => {
+                return this.isCreated;
+            }, () => {
+                this.rotateRight();
+            });
+        });
+
+        $.subscribe(BaseCommands.METRIC_CHANGED, () => {
+            Utils.Async.waitFor(() => {
+                return this.isCreated;
+            }, () => {
+                this.updateResponsiveView();
+            });
+        });
+    }
+
+    zoomIn(): void {
+        this.viewer.viewport.zoomTo(this.viewer.viewport.getZoom(true) * 2);
+    }
+
+    zoomOut(): void {
+        this.viewer.viewport.zoomTo(this.viewer.viewport.getZoom(true) * 0.5);
+    }
+
+    rotateRight(): void {
+        this.viewer.viewport.setRotation(this.viewer.viewport.getRotation() + 90);
+    }
+
+    updateResponsiveView(): void {
+        this.setNavigatorVisible();
+        
+        if (this.extension.metric === Metrics.MOBILE_LANDSCAPE) {
+            this.viewer.autoHideControls = false;
+            this.$viewportNavButtons.hide();
+        } else {
+            this.viewer.autoHideControls = true;
+            this.$viewportNavButtons.show();
+        }
     }
 
     createUI(): void {
@@ -81,7 +140,7 @@ class SeadragonCenterPanel extends CenterPanel {
             showNavigator: true, //this.provider.config.options.navigatorEnabled == null ? true : this.provider.config.options.navigatorEnabled,
             navigationControlAnchor: (this.config.options.showNavigationToTheRight || false) ? 2 : 1,
             showRotationControl: true,
-            showHomeControl: this.config.options.showHomeControl || false,
+            showHomeControl: Utils.Bools.getBool(this.config.options.showHomeControl, false),
             showFullPageControl: false,
             defaultZoomLevel: this.config.options.defaultZoomLevel || 0,
             controlsFadeDelay: this.config.options.controlsFadeDelay || 250,
@@ -89,10 +148,10 @@ class SeadragonCenterPanel extends CenterPanel {
             navigatorPosition: this.config.options.navigatorPosition || "BOTTOM_RIGHT",
             animationTime: this.config.options.animationTime || 1.2,
             visibilityRatio: this.config.options.visibilityRatio || 0.5,
-            constrainDuringPan: this.config.options.constrainDuringPan || false,
-            immediateRender: this.config.options.immediateRender || false,
+            constrainDuringPan: Utils.Bools.getBool(this.config.options.constrainDuringPan, false),
+            immediateRender: Utils.Bools.getBool(this.config.options.immediateRender, false),
             blendTime: this.config.options.blendTime || 0,
-            autoHideControls: this.config.options.autoHideControls == null ? true : this.config.options.autoHideControls,
+            autoHideControls: Utils.Bools.getBool(this.config.options.autoHideControls, true),
             prefixUrl: prefixUrl,
             minScrollDeltaTime: 10,
             crossOriginPolicy: 'use-credentials',
@@ -150,22 +209,22 @@ class SeadragonCenterPanel extends CenterPanel {
         this.$zoomInButton = this.$viewer.find('div[title="Zoom in"]');
         this.$zoomInButton.attr('tabindex', 0);
         this.$zoomInButton.prop('title', this.content.zoomIn);
-        this.$zoomInButton.addClass('zoomIn');
+        this.$zoomInButton.addClass('zoomIn viewportNavButton');
 
         this.$zoomOutButton = this.$viewer.find('div[title="Zoom out"]');
         this.$zoomOutButton.attr('tabindex', 0);
         this.$zoomOutButton.prop('title', this.content.zoomOut);
-        this.$zoomOutButton.addClass('zoomOut');
+        this.$zoomOutButton.addClass('zoomOut viewportNavButton');
 
         this.$goHomeButton = this.$viewer.find('div[title="Go home"]');
         this.$goHomeButton.attr('tabindex', 0);
         this.$goHomeButton.prop('title', this.content.goHome);
-        this.$goHomeButton.addClass('goHome');
+        this.$goHomeButton.addClass('goHome viewportNavButton');
 
         this.$rotateButton = this.$viewer.find('div[title="Rotate right"]');
         this.$rotateButton.attr('tabindex', 0);
         this.$rotateButton.prop('title', this.content.rotateRight);
-        this.$rotateButton.addClass('rotate');
+        this.$rotateButton.addClass('rotate viewportNavButton');
         
         if (this.config.options.showAdjustControl && Modernizr.canvas) {
             this.$adjustButton = $('<a class="adjust" title="' + this.content.adjust + '" tabindex="0" style="background-image:url(' + prefixUrl + 'contrast.png)"><span/></a>');
@@ -176,6 +235,8 @@ class SeadragonCenterPanel extends CenterPanel {
                 $.publish(BaseCommands.SHOW_ADJUST_DIALOGUE);
             });        
         }  
+        this.$viewportNavButtonsContainer = this.$viewer.find('.openseadragon-container > div:not(.openseadragon-canvas):first');
+        this.$viewportNavButtons = this.$viewportNavButtonsContainer.find('.viewportNavButton');
 
         this.$navigator = this.$viewer.find(".navigator");
         this.setNavigatorVisible();
@@ -230,8 +291,8 @@ class SeadragonCenterPanel extends CenterPanel {
             $.publish(Commands.SEADRAGON_ANIMATION_FINISH, [viewer]);
         });
 
-        this.$rotateButton.on('click', () => {
-            $.publish(Commands.SEADRAGON_ROTATION, [this.viewer.viewport.getRotation()]);
+        this.viewer.addHandler('rotate', (args) => {
+            $.publish(Commands.SEADRAGON_ROTATION, [args.degrees]);
         });
         
         $.subscribe(BaseCommands.ADJUST_CONTRAST, (e, params) => {
@@ -256,17 +317,6 @@ class SeadragonCenterPanel extends CenterPanel {
 
         this.hidePrevButton();
         this.hideNextButton();
-
-        // if firefox, hide rotation and prev/next until this is resolved
-        //var browser = window.browserDetect.browser;
-
-        //if (browser == 'Firefox') {
-        //    if (this.provider.isMultiCanvas()){
-        //        this.$prevButton.hide();
-        //        this.$nextButton.hide();
-        //    }
-        //    this.$rotateButton.hide();
-        //}
 
         this.isCreated = true;
 
@@ -368,6 +418,7 @@ class SeadragonCenterPanel extends CenterPanel {
         this.$spinner.show();
         this.items = [];
 
+        // todo: this should be a more specific Manifold.IImageResource
         this.extension.getExternalResources(resources).then((resources: Manifesto.IExternalResource[]) => {
             // OSD can open an array info.json objects
             //this.viewer.open(resources);
@@ -655,24 +706,8 @@ class SeadragonCenterPanel extends CenterPanel {
         this.overlaySearchResults();
     }
 
-    goHome(): void {
-        
+    goHome(): void {        
         this.viewer.viewport.goHome(true);
-        
-        // used with viewer.open
-        // keeping around for reference
-
-        // var viewingDirection: string = this.extension.helper.getViewingDirection().toString();
-
-        // switch (viewingDirection.toString()){
-        //     case manifesto.ViewingDirection.topToBottom().toString() :
-        //         this.viewer.viewport.fitBounds(new OpenSeadragon.Rect(0, 0, 1, this.viewer.world.getItemAt(0).normHeight * this.extension.resources.length), true);
-        //         break;
-        //     case manifesto.ViewingDirection.leftToRight().toString() :
-        //     case manifesto.ViewingDirection.rightToLeft().toString() :
-        //         this.viewer.viewport.fitBounds(new OpenSeadragon.Rect(0, 0, (<any>this.extension.resources[0]).width + (<any>this.extension.resources[1]).width, (<any>this.extension.resources[0]).height), true);
-        //         break;
-        // }
     }
 
     disablePrevButton(): void {
@@ -901,15 +936,16 @@ class SeadragonCenterPanel extends CenterPanel {
             $canvas.focus();
     }
     
-    setNavigatorVisible() {
-        var navigatorEnabled = Utils.Bools.getBool(this.extension.getSettings().navigatorEnabled, true);
+    setNavigatorVisible(): void {
+        var navigatorEnabled = Utils.Bools.getBool(this.extension.getSettings().navigatorEnabled, true) && this.extension.metric !== Metrics.MOBILE_LANDSCAPE;
 
         this.viewer.navigator.setVisible(navigatorEnabled);
         
-        if (navigatorEnabled)
+        if (navigatorEnabled) {
             this.$navigator.show();
-        else
+        } else {
             this.$navigator.hide();
+        }
     }
 }
 export = SeadragonCenterPanel;

@@ -23,8 +23,8 @@ class DownloadDialogue extends Dialogue {
         this.openCommand = BaseCommands.SHOW_DOWNLOAD_DIALOGUE;
         this.closeCommand = BaseCommands.HIDE_DOWNLOAD_DIALOGUE;
 
-        $.subscribe(this.openCommand, (e, params) => {
-            this.open();
+        $.subscribe(this.openCommand, (e, $triggerButton) => {
+            this.open($triggerButton);
         });
 
         $.subscribe(this.closeCommand, (e) => {
@@ -71,7 +71,7 @@ class DownloadDialogue extends Dialogue {
                 if (renderingFormat){
                     format = renderingFormat.toString();
                 }
-                this.addEntireFileDownloadOption(rendering.id, rendering.getLabel(), format);
+                this.addEntireFileDownloadOption(rendering.id, Manifesto.TranslationCollection.getValue(rendering.getLabel()), format);
                 renderingFound = true;
             });
 
@@ -146,6 +146,7 @@ class DownloadDialogue extends Dialogue {
         else {
             super.resize();
         }
+        //this.setDockedPosition();
     }
 }
 

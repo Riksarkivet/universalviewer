@@ -131,8 +131,6 @@ class HeaderPanel extends BaseView {
             $.publish(BaseCommands.HIDE_INFORMATION);
         });
 
-        this.updateLocaleToggle();
-
         this.$localeToggleButton.on('click', () => {
             this.extension.changeLocale(String(this.$localeToggleButton.data('locale')));
         });
@@ -169,6 +167,9 @@ class HeaderPanel extends BaseView {
         if (this.options.localeToggleEnabled === false){
             this.$localeToggleButton.hide();
         }
+
+        this.updateLocaleToggle();
+        this.updateSettingsButton();
     }
 
     private isImageZoomed(canvas: Manifesto.ICanvas, viewer: any): boolean {
@@ -210,8 +211,17 @@ class HeaderPanel extends BaseView {
         this.$localeToggleButton.text(text);
     }
 
+    updateSettingsButton(): void {
+        var settingsEnabled: boolean = Utils.Bools.getBool(this.options.settingsButtonEnabled, true);
+        if (!settingsEnabled){
+            this.$settingsButton.hide();
+        } else {
+            this.$settingsButton.show();
+        }
+    }
+
     localeToggleIsVisible(): boolean {
-        return this.extension.getLocales().length > 1 && this.options.localeToggleEnabled;
+        return this.extension.getLocales().length > 1 && Utils.Bools.getBool(this.options.localeToggleEnabled, false);
     }
 
     showInformation(args: InformationArgs): void {
