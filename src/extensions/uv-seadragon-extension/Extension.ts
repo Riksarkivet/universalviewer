@@ -97,6 +97,7 @@ class Extension extends BaseExtension implements ISeadragonExtension {
         });
 
         $.subscribe(BaseCommands.END, (e) => {
+            this.triggerTrackEvent(BaseCommands.END);             
             this.viewPage(this.helper.getLastPageIndex());
         });
 
@@ -119,6 +120,7 @@ class Extension extends BaseExtension implements ISeadragonExtension {
         });
 
         $.subscribe(BaseCommands.HOME, (e) => {
+            this.triggerTrackEvent(BaseCommands.HOME);             
             this.viewPage(this.helper.getFirstPageIndex());
         });
 
@@ -181,10 +183,12 @@ class Extension extends BaseExtension implements ISeadragonExtension {
 
         $.subscribe(Commands.NEXT, (e) => {
             this.triggerSocket(Commands.NEXT);
+            this.triggerTrackEvent(Commands.NEXT);            
             this.viewPage(this.getNextPageIndex());
         });
 
         $.subscribe(Commands.NEXT_FIVE, (e) => {
+            this.triggerTrackEvent(Commands.NEXT_FIVE);             
             this.viewPage(this.getNextFivePageIndex());
         });
 
@@ -202,6 +206,7 @@ class Extension extends BaseExtension implements ISeadragonExtension {
         });
 
         $.subscribe(BaseCommands.PAGE_DOWN, (e) => {
+            this.triggerTrackEvent(BaseCommands.PAGE_DOWN);             
             this.viewPage(this.getNextPageIndex());
         });
 
@@ -211,6 +216,7 @@ class Extension extends BaseExtension implements ISeadragonExtension {
         });
 
         $.subscribe(BaseCommands.PAGE_UP, (e) => {
+            this.triggerTrackEvent(BaseCommands.PAGE_UP); 
             this.viewPage(this.getPrevPageIndex());
         });
 
@@ -224,10 +230,12 @@ class Extension extends BaseExtension implements ISeadragonExtension {
 
         $.subscribe(Commands.PREV, (e) => {
             this.triggerSocket(Commands.PREV);
+            this.triggerTrackEvent(Commands.PREV); 
             this.viewPage(this.getPrevPageIndex());
         });
 
         $.subscribe(Commands.PREV_FIVE, (e) => {
+            this.triggerTrackEvent(Commands.PREV_FIVE);             
             this.viewPage(this.getPrevFivePageIndex());
         });
 
