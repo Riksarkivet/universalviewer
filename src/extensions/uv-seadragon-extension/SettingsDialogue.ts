@@ -48,7 +48,7 @@ class SettingsDialogue extends BaseSettingsDialogue {
         this.$pagingEnabledLabel = $('<label for="pagingEnabled">' + this.content.pagingEnabled + '</label>');
         this.$pagingEnabled.append(this.$pagingEnabledLabel);
 
-        this.$clickToZoomEnabled = $('<div class="setting zoomClick"></div>');
+        this.$clickToZoomEnabled = $('<div class="setting clickToZoom"></div>');
         this.$scroll.append(this.$clickToZoomEnabled);
 
         this.$clickToZoomEnabledCheckbox = $('<input id="clickToZoomEnabled" type="checkbox" />');
