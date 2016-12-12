@@ -96,15 +96,15 @@ class Extension extends BaseExtension implements ISeadragonExtension {
             }
         });
 
-        $.subscribe(BaseCommands.END, (e) => {
-            this.triggerTrackEvent(BaseCommands.END);             
+        $.subscribe(BaseCommands.END, (e) => {           
             this.viewPage(this.helper.getLastPageIndex());
+            this.triggerTrackEvent(BaseCommands.END);              
         });
 
         $.subscribe(Commands.FIRST, (e) => {
             this.triggerSocket(Commands.FIRST);
-            this.triggerTrackEvent(Commands.FIRST);
             this.viewPage(this.helper.getFirstPageIndex());
+            this.triggerTrackEvent(Commands.FIRST);            
         });
 
         $.subscribe(Commands.GALLERY_DECREASE_SIZE, (e) => {
@@ -119,9 +119,9 @@ class Extension extends BaseExtension implements ISeadragonExtension {
             this.triggerSocket(Commands.GALLERY_THUMB_SELECTED);
         });
 
-        $.subscribe(BaseCommands.HOME, (e) => {
-            this.triggerTrackEvent(BaseCommands.HOME);             
+        $.subscribe(BaseCommands.HOME, (e) => {            
             this.viewPage(this.helper.getFirstPageIndex());
+            this.triggerTrackEvent(BaseCommands.HOME);             
         });
 
         $.subscribe(Commands.IMAGE_SEARCH, (e, index: number) => {
@@ -132,8 +132,8 @@ class Extension extends BaseExtension implements ISeadragonExtension {
 
         $.subscribe(Commands.LAST, (e) => {
             this.triggerSocket(Commands.LAST);
-            this.triggerTrackEvent(Commands.LAST);
             this.viewPage(this.helper.getLastPageIndex());
+            this.triggerTrackEvent(Commands.LAST);            
         });
 
         $.subscribe(BaseCommands.LEFT_ARROW, (e) => {
@@ -182,14 +182,14 @@ class Extension extends BaseExtension implements ISeadragonExtension {
         });
 
         $.subscribe(Commands.NEXT, (e) => {
-            this.triggerSocket(Commands.NEXT);
-            this.triggerTrackEvent(Commands.NEXT);            
+            this.triggerSocket(Commands.NEXT);          
             this.viewPage(this.getNextPageIndex());
+            this.triggerTrackEvent(Commands.NEXT);              
         });
 
-        $.subscribe(Commands.NEXT_FIVE, (e) => {
-            this.triggerTrackEvent(Commands.NEXT_FIVE);             
+        $.subscribe(Commands.NEXT_FIVE, (e) => {             
             this.viewPage(this.getNextFivePageIndex());
+            this.triggerTrackEvent(Commands.NEXT_FIVE);            
         });
 
         $.subscribe(Commands.NEXT_SEARCH_RESULT, () => {
@@ -205,9 +205,9 @@ class Extension extends BaseExtension implements ISeadragonExtension {
             this.triggerSocket(Commands.OPEN_TREE_VIEW);
         });
 
-        $.subscribe(BaseCommands.PAGE_DOWN, (e) => {
-            this.triggerTrackEvent(BaseCommands.PAGE_DOWN);             
+        $.subscribe(BaseCommands.PAGE_DOWN, (e) => {             
             this.viewPage(this.getNextPageIndex());
+            this.triggerTrackEvent(BaseCommands.PAGE_DOWN);            
         });
 
         $.subscribe(Commands.PAGE_SEARCH, (e, value: string) => {
@@ -216,8 +216,8 @@ class Extension extends BaseExtension implements ISeadragonExtension {
         });
 
         $.subscribe(BaseCommands.PAGE_UP, (e) => {
-            this.triggerTrackEvent(BaseCommands.PAGE_UP); 
             this.viewPage(this.getPrevPageIndex());
+            this.triggerTrackEvent(BaseCommands.PAGE_UP);             
         });
 
         $.subscribe(Commands.PAGING_TOGGLED, (e, obj) => {
@@ -230,13 +230,13 @@ class Extension extends BaseExtension implements ISeadragonExtension {
 
         $.subscribe(Commands.PREV, (e) => {
             this.triggerSocket(Commands.PREV);
-            this.triggerTrackEvent(Commands.PREV); 
             this.viewPage(this.getPrevPageIndex());
+            this.triggerTrackEvent(Commands.PREV);             
         });
 
-        $.subscribe(Commands.PREV_FIVE, (e) => {
-            this.triggerTrackEvent(Commands.PREV_FIVE);             
+        $.subscribe(Commands.PREV_FIVE, (e) => {            
             this.viewPage(this.getPrevFivePageIndex());
+            this.triggerTrackEvent(Commands.PREV_FIVE);             
         });
 
         $.subscribe(Commands.PREV_SEARCH_RESULT, () => {
