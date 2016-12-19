@@ -147,7 +147,12 @@ class HeaderPanel extends BaseView {
                 imageUri = (<ISeadragonExtension>this.extension).getCroppedImageUri(canvas, viewer);
             }
             else {
+                //TODO Ungefär samma funktion finns i DownloadDialaogue. kan den användas istället?
                 imageUri = canvas.getCanonicalImageUri(canvas.getWidth());
+                var uri_parts: string [] = imageUri.split('/');
+                var rotation: number = (<ISeadragonExtension>this.extension).getViewerRotation();
+                uri_parts[ uri_parts.length - 2 ] = String(rotation);
+                imageUri = uri_parts.join('/');                
             }
             var title = this.extension.helper.getLabel();
             var ra: RiksarkivetPrint = new RiksarkivetPrint();
