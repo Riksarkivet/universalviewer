@@ -76,12 +76,9 @@ class MoreInfoRightPanel extends RightPanel {
     riksarkivetSetupCopySourceRef() {
         $.subscribe(RiksarkivetCommands.COPY_SOURCE_REFERENCE, (e) => {
             var label = this.content.sourceReference;
-            var $copyBtn = $('.items .item .header:contains(' + label + ') .copyText');
-            $copyBtn.show();
-            //this.copyValueForLabel(label);
-            setTimeout(function() {
-                $copyBtn.hide();
-            }, 2000);
+            var $copyBtn = $('.items .item .label:contains(' + label + ') .copyText');
+            $copyBtn.trigger('click');
+            $copyBtn.children[0].show();
         });
     }
 }
