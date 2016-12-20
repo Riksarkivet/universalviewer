@@ -1444,6 +1444,33 @@ declare module Utils {
         static getCharCode(e: KeyboardEvent): number;
     }
 }
+declare module Utils.Maths {
+    class Vector {
+        X: number;
+        Y: number;
+        constructor(x: number, y: number);
+        get(): Vector;
+        set(x: number, y: number): void;
+        add(v: Vector): void;
+        static add(v1: Vector, v2: Vector): Vector;
+        sub(v: Vector): void;
+        static sub(v1: Vector, v2: Vector): Vector;
+        mult(n: number): void;
+        static mult(v1: Vector, v2: Vector): Vector;
+        static multN(v1: Vector, n: number): Vector;
+        Div(n: number): void;
+        static div(v1: Vector, v2: Vector): Vector;
+        static divN(v1: Vector, n: number): Vector;
+        mag(): number;
+        magSq(): number;
+        normalise(): void;
+        limit(max: number): void;
+        equals(v: Vector): boolean;
+        heading(): number;
+        static random2D(): Vector;
+        static fromAngle(angle: number): Vector;
+    }
+}
 declare module Utils.Measurements {
     class Size {
         width: number;
