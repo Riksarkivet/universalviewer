@@ -78,7 +78,6 @@ class MoreInfoRightPanel extends RightPanel {
             var label = this.content.sourceReference;
             var $copyBtn = $('.items .item .label:contains(' + label + ') .copyText');
             $copyBtn.trigger('click');
-            $copyBtn.children[0].show();
         });
     }
 }
