@@ -239,7 +239,7 @@ class PagingHeaderPanel extends HeaderPanel {
 
         // ui event handlers.
         this.$firstButton.onPressed(() => {
-            switch (viewingDirection.toString()){
+            switch (viewingDirection.toString()) {
                 case manifesto.ViewingDirection.leftToRight().toString() :
                 case manifesto.ViewingDirection.topToBottom().toString() :
                 case manifesto.ViewingDirection.bottomToTop().toString() :
@@ -252,7 +252,7 @@ class PagingHeaderPanel extends HeaderPanel {
         });
 
         this.$prevButton.onPressed(() => {
-            switch (viewingDirection.toString()){
+            switch (viewingDirection.toString()) {
                 case manifesto.ViewingDirection.leftToRight().toString() :
                 case manifesto.ViewingDirection.bottomToTop().toString() :
                 case manifesto.ViewingDirection.topToBottom().toString() :
@@ -273,7 +273,7 @@ class PagingHeaderPanel extends HeaderPanel {
         });
 
         this.$nextButton.onPressed(() => {
-            switch (viewingDirection.toString()){
+            switch (viewingDirection.toString()) {
                 case manifesto.ViewingDirection.leftToRight().toString() :
                 case manifesto.ViewingDirection.bottomToTop().toString() :
                 case manifesto.ViewingDirection.topToBottom().toString() :
@@ -286,7 +286,7 @@ class PagingHeaderPanel extends HeaderPanel {
         });
 
         this.$lastButton.onPressed(() => {
-            switch (viewingDirection.toString()){
+            switch (viewingDirection.toString()) {
                 case manifesto.ViewingDirection.leftToRight().toString() :
                 case manifesto.ViewingDirection.topToBottom().toString() :
                 case manifesto.ViewingDirection.bottomToTop().toString() :

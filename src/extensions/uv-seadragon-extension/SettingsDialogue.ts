@@ -55,8 +55,8 @@ class SettingsDialogue extends BaseSettingsDialogue {
         this.$clickToZoomEnabled.append(this.$clickToZoomEnabledCheckbox);
 
         this.$clickToZoomEnabledLabel = $('<label for="clickToZoomEnabled">' + this.content.clickToZoomEnabled + '</label>');
-        this.$clickToZoomEnabled.append(this.$clickToZoomEnabledLabel);
-
+        this.$clickToZoomEnabled.append(this.$clickToZoomEnabledLabel);        
+        
         this.$preserveViewport = $('<div class="setting preserveViewport"></div>');
         this.$scroll.append(this.$preserveViewport);
 
@@ -77,6 +77,18 @@ class SettingsDialogue extends BaseSettingsDialogue {
 
             this.updateSettings(settings);
         });
+        
+        this.$clickToZoomEnabledCheckbox.change(() => {
+            var settings: ISettings = {};
+
+            if(this.$clickToZoomEnabledCheckbox.is(":checked")) {
+                settings.clickToZoomEnabled = true;
+            } else {
+                settings.clickToZoomEnabled = false;
+            }
+
+            this.updateSettings(settings);
+        });        
 
         this.$clickToZoomEnabledCheckbox.change(() => {
             var settings: ISettings = {};
@@ -130,7 +142,7 @@ class SettingsDialogue extends BaseSettingsDialogue {
             this.$clickToZoomEnabledCheckbox.prop("checked", true);
         } else {
             this.$clickToZoomEnabledCheckbox.removeAttr("checked");
-        }
+        }        
 
         if (!this.extension.helper.isPagingAvailable()){
             this.$pagingEnabled.hide();

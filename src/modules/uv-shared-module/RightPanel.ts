@@ -17,10 +17,8 @@ class RightPanel extends BaseExpandPanel {
 
         if (window.matchMedia && window.matchMedia("(max-width: 768px)").matches) 
             return;
-
-        var panelOpenSaved = Utils.Bools.getBool(this.extension.getSettings().rightPanelOpen, true);
-
-        if (this.options.panelOpen && panelOpenSaved) {
+        var shouldOpenPanel = Utils.Bools.getBool(this.extension.getSettings().rightPanelOpen, this.options.panelOpen);
+        if (shouldOpenPanel) {
             this.toggle(true);
         }
 
