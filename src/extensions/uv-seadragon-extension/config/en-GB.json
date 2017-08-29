@@ -9,6 +9,18 @@
     "headerPanelEnabled": true,
     "leftPanelEnabled": true,
     "limitLocales": false,
+    "metrics": [
+      {
+        "type": "mobilelandscape",
+        "minWidth": 0, 
+        "maxWidth": 200
+      },
+      {
+        "type": "laptop",
+        "minWidth": 640,
+        "maxWidth": 100000
+      }
+    ],
     "multiSelectionMimeType": "application/zip",
     "navigatorEnabled": true,
     "openTemplate": "http://universalviewer.io?manifest={0}",

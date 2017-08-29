@@ -1,7 +1,7 @@
 import Metric = require("./Metric");
 
 class Metrics {
-    static MOBILE_LANDSCAPE: Metric = new Metric(0, 640);
+    static MOBILE_LANDSCAPE: Metric = new Metric(0, 200);
     static LAPTOP: Metric = new Metric(640, Infinity);
 }
 
