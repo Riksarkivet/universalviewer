@@ -158,6 +158,7 @@ class SeadragonCenterPanel extends CenterPanel {
             prefixUrl: prefixUrl,
             minScrollDeltaTime: 10,
             crossOriginPolicy: 'use-credentials',
+            zoomPerClick: 1.5,            
 
             gestureSettingsMouse: {
                 clickToZoom: this.extension.config.options.clickToZoomEnabled
