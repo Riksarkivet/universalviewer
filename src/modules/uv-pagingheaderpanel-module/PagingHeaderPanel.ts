@@ -115,6 +115,7 @@ class PagingHeaderPanel extends HeaderPanel {
                         for (var i = 0; i < canvases.length; i++){
                             var canvas: Manifesto.ICanvas = canvases[i];
                             var label: string = Manifesto.TranslationCollection.getValue(canvas.getLabel());
+                            console.log(canvas.getLabel());
                             if (label.startsWith(term)){
                                 results.push(label);
                             }
@@ -147,7 +148,7 @@ class PagingHeaderPanel extends HeaderPanel {
 
             for (var imageIndex = 0; imageIndex < this.extension.helper.getTotalCanvases(); imageIndex++) {
                 var canvas: Manifesto.ICanvas = this.extension.helper.getCanvasByIndex(imageIndex);
-                var label: string = this.extension.sanitize(Manifesto.TranslationCollection.getValue(canvas.getLabel()));
+                var label: string = this.extension.sanitize(Manifesto.TranslationCollection.getValue(canvas.getLabel(),canvas.options.locale));
                 this.$imageSelectionBox.append('<option value=' + (imageIndex) + '>' + label + '</option>')
             }
 
