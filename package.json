@@ -59,7 +59,7 @@
     "three.js": "^0.73.0",
     "units": "edsilv/Units",
     "utils": "edsilv/utils",
-    "uv-custom":"Riksarkivet/uv-custom.git",
+    "uv-custom": "Riksarkivet/uv-custom.git",
     "virtex3d": "^0.2.6"
   }
 }
