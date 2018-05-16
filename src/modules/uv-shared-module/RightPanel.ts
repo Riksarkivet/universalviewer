@@ -1,7 +1,7 @@
-import BaseCommands = require("./BaseCommands");
-import BaseExpandPanel = require("./BaseExpandPanel");
+import {BaseEvents} from "./BaseEvents";
+import {BaseExpandPanel} from "./BaseExpandPanel";
 
-class RightPanel extends BaseExpandPanel {
+export class RightPanel extends BaseExpandPanel {
 
     constructor($element: JQuery) {
         super($element);
@@ -18,14 +18,14 @@ class RightPanel extends BaseExpandPanel {
         if (window.matchMedia && window.matchMedia("(max-width: 768px)").matches) 
             return;
 
-        var panelOpenSaved = Utils.Bools.getBool(this.extension.getSettings().rightPanelOpen, true);
-
-        if (this.options.panelOpen && panelOpenSaved) {
+        const shouldOpenPanel: boolean = Utils.Bools.getBool(this.extension.getSettings().rightPanelOpen, this.options.panelOpen);
+        
+        if (shouldOpenPanel) {
             this.toggle(true);
         }
 
-        $.subscribe(BaseCommands.TOGGLE_EXPAND_RIGHT_PANEL, () => {
-            if (this.isFullyExpanded){
+        $.subscribe(BaseEvents.TOGGLE_EXPAND_RIGHT_PANEL, () => {
+            if (this.isFullyExpanded) {
                 this.collapseFull();
             } else {
                 this.expandFull();
@@ -45,9 +45,9 @@ class RightPanel extends BaseExpandPanel {
         super.toggleFinish();
 
         if (this.isExpanded) {
-            $.publish(BaseCommands.OPEN_RIGHT_PANEL);
+            $.publish(BaseEvents.OPEN_RIGHT_PANEL);
         } else {            
-            $.publish(BaseCommands.CLOSE_RIGHT_PANEL);
+            $.publish(BaseEvents.CLOSE_RIGHT_PANEL);
         }
         this.extension.updateSettings({rightPanelOpen: this.isExpanded});
     }
@@ -60,5 +60,3 @@ class RightPanel extends BaseExpandPanel {
         });
     }
 }
-
-export = RightPanel;

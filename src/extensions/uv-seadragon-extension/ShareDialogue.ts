@@ -1,19 +1,17 @@
-import BaseCommands = require("../../modules/uv-shared-module/BaseCommands");
-import BaseShareDialogue = require("../../modules/uv-dialogues-module/ShareDialogue");
-import Commands = require("./Commands");
-import ISeadragonExtension = require("./ISeadragonExtension");
-import SeadragonCenterPanel = require("../../modules/uv-seadragoncenterpanel-module/SeadragonCenterPanel");
+import {Events} from "./Events";
+import {ISeadragonExtension} from "./ISeadragonExtension";
+import {ShareDialogue as BaseShareDialogue} from "../../modules/uv-dialogues-module/ShareDialogue";
 
-class ShareDialogue extends BaseShareDialogue {
+export class ShareDialogue extends BaseShareDialogue {
 
     constructor($element: JQuery) {
         super($element);
 
-        $.subscribe(Commands.SEADRAGON_OPEN, () => {
+        $.subscribe(Events.SEADRAGON_OPEN, () => {
             this.update();
         });
 
-        $.subscribe(Commands.SEADRAGON_ANIMATION_FINISH, () => {
+        $.subscribe(Events.SEADRAGON_ANIMATION_FINISH, () => {
             this.update();
         });
     }
@@ -27,14 +25,14 @@ class ShareDialogue extends BaseShareDialogue {
 
         super.update();
 
-        var zoom = (<ISeadragonExtension>this.extension).getViewerBounds();
-        var rotation = (<ISeadragonExtension>this.extension).getViewerRotation();
+        const xywh: string = <string>(<ISeadragonExtension>this.extension).getViewportBounds();
+        const rotation: number = <number>(<ISeadragonExtension>this.extension).getViewerRotation();
 
         this.code = (<ISeadragonExtension>this.extension).getEmbedScript(
             this.options.embedTemplate,
             this.currentWidth,
             this.currentHeight,
-            zoom,
+            xywh,
             rotation);
 
         this.$code.val(this.code);
@@ -44,5 +42,3 @@ class ShareDialogue extends BaseShareDialogue {
         super.resize();
     }
 }
-
-export = ShareDialogue;

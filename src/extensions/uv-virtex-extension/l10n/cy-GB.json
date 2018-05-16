@@ -18,7 +18,7 @@
     "downloadDialogue": {
       "content": {
         "download": "Lawrlwytho",
-        "entireFileAsOriginal": "Y ffeil gyfan ({0})",
+        "entireFileAsOriginal": "Y ffeil gyfan",
         "noneAvailable": "Nid oes unrhyw opsiynau lawrlwytho ar gael.",
         "preview": "Rhagolwg",
         "title": "Lawrlwytho"
@@ -31,7 +31,9 @@
         "embed": "Ymgorffori",
         "exitFullScreen": "Dianc o'r sgrin lawn",
         "fullScreen": "Sgrin lawn",
-        "open": "agored"
+        "moreInfo": "Mwy o Wybodaeth",
+        "open": "agored",
+        "share": "Rhannu"
       }
     },
     "genericDialogue": {
@@ -42,7 +44,8 @@
     "headerPanel": {
       "content": {
         "close": "Cau",
-        "help": "Cymorth"
+        "help": "Cymorth",
+        "settings": "Dewisiadau"
       }
     },
     "helpDialogue": {
@@ -100,7 +103,8 @@
       "content": {
         "attribution": "Priodoliad",
         "zoomIn": "chwyddo Mewn",
-        "zoomOut": "Zoom Out"
+        "zoomOut": "Zoom Out",
+        "vr": "VR"
       }
     },
     "shareDialogue": {

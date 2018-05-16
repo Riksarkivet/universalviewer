@@ -1,13 +1,14 @@
-import BaseCommands = require("../uv-shared-module/BaseCommands");
-import BaseFooterPanel = require("../uv-shared-module/FooterPanel");
-import Commands = require("../../extensions/uv-seadragon-extension/Commands");
-import DownloadDialogue = require("../../extensions/uv-seadragon-extension/DownloadDialogue");
-import AutoComplete = require("../uv-shared-module/AutoComplete");
-import ISeadragonExtension = require("../../extensions/uv-seadragon-extension/ISeadragonExtension");
-import Mode = require("../../extensions/uv-seadragon-extension/Mode");
-import Params = require("../../Params");
+import {AutoComplete} from "../uv-shared-module/AutoComplete";
+import {BaseEvents} from "../uv-shared-module/BaseEvents";
+import {Events} from "../../extensions/uv-seadragon-extension/Events";
+import {FooterPanel as BaseFooterPanel} from "../uv-shared-module/FooterPanel";
+import {ISeadragonExtension} from "../../extensions/uv-seadragon-extension/ISeadragonExtension";
+import {Mode} from "../../extensions/uv-seadragon-extension/Mode";
+import {AnnotationResults} from "../uv-shared-module/AnnotationResults";
+import {UVUtils} from "../uv-shared-module/Utils";
+import AnnotationGroup = Manifold.AnnotationGroup;
 
-class FooterPanel extends BaseFooterPanel {
+export class FooterPanel extends BaseFooterPanel {
 
     $clearSearchResultsButton: JQuery;
     $line: JQuery;
@@ -44,26 +45,47 @@ class FooterPanel extends BaseFooterPanel {
 
         super.create();
 
-        $.subscribe(BaseCommands.CANVAS_INDEX_CHANGED, (e, canvasIndex) => {
+        $.subscribe(BaseEvents.CANVAS_INDEX_CHANGED, () => {
             this.canvasIndexChanged();
             this.setCurrentSearchResultPlacemarker();
+            this.updatePrevButton();
+            this.updateNextButton();
+        });
+
+        $.subscribe(BaseEvents.CLEAR_ANNOTATIONS, () => {
+            this.clearSearchResults();
         });
 
         // todo: this should be a setting
-        $.subscribe(Commands.MODE_CHANGED, (e, mode) => {
+        $.subscribe(Events.MODE_CHANGED, () => {
             this.settingsChanged();
         });
 
-        $.subscribe(Commands.SEARCH, (e, terms) => {
+        $.subscribe(Events.SEARCH, (e: any, terms: string) => {
             this.terms = terms;
         });
 
-        $.subscribe(Commands.SEARCH_RESULTS, (e, obj) => {
-            this.displaySearchResults(obj.terms, obj.results);
+        $.subscribe(BaseEvents.ANNOTATIONS, (e: any, annotationResults: AnnotationResults) => {
+            this.displaySearchResults(annotationResults.annotations, annotationResults.terms);
             this.setCurrentSearchResultPlacemarker();
+            this.updatePrevButton();
+            this.updateNextButton();
         });
 
-        this.$printButton = $('<a class="print" title="' + this.content.print + '" tabindex="0">' + this.content.print + '</a>');
+        $.subscribe(BaseEvents.ANNOTATIONS_EMPTY, () => {
+            this.hideSearchSpinner();
+        });
+
+        $.subscribe(BaseEvents.ANNOTATION_CHANGED, () => {
+            this.updatePrevButton();
+            this.updateNextButton();
+        });
+
+        this.$printButton = $(`
+          <button class="print btn imageBtn" title="${this.content.print}" tabindex="0">
+            <i class="uv-icon uv-icon-print" aria-hidden="true"></i>${this.content.print}
+          </button>
+        `);
         this.$options.prepend(this.$printButton);
 
         // search input.
@@ -79,7 +101,7 @@ class FooterPanel extends BaseFooterPanel {
         this.$searchTextContainer = $('<div class="searchTextContainer"></div>');
         this.$searchOptions.append(this.$searchTextContainer);
 
-        this.$searchText = $('<input class="searchText" type="text" maxlength="100" value="' + this.content.enterKeyword + '" />');
+        this.$searchText = $('<input class="searchText" type="text" maxlength="100" value="' + this.content.enterKeyword + '" aria-label="' + this.content.searchWithin + '"/>');
         this.$searchTextContainer.append(this.$searchText);
 
         this.$searchButton = $('<a class="imageButton searchButton" tabindex="0"></a>');
@@ -95,7 +117,7 @@ class FooterPanel extends BaseFooterPanel {
         this.$previousResultButton = $('<a class="previousResult" title="' + this.content.previousResult + '">' + this.content.previousResult + '</a>');
         this.$searchPagerControls.append(this.$previousResultButton);
 
-        this.$searchResultsInfo = $('<div class="searchResultsInfo"><span class="number">x</span> <span class="foundFor"></span> \'<span class="terms">y</span>\'</div>');
+        this.$searchResultsInfo = $('<div class="searchResultsInfo"><span class="info"><span class="number">x</span> <span class="foundFor"></span> \'<span class="terms">y</span>\'<?span></div>');
         this.$searchPagerControls.append(this.$searchResultsInfo);
 
         this.$clearSearchResultsButton = $('<a class="clearSearch" title="' + this.content.clearSearch + '">' + this.content.clearSearch + '</a>');
@@ -133,9 +155,8 @@ class FooterPanel extends BaseFooterPanel {
         // ui event handlers.
         var that = this;
 
-        this.$searchButton.on('click', (e) => {
+        this.$searchButton.on('click', (e: any) => {
             e.preventDefault();
-
             this.search(this.$searchText.val());
         });
 
@@ -145,76 +166,85 @@ class FooterPanel extends BaseFooterPanel {
         });
 
         this.$placemarkerDetails.on('mouseover', () => {
-            $.publish(Commands.SEARCH_PREVIEW_START, [this.currentPlacemarkerIndex]);
+            $.publish(Events.SEARCH_PREVIEW_START, [this.currentPlacemarkerIndex]);
         });
 
         this.$placemarkerDetails.on('mouseleave', function() {
             $(this).hide();
 
-            $.publish(Commands.SEARCH_PREVIEW_FINISH);
+            $.publish(Events.SEARCH_PREVIEW_FINISH);
 
             // reset all placemarkers.
             var placemarkers = that.getSearchResultPlacemarkers();
             placemarkers.removeClass('hover');
         });
 
-        this.$placemarkerDetails.on('click', (e) => {
-            $.publish(Commands.VIEW_PAGE, [this.currentPlacemarkerIndex]);
+        this.$placemarkerDetails.on('click', () => {
+            $.publish(BaseEvents.CANVAS_INDEX_CHANGED, [this.currentPlacemarkerIndex]);
         });
 
-        this.$previousResultButton.on('click', (e) => {
+        this.$previousResultButton.on('click', (e: any) => {
             e.preventDefault();
-
-            $.publish(Commands.PREV_SEARCH_RESULT);
+            if (this.isPreviousButtonEnabled()) {
+                $.publish(Events.PREV_SEARCH_RESULT);
+            }
         });
 
-        this.$nextResultButton.on('click', (e) => {
+        this.$nextResultButton.on('click', (e: any) => {
             e.preventDefault();
-
-            $.publish(Commands.NEXT_SEARCH_RESULT);
+            if (this.isNextButtonEnabled()) {
+                $.publish(Events.NEXT_SEARCH_RESULT);
+            }
         });
 
-        this.$clearSearchResultsButton.on('click', (e) => {
+        this.$clearSearchResultsButton.on('click', (e: any) => {
             e.preventDefault();
-
-            $.publish(Commands.CLEAR_SEARCH);
-            this.clearSearchResults();
+            $.publish(BaseEvents.CLEAR_ANNOTATIONS);
         });
 
         // hide search options if not enabled/supported.
-        if (!(<ISeadragonExtension>this.extension).isSearchWithinEnabled()) {
+        if (!this.isSearchEnabled()) {
             this.$searchContainer.hide();
             this.$searchPagerContainer.hide();
             this.$searchResultsContainer.hide();
-
             this.$element.addClass('min');
         }
 
-        var autocompleteService = (<ISeadragonExtension>this.extension).getAutoCompleteUri();
+        if (this.extension.helper.getTotalCanvases() === 1) {
+            this.$searchResultsContainer.hide();
+        }
 
-        if (autocompleteService){
+        const autocompleteService: string | null = (<ISeadragonExtension>this.extension).getAutoCompleteUri();
+
+        if (autocompleteService) {
 
             new AutoComplete(this.$searchText,
                 (terms: string, cb: (results: string[]) => void) => {
-                    $.getJSON(String.format(autocompleteService, terms), (results: string[]) => {
+                    $.getJSON(Utils.Strings.format(autocompleteService, terms), (results: string[]) => {
                         cb(results);
                     });
                 },
                 (results: any) => {
-                    return _.map(results.terms, (result: any) => {
+                    return $.map(results.terms, (result: any) => {
                         return result.match;
                     });
                 },
                 (terms: string) => {
                     this.search(terms);
                 },
-                300, 2, true
+                300, 2, true, Utils.Bools.getBool(this.options.autocompleteAllowWords, false)
             );
 
+        } else {
+            this.$searchText.on("keyup", (e) => {
+                if (e.keyCode === KeyCodes.KeyDown.Enter) {
+                    that.search(that.$searchText.val());
+                }
+            });
         }
 
         this.$printButton.onPressed(() => {
-            $.publish(Commands.PRINT);
+            $.publish(Events.PRINT);
         });
 
         this.updatePrintButton();
@@ -227,8 +257,112 @@ class FooterPanel extends BaseFooterPanel {
         }
     }
 
+    isSearchEnabled(): boolean {
+        return (<ISeadragonExtension>this.extension).isSearchEnabled();
+    }
+
+    isZoomToSearchResultEnabled(): boolean {
+        return Utils.Bools.getBool(this.extension.data.config.options.zoomToSearchResultEnabled, true);
+    }
+
+    isPreviousButtonEnabled(): boolean {
+
+        const currentCanvasIndex: number = this.extension.helper.canvasIndex;
+        const firstSearchResultCanvasIndex: number = this.getFirstSearchResultCanvasIndex();
+        const currentSearchResultRectIndex: number = this.getCurrentSearchResultRectIndex();
+
+        // if zoom to search result is enabled and there is a highlighted search result.
+        if (this.isZoomToSearchResultEnabled() && (<ISeadragonExtension>this.extension).currentAnnotationRect) {
+            
+            if (currentCanvasIndex < firstSearchResultCanvasIndex) {
+                return false;
+            } else if (currentCanvasIndex === firstSearchResultCanvasIndex) {
+                if (currentSearchResultRectIndex === 0) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        
+        return (currentCanvasIndex > firstSearchResultCanvasIndex);
+    }
+
+    isNextButtonEnabled(): boolean {
+
+        const currentCanvasIndex: number = this.extension.helper.canvasIndex;
+        const lastSearchResultCanvasIndex: number = this.getLastSearchResultCanvasIndex();
+        const currentSearchResultRectIndex: number = this.getCurrentSearchResultRectIndex();
+
+        // if zoom to search result is enabled and there is a highlighted search result.
+        if (this.isZoomToSearchResultEnabled() && (<ISeadragonExtension>this.extension).currentAnnotationRect) {
+
+            if (currentCanvasIndex > lastSearchResultCanvasIndex) {
+                return false;
+            } else if (currentCanvasIndex === lastSearchResultCanvasIndex) {
+                if (currentSearchResultRectIndex === this.getLastSearchResultRectIndex()) {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        return (currentCanvasIndex < lastSearchResultCanvasIndex); 
+    }
+
+    getSearchResults(): AnnotationGroup[] | null {
+        return (<ISeadragonExtension>this.extension).annotations;
+    }
+
+    getCurrentSearchResultRectIndex(): number {
+        return (<ISeadragonExtension>this.extension).getCurrentAnnotationRectIndex();
+    }
+
+    getFirstSearchResultCanvasIndex(): number {
+        const searchResults: AnnotationGroup[] | null = this.getSearchResults();
+        if (!searchResults) return -1;
+        let firstSearchResultCanvasIndex: number = searchResults[0].canvasIndex;
+        return firstSearchResultCanvasIndex;
+    }
+
+    getLastSearchResultCanvasIndex(): number {
+        const searchResults: AnnotationGroup[] | null = this.getSearchResults();        
+        if (!searchResults) return -1;
+        let lastSearchResultCanvasIndex: number = searchResults[searchResults.length - 1].canvasIndex;
+        return lastSearchResultCanvasIndex;
+    }
+
+    getLastSearchResultRectIndex(): number {
+        return (<ISeadragonExtension>this.extension).getLastAnnotationRectIndex();
+    }
+
+    updateNextButton(): void {
+        const searchResults: AnnotationGroup[] | null = this.getSearchResults();
+        
+        if (searchResults && searchResults.length) {
+            if (this.isNextButtonEnabled()) {
+                this.$nextResultButton.removeClass('disabled');
+            } else {
+                this.$nextResultButton.addClass('disabled');
+            }
+        }
+    }
+
+    updatePrevButton(): void {
+        const searchResults: AnnotationGroup[] | null = this.getSearchResults();
+        
+        if (searchResults && searchResults.length) {       
+            if (this.isPreviousButtonEnabled()) {
+                this.$previousResultButton.removeClass('disabled');
+            } else {
+                this.$previousResultButton.addClass('disabled');
+            }
+        }
+    }
+
     updatePrintButton(): void {
-        var configEnabled = Utils.Bools.getBool(this.options.printEnabled, false);
+        const configEnabled: boolean = Utils.Bools.getBool(this.options.printEnabled, false);
         //var printService: Manifesto.IService = this.extension.helper.manifest.getService(manifesto.ServiceProfile.printExtensions());
 
         //if (configEnabled && printService && this.extension.isOnHomeDomain()){
@@ -254,7 +388,9 @@ class FooterPanel extends BaseFooterPanel {
         // blur search field
         this.$searchText.blur();
 
-        $.publish(Commands.SEARCH, [this.terms]);
+        this.showSearchSpinner();
+
+        $.publish(Events.SEARCH, [this.terms]);
     }
 
     getSearchResultPlacemarkers(): JQuery {
@@ -262,45 +398,43 @@ class FooterPanel extends BaseFooterPanel {
     }
 
     setCurrentSearchResultPlacemarker(): void {
-        var placemarkers: JQuery = this.getSearchResultPlacemarkers();
+        const placemarkers: JQuery = this.getSearchResultPlacemarkers();
         placemarkers.parent().find('.current').removeClass('current');
-        var $current = $('.searchResultPlacemarker[data-index="' + this.extension.helper.canvasIndex + '"]');
+        const $current: JQuery = $('.searchResultPlacemarker[data-index="' + this.extension.helper.canvasIndex + '"]');
         $current.addClass('current');
     }
 
     positionSearchResultPlacemarkers(): void {
 
-        var results = (<ISeadragonExtension>this.extension).searchResults;
+        const searchResults: AnnotationGroup[] | null = this.getSearchResults();
 
-        if (!results.length) return;
+        if (!searchResults || !searchResults.length) return;
 
         // clear all existing placemarkers
-        var placemarkers: JQuery = this.getSearchResultPlacemarkers();
+        const placemarkers: JQuery = this.getSearchResultPlacemarkers();
         placemarkers.remove();
 
-        var pageWidth = this.getPageLineRatio();
-        var lineTop = this.$line.position().top;
-        var lineLeft = this.$line.position().left;
+        const pageWidth = this.getPageLineRatio();
+        const lineTop = this.$line.position().top;
+        const lineLeft = this.$line.position().left;
 
-        var that = this;
+        const that = this;
 
         // for each page with a result, place a marker along the line.
-        for (var i = 0; i < results.length; i++) {
-            var result = results[i];
+        for (let i = 0; i < searchResults.length; i++) {
+            const result: AnnotationGroup = searchResults[i];
+            const distance: number = result.canvasIndex * pageWidth;
+            const $placemarker: JQuery = $('<div class="searchResultPlacemarker" data-index="' + result.canvasIndex + '"></div>');
 
-            var distance = result.canvasIndex * pageWidth;
-
-            var $placemarker = $('<div class="searchResultPlacemarker" data-index="' + result.canvasIndex + '"></div>');
-
-            $placemarker[0].ontouchstart = function (e) { that.onPlacemarkerTouchStart.call(this, that) };
-            $placemarker.click(function (e) { that.onPlacemarkerClick.call(this, that) });
-            $placemarker.mouseenter(function (e) { that.onPlacemarkerMouseEnter.call(this, that) });
-            $placemarker.mouseleave(function (e) { that.onPlacemarkerMouseLeave.call(this, e, that) });
+            $placemarker[0].ontouchstart = function (e: any) { that.onPlacemarkerTouchStart.call(this, that) };
+            $placemarker.click(function (e: any) { that.onPlacemarkerClick.call(this, that) });
+            $placemarker.mouseenter(function (e: any) { that.onPlacemarkerMouseEnter.call(this, that) });
+            $placemarker.mouseleave(function (e: any) { that.onPlacemarkerMouseLeave.call(this, e, that) });
 
             this.$searchResultsContainer.append($placemarker);
 
-            var top = lineTop - $placemarker.height();
-            var left = lineLeft + distance - ($placemarker.width() / 2);
+            const top: number = lineTop - $placemarker.height();
+            const left: number = lineLeft + distance - ($placemarker.width() / 2);
 
             $placemarker.css({
                 top: top,
@@ -309,84 +443,89 @@ class FooterPanel extends BaseFooterPanel {
         }
     }
 
-    onPlacemarkerTouchStart(that): void {
+    onPlacemarkerTouchStart(that: any): void {
         that.placemarkerTouched = true;
 
-        var $placemarker = $(this);
-        var index = parseInt($placemarker.attr('data-index'));
+        //const $placemarker: JQuery = $(this);
+        //const index: number = parseInt($placemarker.attr('data-index'));
 
-        $.publish(Commands.VIEW_PAGE, [index]);
+        //$.publish(Events.VIEW_PAGE, [index]);
     }
 
-    onPlacemarkerClick(that): void {
+    onPlacemarkerClick(that: any): void {
         if (that.placemarkerTouched) return;
 
         that.placemarkerTouched = false;
 
-        var $placemarker = $(this);
-        var index = parseInt($placemarker.attr('data-index'));
+        //const $placemarker: JQuery = $(this);
+        //const index: number = parseInt($placemarker.attr('data-index'));
 
-        $.publish(Commands.VIEW_PAGE, [index]);
+        //$.publish(Events.VIEW_PAGE, [index]);
     }
 
-    onPlacemarkerMouseEnter(that): void {
+    onPlacemarkerMouseEnter(that: any): void {
         if (that.placemarkerTouched) return;
 
-        var $placemarker = $(this);
+        const $placemarker: JQuery = $(this);
 
         $placemarker.addClass('hover');
 
-        var canvasIndex = parseInt($placemarker.attr('data-index'));
+        const canvasIndex: number = parseInt($placemarker.attr('data-index'));
 
-        $.publish(Commands.SEARCH_PREVIEW_START, [canvasIndex]);
+        $.publish(Events.SEARCH_PREVIEW_START, [canvasIndex]);
 
-        var placemarkers = that.getSearchResultPlacemarkers();
-        var elemIndex = placemarkers.index($placemarker[0]);
+        const $placemarkers: JQuery = that.getSearchResultPlacemarkers();
+        const elemIndex: number = $placemarkers.index($placemarker[0]);
 
         that.currentPlacemarkerIndex = canvasIndex;
 
         that.$placemarkerDetails.show();
 
-        var title = "{0} {1}";
+        let title: string = "{0} {1}";
 
-        var mode = that.extension.getMode();
+        if (that.isPageModeEnabled()) {
+            const canvas: Manifesto.ICanvas = that.extension.helper.getCanvasByIndex(canvasIndex);
+            let label: string | null = Manifesto.TranslationCollection.getValue(canvas.getLabel());
 
-        if (mode.toString() === Mode.page.toString()) {
-            var canvas: Manifesto.ICanvas = that.extension.helper.getCanvasByIndex(canvasIndex);
-
-            var label: string = Manifesto.TranslationCollection.getValue(canvas.getLabel());
-
-            if (label === "") {
+            if (!label) {
                 label = this.extension.helper.manifest.options.defaultLabel;
             }
 
-            title = String.format(title, that.content.pageCaps, label);
+            title = Utils.Strings.format(title, that.content.pageCaps, label);
         } else {
-            title = String.format(title, that.content.imageCaps, canvasIndex + 1);
+            title = Utils.Strings.format(title, that.content.imageCaps, String(canvasIndex + 1));
         }
 
         that.$placemarkerDetailsTop.html(title);
 
-        var result = (<ISeadragonExtension>that.extension).searchResults[elemIndex];
+        const searchResults: AnnotationGroup[] | null = that.getSearchResults();
 
-        var terms = Utils.Strings.ellipsis(that.terms, that.options.elideDetailsTermsCount);
+        if (searchResults) {
+            const result: AnnotationGroup = searchResults[elemIndex];
 
-        var instancesFoundText;
+            let terms: string = "";
 
-        if (result.rects.length === 1) {
-            instancesFoundText = that.content.instanceFound;
-            instancesFoundText = String.format(instancesFoundText, terms);
-        } else {
-            instancesFoundText = that.content.instancesFound;
-            instancesFoundText = String.format(instancesFoundText, result.rects.length, terms);
+            if (that.terms) {
+                terms = Utils.Strings.ellipsis(that.terms, that.options.elideDetailsTermsCount);
+            }
+
+            let instanceFoundText: string = that.content.instanceFound;
+            let instancesFoundText: string = that.content.instancesFound;
+            let text: string = '';
+
+            if (result.rects.length === 1) {
+                text = Utils.Strings.format(instanceFoundText, terms);
+                that.$placemarkerDetailsBottom.html(text);
+            } else {
+                text = Utils.Strings.format(instancesFoundText, String(result.rects.length), terms);
+                that.$placemarkerDetailsBottom.html(text);
+            }
         }
 
-        that.$placemarkerDetailsBottom.html(instancesFoundText);
+        const pos: any = $placemarker.position();
 
-        var pos = $placemarker.position();
-
-        var top = pos.top - that.$placemarkerDetails.height();
-        var left = pos.left;
+        let top: number = pos.top - that.$placemarkerDetails.height();
+        let left: number = pos.left;
 
         if (left < that.$placemarkerDetails.width() / 2) {
             left = 0 - ($placemarker.width() / 2);
@@ -402,16 +541,14 @@ class FooterPanel extends BaseFooterPanel {
         });
     }
 
-    onPlacemarkerMouseLeave(e, that): void {
-        $.publish(Commands.SEARCH_PREVIEW_FINISH);
+    onPlacemarkerMouseLeave(e: any, that: any): void {
+        $.publish(Events.SEARCH_PREVIEW_FINISH);
 
-        var $placemarker = $(this);
+        const $placemarker: JQuery = $(this);
+        const newElement: Element = e.toElement || e.relatedTarget;
+        const isChild: number = $(newElement).closest(that.$placemarkerDetails).length;
 
-        var newElement = e.toElement || e.relatedTarget;
-
-        var isChild = $(newElement).closest(that.$placemarkerDetails).length;
-
-        if (newElement != that.$placemarkerDetails.get(0) && isChild == 0) {
+        if (newElement != that.$placemarkerDetails.get(0) && isChild === 0) {
             that.$placemarkerDetails.hide();
             $placemarker.removeClass('hover');
         }
@@ -419,16 +556,16 @@ class FooterPanel extends BaseFooterPanel {
 
     setPageMarkerPosition(): void {
 
-        if (this.extension.helper.canvasIndex == null) return;
+        if (this.extension.helper.canvasIndex === null) return;
 
         // position placemarker showing current page.
-        var pageLineRatio = this.getPageLineRatio();
-        var lineTop = this.$line.position().top;
-        var lineLeft = this.$line.position().left;
+        const pageLineRatio: number = this.getPageLineRatio();
+        const lineTop: number = this.$line.position().top;
+        const lineLeft: number = this.$line.position().left;
 
-        var position = this.extension.helper.canvasIndex * pageLineRatio;
-        var top = lineTop;
-        var left = lineLeft + position;
+        const position: number = this.extension.helper.canvasIndex * pageLineRatio;
+        const top: number = lineTop;
+        let left: number = lineLeft + position;
 
         this.$pagePositionMarker.css({
             top: top,
@@ -437,7 +574,7 @@ class FooterPanel extends BaseFooterPanel {
 
         // if the remaining distance to the right is less than the width of the label
         // shift it to the left.
-        var lineWidth = this.$line.width();
+        const lineWidth: number = this.$line.width();
 
         if (left + this.$pagePositionLabel.outerWidth(true) > lineWidth) {
             left -= this.$pagePositionLabel.outerWidth(true);
@@ -456,11 +593,13 @@ class FooterPanel extends BaseFooterPanel {
 
     clearSearchResults(): void {
 
-        (<ISeadragonExtension>this.extension).searchResults = [];
+        if (!this.isSearchEnabled()) {
+            return;
+        }
 
         // clear all existing placemarkers
-        var placemarkers = this.getSearchResultPlacemarkers();
-        placemarkers.remove();
+        const $placemarkers: JQuery = this.getSearchResultPlacemarkers();
+        $placemarkers.remove();
 
         // clear search input field.
         this.$searchText.val(this.content.enterKeyword);
@@ -475,7 +614,7 @@ class FooterPanel extends BaseFooterPanel {
 
     getPageLineRatio(): number {
 
-        var lineWidth = this.$line.width();
+        const lineWidth: number = this.$line.width();
 
         // find page/width ratio by dividing the line width by the number of pages in the book.
         if (this.extension.helper.getTotalCanvases() === 1) return 0;
@@ -494,33 +633,47 @@ class FooterPanel extends BaseFooterPanel {
 
     setPlacemarkerLabel(): void {
 
-        var displaying = this.content.displaying;
-        var index = this.extension.helper.canvasIndex;
+        const displaying: string = this.content.displaying;
+        const index: number = this.extension.helper.canvasIndex;
 
         if (this.isPageModeEnabled()) {
-            var canvas: Manifesto.ICanvas = this.extension.helper.getCanvasByIndex(index);
+            const canvas: Manifesto.ICanvas = this.extension.helper.getCanvasByIndex(index);
+            let label: string | null = Manifesto.TranslationCollection.getValue(canvas.getLabel());
 
-            var label: string = Manifesto.TranslationCollection.getValue(canvas.getLabel());
-
-            if (label === "") {
+            if (!label) {
                 label = this.content.defaultLabel;
             }
 
-            var lastCanvasOrderLabel = this.extension.helper.getLastCanvasLabel(true);
-            this.$pagePositionLabel.html(String.format(displaying, this.content.page, this.extension.sanitize(label), this.extension.sanitize(lastCanvasOrderLabel)));
+            const lastCanvasOrderLabel: string | null = this.extension.helper.getLastCanvasLabel(true);
+
+            if (lastCanvasOrderLabel) {
+                this.$pagePositionLabel.html(Utils.Strings.format(displaying, this.content.page, UVUtils.sanitize(<string>label), UVUtils.sanitize(<string>lastCanvasOrderLabel)));
+            }
+
         } else {
-            this.$pagePositionLabel.html(String.format(displaying, this.content.image, index + 1, this.extension.helper.getTotalCanvases()));
+            this.$pagePositionLabel.html(Utils.Strings.format(displaying, this.content.image, String(index + 1), this.extension.helper.getTotalCanvases().toString()));
         }
     }
 
     isPageModeEnabled(): boolean {
-        return this.config.options.pageModeEnabled && (<ISeadragonExtension>this.extension).getMode().toString() === Mode.page.toString();
+        return this.config.options.pageModeEnabled && (<ISeadragonExtension>this.extension).getMode().toString() === Mode.page.toString() && !Utils.Bools.getBool(this.config.options.forceImageMode, false);
     }
 
-    displaySearchResults(terms, results): void {
+    showSearchSpinner(): void {
+        this.$searchText.addClass('searching');
+    }
 
-        if (!results) return;
+    hideSearchSpinner(): void {
+        this.$searchText.removeClass('searching');
+    }
 
+    displaySearchResults(results: AnnotationGroup[], terms?: string): void {
+
+        if (!this.isSearchEnabled()) {
+            return;
+        }
+
+        this.hideSearchSpinner();
         this.positionSearchResultPlacemarkers();
 
         // show pager.
@@ -530,20 +683,29 @@ class FooterPanel extends BaseFooterPanel {
             'left': 0
         });
 
-        var $number = this.$searchPagerContainer.find('.number');
-        $number.text(results.resources.length);
+        const $info: JQuery = this.$searchResultsInfo.find('.info');
+        const $number: JQuery = $info.find('.number');
+        const $foundFor: JQuery = $info.find('.foundFor');
+        const $terms: JQuery = $info.find('.terms');
 
-        var foundFor = this.$searchResultsInfo.find('.foundFor');
+        if (terms) {
 
-        if (results.resources.length === 1) {
-            foundFor.html(this.content.resultFoundFor);
+            $info.show();
+
+            $number.text((<ISeadragonExtension>this.extension).getTotalAnnotationRects());
+
+            if (results.length === 1) {
+                $foundFor.html(this.content.resultFoundFor);
+            } else {
+                $foundFor.html(this.content.resultsFoundFor);
+            }
+            
+            $terms.html(Utils.Strings.ellipsis(terms, this.options.elideResultsTermsCount));
+            $terms.prop('title', terms);
+
         } else {
-            foundFor.html(this.content.resultsFoundFor);
-        }
-
-        var $terms = this.$searchPagerContainer.find('.terms');
-        $terms.html(Utils.Strings.ellipsis(terms, this.options.elideResultsTermsCount));
-        $terms.prop('title', terms);
+            $info.hide();
+        } 
 
         this.$searchPagerContainer.show();
 
@@ -553,7 +715,9 @@ class FooterPanel extends BaseFooterPanel {
     resize(): void {
         super.resize();
 
-        if ((<ISeadragonExtension>this.extension).searchResults.length) {
+        const searchResults: AnnotationGroup[] | null = this.getSearchResults();
+
+        if (searchResults && searchResults.length) {
             this.positionSearchResultPlacemarkers();
         }
 
@@ -561,7 +725,7 @@ class FooterPanel extends BaseFooterPanel {
 
         this.$searchPagerContainer.width(this.$element.width());
 
-        var center = this.$element.width() / 2;
+        const center: number = this.$element.width() / 2;
 
         // position search pager controls.
         this.$searchPagerControls.css({
@@ -574,5 +738,3 @@ class FooterPanel extends BaseFooterPanel {
         });
     }
 }
-
-export = FooterPanel;

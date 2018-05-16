@@ -1,6 +1,8 @@
 ﻿@import 'mobile';
 
-#app {
+.uv{
+
+    @search-result: @brand-secondary;
 
     .centerPanel {
 
@@ -40,48 +42,48 @@
                     }
 
                     &.prev {
-                        background-image: url('@{img-path}left_arrow.png');
+                        background-image: data-uri('@{img-path}left_arrow.png');
                         left: 0;
                         &.disabled {
-                            background-image: url('@{img-path}left_arrow_disabled.png');
+                            background-image: data-uri('@{img-path}left_arrow_disabled.png');
                         }
                     }
 
                     &.prev.vertical {
-                        background-image: url('@{img-path}up_arrow.png');
+                        background-image: data-uri('@{img-path}up_arrow.png');
                         left: 0;
                         top: 0;
                         &.disabled {
-                            background-image: url('@{img-path}up_arrow_disabled.png');
+                            background-image: data-uri('@{img-path}up_arrow_disabled.png');
                         }
                         &.down {
-                            background-image: url('@{img-path}down_arrow.png');
+                            background-image: data-uri('@{img-path}down_arrow.png');
                             &.disabled {
-                                background-image: url('@{img-path}down_arrow_disabled.png');
+                                background-image: data-uri('@{img-path}down_arrow_disabled.png');
                             }
                         }
                     }
 
                     &.next {
-                        background-image: url('@{img-path}right_arrow.png');
+                        background-image: data-uri('@{img-path}right_arrow.png');
                         right: 0;
                         &.disabled {
-                            background-image: url('@{img-path}right_arrow_disabled.png');
+                            background-image: data-uri('@{img-path}right_arrow_disabled.png');
                         }
                     }
 
                     &.next.vertical {
-                        background-image: url('@{img-path}down_arrow.png');
+                        background-image: data-uri('@{img-path}down_arrow.png');
                         left: 0;
                         top: 0;
                         margin-left: 15px;
                         &.disabled {
-                            background-image: url('@{img-path}down_arrow_disabled.png');
+                            background-image: data-uri('@{img-path}down_arrow_disabled.png');
                         }
                         &.up {
-                            background-image: url('@{img-path}up_arrow.png');
+                            background-image: data-uri('@{img-path}up_arrow.png');
                             &.disabled {
-                                background-image: url('@{img-path}up_arrow_disabled.png');
+                                background-image: data-uri('@{img-path}up_arrow_disabled.png');
                             }
                         }
                     }
@@ -89,17 +91,34 @@
 
                 .zoomIn{
                     cursor: pointer !important;
-                    .btn-focus() !important;
+                    background-image: data-uri('@{img-path}zoom_in.png') !important;
+                    width: 28px;
+                    height: 28px;
+                    margin: 3px !important;
+                    img {
+                        display: none;
+                    }
+                    &:focus {
+                      .tab-focus();
+                    }
                 }
 
                 .zoomOut{
                     cursor: pointer !important;
-                    .btn-focus() !important;
+                    background-image: data-uri('@{img-path}zoom_out.png') !important;
+                    width: 28px;
+                    height: 28px;
+                    margin: 3px !important;
+                    img {
+                        display: none;
+                    }
+                    &:focus {
+                      .tab-focus();
+                    }
                 }
 
                 .goHome{
                     cursor: pointer !important;
-                    .btn-focus() !important;
                 }
                 
                 div[title="Rotate left"] {
@@ -108,7 +127,16 @@
 
                 .rotate{
                     cursor: pointer !important;
-                    .btn-focus() !important;
+                    background-image: data-uri('@{img-path}rotate_right.png') !important;
+                    width: 28px;
+                    height: 28px;
+                    margin: 3px !important;
+                    img {
+                        display: none;
+                    }
+                    &:focus {
+                      .tab-focus();
+                    }
                 }
 
                 div[title="Previous page"] {
@@ -147,8 +175,13 @@
             }
 
             .searchOverlay{
-                background-color: @brand-secondary;
+                background-color: desaturate(@search-result, 40%);
                 .opacity(.5);
+                &.current {
+                    //border: 3px solid #fff;
+                    @col: lighten(@search-result, 20%);
+                    background-color: saturate(@col, 100%);
+                }
             }
         }
     }

@@ -36,7 +36,7 @@
                             width: 15px;
                             height: 15px;
                             cursor: pointer;
-                            background-image: url('@{img-path}copy.png');
+                            background-image: data-uri('@{img-path}copy.png');
                         }
                         .copiedText {
                             display: none;
@@ -55,7 +55,7 @@
                         
                     }
 
-                    .value{
+                    .value {
                         color: @text-color;
                         margin: @margin-small-vertical @margin-medium-horizontal 0 0;
                         overflow: hidden;
@@ -79,6 +79,11 @@
                         img {
                             max-width: 100px;
                         }
+                    }
+
+                    a.value {
+                        display: block;
+                        color: @link-color;
                     }
                 }
             }

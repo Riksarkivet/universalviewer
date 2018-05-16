@@ -1,16 +1,16 @@
-import BaseCommands = require("./BaseCommands");
-import BaseView = require("./BaseView");
-import BootstrapParams = require("../../BootstrapParams");
-import Information = require("../uv-shared-module/Information");
-import InformationAction = require("../uv-shared-module/InformationAction");
-import InformationArgs = require("../uv-shared-module/InformationArgs");
-import InformationFactory = require("../uv-shared-module/InformationFactory");
-import SettingsDialogue = require("../uv-dialogues-module/SettingsDialogue");
+import {BaseEvents} from "./BaseEvents";
+import {BaseView} from "./BaseView";
+import {ILocale} from "../../ILocale";
+import {Information} from "../uv-shared-module/Information";
+import {InformationAction} from "../uv-shared-module/InformationAction";
+import {InformationArgs} from "../uv-shared-module/InformationArgs";
+import {InformationFactory} from "../uv-shared-module/InformationFactory";
 import CroppedImageDimensions = require("../../extensions/uv-seadragon-extension/CroppedImageDimensions");
 import RiksarkivetPrint = require("../../modules/uv-shared-module/RiksarkivetPrint");
 import ISeadragonExtension = require("../../Extensions/uv-seadragon-extension/ISeadragonExtension");
 
-class HeaderPanel extends BaseView {
+
+export class HeaderPanel extends BaseView {
 
     $centerOptions: JQuery;
     $helpButton: JQuery;
@@ -36,20 +36,20 @@ class HeaderPanel extends BaseView {
 
         super.create();
 
-        $.subscribe(BaseCommands.SETTINGS_CHANGED, () => {
+        $.subscribe(BaseEvents.SETTINGS_CHANGED, () => {
             this.updateButton(this.$downloadButton, "downloadEnabled");
             this.updateButton(this.$printButton, "printEnabled");
         });
 
-        $.subscribe(BaseCommands.SHOW_INFORMATION, (e, args: InformationArgs) => {
+        $.subscribe(BaseEvents.SHOW_INFORMATION, (e: any, args: InformationArgs) => {
             this.showInformation(args);
         });
 
-        $.subscribe(BaseCommands.HIDE_INFORMATION, () => {
+        $.subscribe(BaseEvents.HIDE_INFORMATION, () => {
             this.hideInformation();
         });
 
-        $.subscribe(BaseCommands.TOGGLE_FULLSCREEN, () => {
+        $.subscribe(BaseEvents.TOGGLE_FULLSCREEN, () => {
             this.updateFullScreenButton();
             this.updateOldImageViewerLink();
         });
@@ -72,31 +72,33 @@ class HeaderPanel extends BaseView {
         this.$localeToggleButton = $('<a class="localeToggle" tabindex="0"></a>');
         this.$rightOptions.append(this.$localeToggleButton);
 
-        //Temporary code for Beta viewer
-        if (this.bootstrapper.params.isHomeDomain) {
-            var url = parent.document.URL;
-    
-            if (url.indexOf("?") > -1) {
-                url = url.substr(0, url.indexOf("?"));
-            }
-            var checkMobile = false;
-            if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/webOS/i) || navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/Windows Phone/i)) {
-                checkMobile = true;
-            }
-            var checkOnlyUVViewer = false;
-            if (url.contains("Folk_") || url.contains("Sdhk_") || url.contains("BRFV_") || url.contains("Brev_")) {
-                checkOnlyUVViewer = true;
-            }
-            if (!checkMobile && !checkOnlyUVViewer) {
-                this.$linkOldImageViewer = $('<a class="linkOldImageViewer" target="_top" tabindex="2" title="' + this.content.backOldImageViewer + '" href="' + url + '?viewer=DjVu">' + this.content.backOldImageViewer + '</a>');
-                this.$rightOptions.append(this.$linkOldImageViewer);
-            }
-        }
-        //END Temporary code for Beta viewer
+        //Link to old image viewer
+        var url = parent.document.URL;
 
-        this.$settingsButton = $('<a class="imageBtn settings" tabindex="0"><span /></a>');
+        if (url.indexOf("?") > -1) {
+            url = url.substr(0, url.indexOf("?"));
+        }
+        var checkMobile = false;
+        if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/webOS/i) || navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/Windows Phone/i)) {
+            checkMobile = true;
+        }
+        var checkOnlyUVViewer = false;
+        if (url.contains("Folk_") || url.contains("Sdhk_") || url.contains("BRFV_") || url.contains("Brev_")) {
+            checkOnlyUVViewer = true;
+        }
+        if (!checkMobile && !checkOnlyUVViewer) {
+            this.$linkOldImageViewer = $('<a class="linkOldImageViewer" target="_top" tabindex="2" title="' + this.content.backOldImageViewer + '" href="' + url + '?viewer=DjVu">' + this.content.backOldImageViewer + '</a>');
+            this.$rightOptions.append(this.$linkOldImageViewer);
+        }
+        //END Link to old image viewer
+
+        this.$settingsButton = $(`
+          <button class="btn imageBtn settings" tabindex="0" title="${this.content.settings}">
+            <i class="uv-icon-settings" aria-hidden="true"></i>${this.content.settings}
+          </button>
+        `);
         this.$settingsButton.attr('title', this.content.settings);
-        this.$rightOptions.append(this.$settingsButton);
+        this.$rightOptions.append(this.$settingsButton);        
 
         this.$downloadButton = $('<a class="download" tabindex="4" title="' + this.content.download + '"><span /></a>');
         this.$rightOptions.append(this.$downloadButton);
@@ -115,11 +117,12 @@ class HeaderPanel extends BaseView {
         this.updateButton(this.$printButton, "printEnabled");
         this.updateFullScreenButton();
         
-
-        this.$informationBox = $('<div class="informationBox"> \
+        this.$informationBox = $('<div class="informationBox" aria-hidden="true"> \
                                     <div class="message"></div> \
                                     <div class="actions"></div> \
-                                    <div class="close"></div> \
+                                    <button type="button" class="close" aria-label="Close"> \
+                                        <span aria-hidden="true">&times;</span>\
+                                    </button> \
                                   </div>');
 
         this.$element.append(this.$informationBox);
@@ -128,7 +131,7 @@ class HeaderPanel extends BaseView {
         this.$informationBox.find('.close').attr('title', this.content.close);
         this.$informationBox.find('.close').on('click', (e) => {
             e.preventDefault();
-            $.publish(BaseCommands.HIDE_INFORMATION);
+            $.publish(BaseEvents.HIDE_INFORMATION);
         });
 
         this.$localeToggleButton.on('click', () => {
@@ -136,7 +139,7 @@ class HeaderPanel extends BaseView {
         });
 
         this.$settingsButton.onPressed(() => {
-            $.publish(BaseCommands.SHOW_SETTINGS_DIALOGUE);
+            $.publish(BaseEvents.SHOW_SETTINGS_DIALOGUE);
         });
 
         this.$printButton.onPressed(() => {
@@ -161,16 +164,16 @@ class HeaderPanel extends BaseView {
 
         this.$downloadButton.on('click', (e) => {
             e.preventDefault();
-            $.publish(BaseCommands.SHOW_DOWNLOAD_DIALOGUE);
+            $.publish(BaseEvents.SHOW_DOWNLOAD_DIALOGUE);
         });
 
         this.$fullScreenBtn.on('click', (e) => {
             e.preventDefault();
-            $.publish(BaseCommands.TOGGLE_FULLSCREEN);
+            $.publish(BaseEvents.TOGGLE_FULLSCREEN);
         });
 
-        if (this.options.localeToggleEnabled === false){
-            this.$localeToggleButton.hide();
+        if (!Utils.Bools.getBool(this.options.centerOptionsEnabled, true)) {
+            this.$centerOptions.hide();
         }
 
         this.updateLocaleToggle();
@@ -203,13 +206,13 @@ class HeaderPanel extends BaseView {
     }
 
     updateLocaleToggle(): void {
-        if (!this.localeToggleIsVisible()){
+        if (!this.localeToggleIsVisible()) {
             this.$localeToggleButton.hide();
             return;
         }
 
-        var alternateLocale = this.extension.getAlternateLocale();
-        var text = alternateLocale.name.split('-')[0].toUpperCase();
+        const alternateLocale: any = this.extension.getAlternateLocale();
+        const text: string = alternateLocale.name.split('-')[0].toUpperCase();
 
         this.$localeToggleButton.data('locale', alternateLocale.name);
         this.$localeToggleButton.attr('title', alternateLocale.label);
@@ -217,7 +220,7 @@ class HeaderPanel extends BaseView {
     }
 
     updateSettingsButton(): void {
-        var settingsEnabled: boolean = Utils.Bools.getBool(this.options.settingsButtonEnabled, true);
+        const settingsEnabled: boolean = Utils.Bools.getBool(this.options.settingsButtonEnabled, true);
         if (!settingsEnabled){
             this.$settingsButton.hide();
         } else {
@@ -226,28 +229,31 @@ class HeaderPanel extends BaseView {
     }
 
     localeToggleIsVisible(): boolean {
-        return this.extension.getLocales().length > 1 && Utils.Bools.getBool(this.options.localeToggleEnabled, false);
+        const locales: ILocale[] | null = this.extension.data.locales;
+
+        if (locales) {
+            return locales.length > 1 && Utils.Bools.getBool(this.options.localeToggleEnabled, false);
+        }
+        
+        return false;
     }
 
     showInformation(args: InformationArgs): void {
-
-        var informationFactory: InformationFactory = new InformationFactory(this.extension);
-
+        const informationFactory: InformationFactory = new InformationFactory(this.extension);
         this.information = informationFactory.Get(args);
         var $message = this.$informationBox.find('.message');
         $message.html(this.information.message).find('a').attr('target', '_top');
         var $actions = this.$informationBox.find('.actions');
         $actions.empty();
 
-        for (var i = 0; i < this.information.actions.length; i++) {
-            var action: InformationAction = this.information.actions[i];
-
-            var $action = $('<a href="#" class="btn btn-default">' + action.label + '</a>');
+        for (let i = 0; i < this.information.actions.length; i++) {
+            const action: InformationAction = this.information.actions[i];
+            const $action: JQuery = $('<a href="#" class="btn btn-default">' + action.label + '</a>');
             $action.on('click', action.action);
-
             $actions.append($action);
         }
 
+        this.$informationBox.attr('aria-hidden', 'false');
         this.$informationBox.show();
         this.$element.addClass('showInformation');
         this.extension.resize();
@@ -255,6 +261,7 @@ class HeaderPanel extends BaseView {
 
     hideInformation(): void {
         this.$element.removeClass('showInformation');
+        this.$informationBox.attr('aria-hidden', 'true');
         this.$informationBox.hide();
         this.extension.resize();
     }
@@ -265,31 +272,30 @@ class HeaderPanel extends BaseView {
 
     updateSettings(settings: ISettings): void {
         this.extension.updateSettings(settings);
-
-        $.publish(BaseCommands.UPDATE_SETTINGS, [settings]);
+        $.publish(BaseEvents.UPDATE_SETTINGS, [settings]);
     }
 
     resize(): void {
         super.resize();
 
-        var headerWidth = this.$element.width();
-        var center = headerWidth / 2;
-        var containerWidth = this.$centerOptions.outerWidth();
-        var pos = center - (containerWidth / 2);
+        const headerWidth: number = this.$element.width();
+        const center: number = headerWidth / 2;
+        const containerWidth: number = this.$centerOptions.outerWidth();
+        const pos: number = center - (containerWidth / 2);
 
         this.$centerOptions.css({
             left: pos
         });
 
-        if (this.$informationBox.is(':visible')){
-            var $actions = this.$informationBox.find('.actions');
-            var $message = this.$informationBox.find('.message');
-            $message.width(this.$element.width() - $message.horizontalMargins() - $actions.outerWidth(true) - this.$informationBox.find('.close').outerWidth(true) - 1);
+        if (this.$informationBox.is(':visible')) {
+            const $actions: JQuery = this.$informationBox.find('.actions');
+            const $message: JQuery = this.$informationBox.find('.message');
+            $message.width(Math.floor(this.$element.width()) - Math.ceil($message.horizontalMargins()) - Math.ceil($actions.outerWidth(true)) - Math.ceil(this.$informationBox.find('.close').outerWidth(true)) - 2);
             $message.ellipsisFill(this.information.message);
         }
 
         // hide toggle buttons below minimum width
-        if (this.extension.width() < this.extension.config.options.minWidthBreakPoint){
+        if (this.extension.width() < this.extension.data.config.options.minWidthBreakPoint) {
             if (this.localeToggleIsVisible()) this.$localeToggleButton.hide();
         } else {
             if (this.localeToggleIsVisible()) this.$localeToggleButton.show();
@@ -335,5 +341,3 @@ class HeaderPanel extends BaseView {
     }    
 
 }
-
-export = HeaderPanel;

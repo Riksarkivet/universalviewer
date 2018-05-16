@@ -1,8 +1,10 @@
-import BaseSettingsDialogue = require("../../modules/uv-dialogues-module/SettingsDialogue");
-import ISeadragonExtension = require("./ISeadragonExtension");
+import {SettingsDialogue as BaseSettingsDialogue} from "../../modules/uv-dialogues-module/SettingsDialogue";
 
-class SettingsDialogue extends BaseSettingsDialogue {
+export class SettingsDialogue extends BaseSettingsDialogue {
 
+    $clickToZoomEnabled: JQuery;
+    $clickToZoomEnabledCheckbox: JQuery;
+    $clickToZoomEnabledLabel: JQuery;
     $navigatorEnabled: JQuery;
     $navigatorEnabledCheckbox: JQuery;
     $navigatorEnabledLabel: JQuery;
@@ -55,8 +57,8 @@ class SettingsDialogue extends BaseSettingsDialogue {
         this.$clickToZoomEnabled.append(this.$clickToZoomEnabledCheckbox);
 
         this.$clickToZoomEnabledLabel = $('<label for="clickToZoomEnabled">' + this.content.clickToZoomEnabled + '</label>');
-        this.$clickToZoomEnabled.append(this.$clickToZoomEnabledLabel);
-
+        this.$clickToZoomEnabled.append(this.$clickToZoomEnabledLabel);        
+        
         this.$preserveViewport = $('<div class="setting preserveViewport"></div>');
         this.$scroll.append(this.$preserveViewport);
 
@@ -67,7 +69,7 @@ class SettingsDialogue extends BaseSettingsDialogue {
         this.$preserveViewport.append(this.$preserveViewportLabel);
 
         this.$navigatorEnabledCheckbox.change(() => {
-            var settings: ISettings = {};
+            const settings: ISettings = {};
 
             if(this.$navigatorEnabledCheckbox.is(":checked")) {
                 settings.navigatorEnabled = true;
@@ -77,6 +79,18 @@ class SettingsDialogue extends BaseSettingsDialogue {
 
             this.updateSettings(settings);
         });
+        
+        this.$clickToZoomEnabledCheckbox.change(() => {
+            const settings: ISettings = {};
+
+            if(this.$clickToZoomEnabledCheckbox.is(":checked")) {
+                settings.clickToZoomEnabled = true;
+            } else {
+                settings.clickToZoomEnabled = false;
+            }
+
+            this.updateSettings(settings);
+        });        
 
         this.$clickToZoomEnabledCheckbox.change(() => {
             var settings: ISettings = {};
@@ -91,7 +105,7 @@ class SettingsDialogue extends BaseSettingsDialogue {
         });
 
         this.$pagingEnabledCheckbox.change(() => {
-            var settings: ISettings = {};
+            const settings: ISettings = {};
 
             if(this.$pagingEnabledCheckbox.is(":checked")) {
                 settings.pagingEnabled = true;
@@ -103,7 +117,7 @@ class SettingsDialogue extends BaseSettingsDialogue {
         });
 
         this.$preserveViewportCheckbox.change(() => {
-            var settings: ISettings = {};
+            const settings: ISettings = {};
 
             if(this.$preserveViewportCheckbox.is(":checked")) {
                 settings.preserveViewport = true;
@@ -118,7 +132,7 @@ class SettingsDialogue extends BaseSettingsDialogue {
     open(): void {
         super.open();
 
-        var settings: ISettings = this.getSettings();
+        const settings: ISettings = this.getSettings();
         
         if (settings.navigatorEnabled){
             this.$navigatorEnabledCheckbox.prop("checked", true);
@@ -130,7 +144,7 @@ class SettingsDialogue extends BaseSettingsDialogue {
             this.$clickToZoomEnabledCheckbox.prop("checked", true);
         } else {
             this.$clickToZoomEnabledCheckbox.removeAttr("checked");
-        }
+        }        
 
         if (!this.extension.helper.isPagingAvailable()){
             this.$pagingEnabled.hide();
@@ -150,5 +164,3 @@ class SettingsDialogue extends BaseSettingsDialogue {
     }
 
 }
-
-export = SettingsDialogue;

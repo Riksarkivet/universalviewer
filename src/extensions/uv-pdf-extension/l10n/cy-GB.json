@@ -18,7 +18,7 @@
     "downloadDialogue": {
       "content": {
         "download": "Lawrlwytho",
-        "entireFileAsOriginal": "Y ffeil gyfan ({0})",
+        "entireFileAsOriginal": "Y ffeil gyfan",
         "noneAvailable": "Nid oes unrhyw opsiynau lawrlwytho ar gael.",
         "preview": "Rhagolwg",
         "title": "Lawrlwytho"
@@ -30,8 +30,11 @@
         "download": "Lawrlwytho",
         "embed": "Ymgorffori",
         "exitFullScreen": "Dianc o'r sgrin lawn",
+        "feedback": "Adborth",
         "fullScreen": "Sgrin lawn",
-        "open": "agored"
+        "moreInfo": "Mwy o Wybodaeth",
+        "open": "Agor",
+        "share": "Rhannu"
       }
     },
     "genericDialogue": {

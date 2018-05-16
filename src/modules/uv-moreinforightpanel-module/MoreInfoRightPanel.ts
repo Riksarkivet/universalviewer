@@ -1,9 +1,10 @@
-import BaseCommands = require("../uv-shared-module/BaseCommands");
-import RightPanel = require("../uv-shared-module/RightPanel");
+import {BaseEvents} from "../uv-shared-module/BaseEvents";
+import {RightPanel} from "../uv-shared-module/RightPanel";
+import {UVUtils} from "../uv-shared-module/Utils";
 
-class MoreInfoRightPanel extends RightPanel {
+export class MoreInfoRightPanel extends RightPanel {
 
-    component: IIIFComponents.IMetadataComponent;
+    metadataComponent: IIIFComponents.IMetadataComponent;
     $metadata: JQuery;
     limitType: IIIFComponents.MetadataComponentOptions.LimitType;
     limit: number;
@@ -18,7 +19,11 @@ class MoreInfoRightPanel extends RightPanel {
 
         super.create();
         
-        $.subscribe(BaseCommands.CANVAS_INDEX_CHANGED, (e, canvasIndex) => {
+        $.subscribe(BaseEvents.CANVAS_INDEX_CHANGED, () => {
+            this.databind();
+        });
+
+        $.subscribe(BaseEvents.RANGE_CHANGED, () => {
             this.databind();
         });
 
@@ -27,8 +32,11 @@ class MoreInfoRightPanel extends RightPanel {
         this.$metadata = $('<div class="iiif-metadata-component"></div>');
         this.$main.append(this.$metadata);
 
-        this.component = new IIIFComponents.MetadataComponent(this._getOptions());
-        
+        this.metadataComponent = new IIIFComponents.MetadataComponent({
+            target: this.$metadata[0],
+            data: this._getData()
+        });
+
         this.riksarkivetSetupCopySourceRef();
     }
     
@@ -38,12 +46,11 @@ class MoreInfoRightPanel extends RightPanel {
     }
 
     databind(): void {
-        this.component.options = this._getOptions();
-        this.component.databind();
+        this.metadataComponent.set(this._getData());
     }
 
-    private _getOptions(): IIIFComponents.IMetadataComponentOptions {
-        return <IIIFComponents.IMetadataComponentOptions>{
+    private _getData(): IIIFComponents.IMetadataComponentData {
+        return <IIIFComponents.IMetadataComponentData>{
             canvasDisplayOrder: this.config.options.canvasDisplayOrder,
             canvases: this.extension.getCurrentCanvases(),
             canvasExclude: this.config.options.canvasExclude,
@@ -51,9 +58,8 @@ class MoreInfoRightPanel extends RightPanel {
             content: this.config.content,
             copiedMessageDuration: 2000,
             copyToClipboardEnabled: Utils.Bools.getBool(this.config.options.copyToClipboardEnabled, false),
-            element: ".rightPanel .iiif-metadata-component",
             helper: this.extension.helper,
-            licenseFormatter: null,
+            licenseFormatter: new Manifold.UriLabeller(this.config.license ? this.config.license : {}), 
             limit: this.config.options.textLimit || 4,
             limitType: IIIFComponents.MetadataComponentOptions.LimitType.LINES,
             manifestDisplayOrder: this.config.options.manifestDisplayOrder,
@@ -61,7 +67,7 @@ class MoreInfoRightPanel extends RightPanel {
             range: this.extension.getCurrentCanvasRange(),
             rtlLanguageCodes: this.config.options.rtlLanguageCodes,
             sanitizer: (html) => {
-                return this.extension.sanitize(html);
+                return UVUtils.sanitize(html);
             },
             showAllLanguages: this.config.options.showAllLanguages
         };
@@ -83,5 +89,3 @@ class MoreInfoRightPanel extends RightPanel {
 }
 
 import RiksarkivetCommands = require("../uv-shared-module/RiksarkivetCommands");
-
-export = MoreInfoRightPanel;

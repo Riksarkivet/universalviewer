@@ -1,9 +1,6 @@
-import BaseCommands = require("../uv-shared-module/BaseCommands");
-import BootstrapParams = require("../../BootstrapParams");
-import Commands = require("../uv-shared-module/BaseCommands");
-import Dialogue = require("../uv-shared-module/Dialogue");
-import Shell = require("../uv-shared-module/Shell");
-import Version = require("../../_Version");
+import {Dialogue} from "../uv-shared-module/Dialogue";
+import {BaseEvents} from "../uv-shared-module/BaseEvents";
+import {Shell} from "../uv-shared-module/Shell";
 
 class AdjustDialogue extends Dialogue {
 
@@ -29,8 +26,8 @@ class AdjustDialogue extends Dialogue {
 
         super.create();
 
-        this.openCommand = BaseCommands.SHOW_ADJUST_DIALOGUE;
-        this.closeCommand = BaseCommands.HIDE_ADJUST_DIALOGUE;
+        this.openCommand = BaseEvents.SHOW_ADJUST_DIALOGUE;
+        this.closeCommand = BaseEvents.HIDE_ADJUST_DIALOGUE;
 
         $.subscribe(this.openCommand, (e, params) => {
             this.open();
@@ -120,12 +117,12 @@ class AdjustDialogue extends Dialogue {
     }
     
     adjustContrast(value: number) {
-        $.publish(BaseCommands.ADJUST_CONTRAST, [value]);
+        $.publish(BaseEvents.ADJUST_CONTRAST, [value]);
         this.extension.updateSettings({ contrastPercent: value});
     }
     
     adjustBrightness(value: number) {
-        $.publish(BaseCommands.ADJUST_BRIGHTNESS, [value]);
+        $.publish(BaseEvents.ADJUST_BRIGHTNESS, [value]);
         this.extension.updateSettings({ brightnessPercent: value});
     }
 
@@ -139,7 +136,7 @@ class AdjustDialogue extends Dialogue {
         if (!this.isSliding) {            
             super.close();
             
-            $.publish(BaseCommands.ADJUST_FINALIZE);
+            $.publish(BaseEvents.ADJUST_FINALIZE);
         }              
     }
 

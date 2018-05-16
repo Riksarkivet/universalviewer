@@ -8,12 +8,18 @@
     "authCORSError": "Your browser does not support CORS, please upgrade to view this content.",
     "authorisationFailedMessage": "Your log-in attempt did not appear to be successful. Please try again.",
     "canvasIndexOutOfRange": "Canvas index out of range.",
-    "degradedResourceMessage": "Please log in to view at full quality.",
-    "degradedResourceLogin": "log in",
+    "fallbackDegradedLabel": "Login",
+    "fallbackDegradedMessage": "Please log in to view this content at full resolution.",
     "forbiddenResourceMessage": "Your current access rights are insufficient to view this image",
     "termsOfUse": "Terms of Use"
   },
   "modules": {
+    "authDialogue": {
+      "content": {
+        "cancel": "Cancel",
+        "confirm": "Confirm"
+      }
+    },
     "clickThroughDialogue": {
       "content": {
         "viewTerms": "Read Full Terms and Conditions"
@@ -27,6 +33,9 @@
         "expand": "Expand Contents",
         "expandFull": "Expand Gallery",
         "index": "Index",
+        "manifestRanges": "Manifest Ranges",
+        "searchResult": "{0} search result",
+        "searchResults": "{0} search results",
         "sortBy": "Sort By:",
         "thumbnails": "Thumbnails",
         "title": "Contents",
@@ -47,7 +56,7 @@
         "downloadSelectionExplanation": "Opens a dialogue to select which pages to download.",
         "editSettings": "Edit Settings",
         "entireDocument": "Entire document ({0})",
-        "entireFileAsOriginal": "Entire file ({0})",
+        "entireFileAsOriginal": "Entire file",
         "noneAvailable": "No download options are available.",
         "pagingNote": "Please turn off Two Page View for additional options.",
         "preview": "Preview",
@@ -69,15 +78,16 @@
         "print": "Print page",
         "backOldImageViewer": "Old Image Viewer"
       }
-    },
+    },    
     "footerPanel": {
       "content": {
         "bookmark": "Add to bookmarks",
         "download": "Download",
         "embed": "Embed",
-        "feedback": "Feedback",
         "exitFullScreen": "Exit Full Screen",
+        "feedback": "Feedback",
         "fullScreen": "Full Screen",
+        "moreInfo": "More Information",
         "open": "Open",
         "share": "Share"
       }
@@ -127,7 +137,7 @@
         "logo": "Logo",
         "more": "more",
         "noData": "No data to display",
-        "page": "About image",
+        "page": "Image",
         "title": "More Information",
         "manifestHeader": "About the item",
         "canvasHeader": "About the image",
@@ -165,6 +175,7 @@
         "of": "of {0}",
         "oneUp": "Single page view",
         "page": "Page",
+        "pageSearchLabel": "Search by Page Number",
         "previous": "Previous",
         "previousImage": "Previous Image",
         "previousPage": "Previous Page",
@@ -176,8 +187,8 @@
     "seadragonCenterPanel": {
       "content": {
         "adjust": "Adjust image",
-        "goHome": "Show entire page",
         "attribution": "Attribution",
+        "goHome": "Show entire page",
         "imageUnavailable": "Image Unavailable",
         "next": "Next",
         "previous": "Previous",
@@ -195,7 +206,7 @@
     {
       "content":
       {
-        "clearSearch": "Clear Search",
+        "clearSearch": "Clear",
         "defaultLabel": "-",
         "displaying": "{0} {1} of {2}",
         "enterKeyword": "Enter Keyword",
@@ -217,7 +228,7 @@
       "content": {
         "locale": "Locale",
         "navigatorEnabled": "Navigator Enabled",
-        "clickToZoomEnabled": "Click to Zoom",
+        "clickToZoomEnabled": "Mouse Click To Zoom",
         "pagingEnabled": "Two Page View",
         "preserveViewport": "Preserve Zoom",
         "title": "Settings",

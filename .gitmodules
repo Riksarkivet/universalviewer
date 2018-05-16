@@ -1,6 +1,3 @@
 [submodule "examples"]
 	path = examples
 	url = https://github.com/Riksarkivet/examples.git
-[submodule "tests"]
-	path = tests
-	url = https://github.com/Riksarkivet/tests.git

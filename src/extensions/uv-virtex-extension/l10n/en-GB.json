@@ -18,7 +18,7 @@
     "downloadDialogue": {
       "content": {
         "download": "Download",
-        "entireFileAsOriginal": "Entire file ({0})",
+        "entireFileAsOriginal": "Entire file",
         "noneAvailable": "No download options are available.",
         "preview": "Preview",
         "title": "Download"
@@ -31,7 +31,9 @@
         "embed": "Embed",
         "exitFullScreen": "Exit Full Screen",
         "fullScreen": "Full Screen",
-        "open": "Open"
+        "moreInfo": "More Information",
+        "open": "Open",
+        "share": "Share"
       }
     },
     "genericDialogue": {
@@ -42,7 +44,8 @@
     "headerPanel": {
       "content": {
         "close": "Close",
-        "help": "Help"
+        "help": "Help",
+        "settings": "Settings"
       }
     },
     "helpDialogue": {
@@ -100,7 +103,8 @@
       "content": {
         "attribution": "Attribution",
         "zoomIn": "Zoom In",
-        "zoomOut": "Zoom Out"
+        "zoomOut": "Zoom Out",
+        "vr": "VR"
       }
     },
     "shareDialogue": {

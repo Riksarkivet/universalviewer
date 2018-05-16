@@ -18,7 +18,7 @@
     "downloadDialogue": {
       "content": {
         "download": "Download",
-        "entireFileAsOriginal": "Entire file ({0})",
+        "entireFileAsOriginal": "Entire file",
         "noneAvailable": "No download options are available.",
         "preview": "Preview",
         "title": "Download"
@@ -28,10 +28,13 @@
       "content": {
         "bookmark": "Add to bookmarks",
         "download": "Download",
-        "embed": "Share",
+        "embed": "Embed",
         "exitFullScreen": "Exit Full Screen",
+        "feedback": "Feedback",
         "fullScreen": "Full Screen",
-        "open": "Open"
+        "moreInfo": "More Information",
+        "open": "Open",
+        "share": "Share"
       }
     },
     "genericDialogue": {
@@ -43,6 +46,17 @@
       "content": {
         "close": "Close",
         "help": "Help"
+      }
+    },
+    "pdfHeaderPanel": {
+      "content": {
+        "emptyValue": "Please enter a value",
+        "first": "First",
+        "go": "Go",
+        "last": "Last",
+        "next": "Next",
+        "of": "of {0}",
+        "previous": "Previous"
       }
     },
     "helpDialogue": {

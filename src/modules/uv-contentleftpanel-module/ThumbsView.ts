@@ -1,9 +1,9 @@
-import BaseThumbsView = require("../uv-shared-module/ThumbsView");
-import Commands = require("../../extensions/uv-seadragon-extension/Commands");
-import ISeadragonExtension = require("../../extensions/uv-seadragon-extension/ISeadragonExtension");
-import Mode = require("../../extensions/uv-seadragon-extension/Mode");
+import {ThumbsView as BaseThumbsView} from "../uv-shared-module/ThumbsView";
+import {Events} from "../../extensions/uv-seadragon-extension/Events";
+import {ISeadragonExtension} from "../../extensions/uv-seadragon-extension/ISeadragonExtension";
+import {Mode} from "../../extensions/uv-seadragon-extension/Mode";
 
-class ThumbsView extends BaseThumbsView {
+export class ThumbsView extends BaseThumbsView {
     create(): void {
 
         this.setConfig('contentLeftPanel');
@@ -11,15 +11,15 @@ class ThumbsView extends BaseThumbsView {
         super.create();
 
         // todo: this should be a setting
-        $.subscribe(Commands.MODE_CHANGED, (e, mode) => {
+        $.subscribe(Events.MODE_CHANGED, () => {
             this.setLabel();
         });
 
-        $.subscribe(Commands.SEARCH_PREVIEW_START, (e, canvasIndex) => {
+        $.subscribe(Events.SEARCH_PREVIEW_START, (e: any, canvasIndex: number) => {
             this.searchPreviewStart(canvasIndex);
         });
 
-        $.subscribe(Commands.SEARCH_PREVIEW_FINISH, () => {
+        $.subscribe(Events.SEARCH_PREVIEW_FINISH, () => {
             this.searchPreviewFinish();
         });
 
@@ -30,8 +30,8 @@ class ThumbsView extends BaseThumbsView {
         var that = this;
         
         $.views.helpers({
-            separator: function(){
-                if (that.extension.helper.isVerticallyAligned()){
+            separator: function() {
+                if (that.extension.helper.isVerticallyAligned()) {
                     return true; // one thumb per line
                 }
                 // two thumbs per line
@@ -45,18 +45,26 @@ class ThumbsView extends BaseThumbsView {
     }
 
     addSelectedClassToThumbs(index: number): void {
-        if ((<ISeadragonExtension>this.extension).isPagingSettingEnabled()){
-            var indices = this.extension.getPagedIndices(index);
 
-            _.each(indices, (index: number) => {
-                this.getThumbByIndex(index).addClass('selected');
-            });
-        } else {
-            this.getThumbByIndex(index).addClass('selected');
+        const indices: number[] = this.extension.getPagedIndices(index);
+        
+        for (let i = 0; i < indices.length; i++) {
+            this.getThumbByIndex(indices[i]).addClass('selected');
         }
+        // if ((<ISeadragonExtension>this.extension).isPagingSettingEnabled()) {
+        //     const indices: number[] = this.extension.getPagedIndices(index);
+
+        //     for (let i = 0; i < indices.length; i++) {
+        //         this.getThumbByIndex(indices[i]).addClass('selected');
+        //     }
+
+        // } else {
+        //     this.getThumbByIndex(index).addClass('selected');
+        // }
     }
 
     isPageModeEnabled(): boolean {
+        // todo: move getMode to BaseExtension. call it getIndexingMode which can be Label or Index
         if (typeof (<ISeadragonExtension>this.extension).getMode === "function") {
             return this.config.options.pageModeEnabled && (<ISeadragonExtension>this.extension).getMode().toString() === Mode.page.toString();
         }
@@ -65,7 +73,7 @@ class ThumbsView extends BaseThumbsView {
 
     searchPreviewStart(canvasIndex: number): void {
         this.scrollToThumb(canvasIndex);
-        var $thumb = this.getThumbByIndex(canvasIndex);
+        const $thumb: JQuery = this.getThumbByIndex(canvasIndex);
         $thumb.addClass('searchpreview');
     }
 
@@ -76,7 +84,7 @@ class ThumbsView extends BaseThumbsView {
 
     setLabel(): void {
 
-        if (this.isPDF()){
+        if (this.isPDF()) {
             $(this.$thumbs).find('span.index').hide();
             $(this.$thumbs).find('span.label').hide();
         } else {
@@ -90,5 +98,3 @@ class ThumbsView extends BaseThumbsView {
         }
     }
 }
-
-export = ThumbsView;

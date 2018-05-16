@@ -1,7 +1,6 @@
-import BaseView = require("./BaseView");
-import Shell = require("./Shell");
+import {BaseView} from "./BaseView";
 
-class BaseExpandPanel extends BaseView {
+export class BaseExpandPanel extends BaseView {
 
     isExpanded: boolean = false;
     isFullyExpanded: boolean = false;
@@ -9,14 +8,14 @@ class BaseExpandPanel extends BaseView {
     autoToggled: boolean = false;
     expandFullEnabled: boolean = true;
 
-    $top: JQuery;
-    $title: JQuery;
-    $collapseButton: JQuery;
-    $main: JQuery;
     $closed: JQuery;
+    $closedTitle: JQuery;
+    $collapseButton: JQuery;
     $expandButton: JQuery;
     $expandFullButton: JQuery;
-    $closedTitle: JQuery;
+    $main: JQuery;
+    $title: JQuery;
+    $top: JQuery;
 
     constructor($element: JQuery) {
         super($element, false, true);
@@ -91,7 +90,7 @@ class BaseExpandPanel extends BaseView {
         this.$main.hide();
     }
 
-    init(): void{
+    init(): void {
         super.init();
     }
 
@@ -106,6 +105,9 @@ class BaseExpandPanel extends BaseView {
 
         // if collapsing, hide contents immediately.
         if (this.isExpanded) {
+            this.$top.attr('aria-hidden', 'true');
+            this.$main.attr('aria-hidden', 'true');
+            this.$closed.attr('aria-hidden', 'false');
             this.$top.hide();
             this.$main.hide();
             this.$closed.show();
@@ -128,6 +130,9 @@ class BaseExpandPanel extends BaseView {
 
         // if expanded show content when animation finished.
         if (this.isExpanded) {
+            this.$top.attr('aria-hidden', 'false');
+            this.$main.attr('aria-hidden', 'false');
+            this.$closed.attr('aria-hidden', 'true');
             this.$closed.hide();
             this.$top.show();
             this.$main.show();
@@ -139,8 +144,12 @@ class BaseExpandPanel extends BaseView {
     }
 
     expandFull(): void {
-        var targetWidth = this.getFullTargetWidth();
-        var targetLeft = this.getFullTargetLeft();
+        if (!this.isExpanded) {
+            this.toggled();
+        }        
+        
+        var targetWidth: number = this.getFullTargetWidth();
+        var targetLeft: number = this.getFullTargetLeft();
 
         this.expandFullStart();
 
@@ -155,8 +164,8 @@ class BaseExpandPanel extends BaseView {
     }
 
     collapseFull(): void {
-        var targetWidth = this.getTargetWidth();
-        var targetLeft = this.getTargetLeft();
+        var targetWidth: number = this.getTargetWidth();
+        var targetLeft: number = this.getTargetLeft();
 
         this.collapseFullStart();
 
@@ -247,5 +256,3 @@ class BaseExpandPanel extends BaseView {
         this.$main.height(this.$element.parent().height() - this.$top.outerHeight(true));
     }
 }
-
-export = BaseExpandPanel;

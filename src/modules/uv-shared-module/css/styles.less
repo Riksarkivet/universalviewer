@@ -1,6 +1,7 @@
 ﻿@import 'variables';
 @import 'mixins';
 @import 'mixins-extended';
+@import 'icons';
 @import 'scaffolding';
 @import 'buttons';
 @import 'range';
@@ -11,18 +12,19 @@
 @import 'center-panel';
 @import 'footer-panel';
 @import 'overlays';
+@import 'iiif-av-component';
 @import 'iiif-gallery-component';
 @import 'iiif-tree-component';
 @import 'iiif-metadata-component';
-@import 'mobile';
+@import 'catch-all';
+@import 'watch';
+@import 'mobile-landscape';
+@import 'mobile-portrait';
+@import 'desktop';
 
 @img-path: '../../../modules/uv-shared-module/img/';
 
-#app {
-
-    :focus {
-        //outline: 1px dotted @btn-focused-border;
-    }
+.uv {
 
     background-color: @body-bg;
     position: relative;
@@ -37,70 +39,93 @@
         .border-radius(0);
     }
 
-    .imageBtn{
+    // A button that should not have the browser default characteristics
+    .imageBtn {
+        background: 0 0;
+        border: 0;
         cursor: pointer;
-        .btn-focus();
     }
 
     .action, a.action.black, input.action {
         display: inline-block;
-        background: url('@{img-path}sprite.png') 0 -1000px no-repeat;
+        background-image: data-uri('@{img-path}sprite.png');
+        background-position-x: 0;
+        background-position-y: -1000px;
+        background-repeat: no-repeat;
         text-transform: none;
         padding: 0 0 0 16px;
         font-weight: bold;
     }
 
-    #commsFrame{
+    #debug {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+
+        #watch {
+            display: none;
+        }
+
+        #mobile-portrait {
+            display: none;
+        }
+
+        #mobile-landscape {
+            display: none;
+        }
+
+        #desktop {
+            display: none;
+        }
+    }
+    
+    #commsFrame {
         width: 1px;
         height: 1px;
         border: none;
     }
 
-    .headerPanel{
+    .headerPanel {
         position: relative;
         color: #fff;
         height: 40px;
     }
 
-    .mainPanel{
+    .mainPanel {
         position: relative;
-        margin-top: @panel-margin;
+        padding-top: @panel-margin;
         margin-right: @panel-margin;
         margin-bottom: 0px;
         margin-left: @panel-margin;
     }
 
-    .leftPanel{
+    .leftPanel {
         position: absolute;
         background: @panel-dark-bg;
         border: @panel-border;
     }
 
-    .centerPanel{
+    .centerPanel {
         position: absolute;
     }
 
-    .rightPanel{
+    .rightPanel {
         position: absolute;
         background: @panel-dark-bg;
         border: @panel-border;
     }
 
-    .footerPanel{
+    .footerPanel {
         position: relative;
         margin-top: 0;
         margin-right: @panel-margin;
         margin-bottom: 0px;
         margin-left: @panel-margin;
     }
-
-    .footerPanel.mobile {
-        display: none;
-    }
 }
 
 @media print {
-   #app {
+   .uv {
 
        .headerPanel {
            display: none;
@@ -118,8 +143,8 @@
            display: none;
        }
 
-       .mobileFooter {
-           display: none;
-       }
+       .mobileFooterPanel {
+            display: none;
+        }
    }
 }
