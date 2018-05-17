@@ -17,8 +17,8 @@ class Riksarkivet {
     public GetShortcutEvent(e: JQueryKeyEventObject) {
         if (e.ctrlKey && e.shiftKey && e.keyCode === KeyCodes.KeyDown.c) 
             return RiksarkivetCommands.COPY_SOURCE_REFERENCE;
-        return undefined;
-    } 
+        return null;
+    }
 }
 
 export = Riksarkivet;

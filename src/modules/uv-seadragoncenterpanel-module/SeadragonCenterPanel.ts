@@ -156,6 +156,7 @@ export class SeadragonCenterPanel extends CenterPanel {
 
     createUI(): void {
 
+        var prefixUrl = this.extension.data.root + '/img/';
         this.$spinner = $('<div class="spinner"></div>');
         this.$content.append(this.$spinner);
 
@@ -337,17 +338,17 @@ export class SeadragonCenterPanel extends CenterPanel {
             $.publish(Events.SEADRAGON_ROTATION, [args.degrees]);
         });
         
-        $.subscribe(BaseEvents.ADJUST_CONTRAST, (e, params) => {
+        $.subscribe(BaseEvents.ADJUST_CONTRAST, (e: any, params: any) => {
             this.contrastPercent = params;
             this.adjustImage(false);
         });
         
-        $.subscribe(BaseEvents.ADJUST_BRIGHTNESS, (e, params) => {
+        $.subscribe(BaseEvents.ADJUST_BRIGHTNESS, (e: any, params: any) => {
             this.brightnessPercent = params;
             this.adjustImage(false);
         });
         
-        $.subscribe(BaseEvents.ADJUST_FINALIZE, (e, params) => {
+        $.subscribe(BaseEvents.ADJUST_FINALIZE, (e: any, params: any) => {
             this.adjustImage(true);
         });
         
@@ -365,12 +366,12 @@ export class SeadragonCenterPanel extends CenterPanel {
     }
     
     adjustImage(async: boolean) {
-        var processors = [];
+        var processors: any[] = [];
         
-        if (this.contrastPercent != 50)
+        if (this.contrastPercent !== 50)
             processors.push(OpenSeadragon.Filters.CONTRAST(this.convertFromPercent(this.contrastPercent, 0.2, 1, 2)));
             
-        if (this.brightnessPercent != 50)
+        if (this.brightnessPercent !== 50)
             processors.push(OpenSeadragon.Filters.BRIGHTNESS(this.convertFromPercent(this.brightnessPercent, -200, 0, 130)));
         
         this.viewer.setFilterOptions({
@@ -1034,8 +1035,6 @@ export class SeadragonCenterPanel extends CenterPanel {
                 - parseInt(this.$title.css("padding-left"), 10) 
                 - parseInt(this.$title.css("padding-right"), 10));
         }
-
-        this.$title.ellipsisFill(this.extension.sanitize(this.title));
 
         this.$spinner.css('top', (this.$content.height() / 2) - (this.$spinner.height() / 2));
         this.$spinner.css('left', (this.$content.width() / 2) - (this.$spinner.width() / 2));

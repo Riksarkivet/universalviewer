@@ -1,5 +1,4 @@
 import BaseAdjustDialogue = require("../../modules/uv-dialogues-module/AdjustDialogue");
-import ISeadragonExtension = require("./ISeadragonExtension");
 
 class AdjustDialogue extends BaseAdjustDialogue {
 

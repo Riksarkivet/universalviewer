@@ -29,11 +29,11 @@ class AdjustDialogue extends Dialogue {
         this.openCommand = BaseEvents.SHOW_ADJUST_DIALOGUE;
         this.closeCommand = BaseEvents.HIDE_ADJUST_DIALOGUE;
 
-        $.subscribe(this.openCommand, (e, params) => {
+        $.subscribe(this.openCommand, (e: any, params: any) => {
             this.open();
         });
 
-        $.subscribe(this.closeCommand, (e) => {
+        $.subscribe(this.closeCommand, (e: any) => {
             this.close();
         });
 

@@ -1094,7 +1094,7 @@ export class BaseExtension implements IExtension {
     }
 
     SetUrlAfter(searchvalue: string, value: string): void {
-        if (this.isDeepLinkingEnabled()) {
+        if (!this.data.embedded) {
             RaUvCustom.SetUrlAfter(searchvalue, value, parent.document);
         }
     }

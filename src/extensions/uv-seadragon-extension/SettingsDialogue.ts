@@ -8,13 +8,6 @@ export class SettingsDialogue extends BaseSettingsDialogue {
     $navigatorEnabled: JQuery;
     $navigatorEnabledCheckbox: JQuery;
     $navigatorEnabledLabel: JQuery;
-
-    $clickToZoomEnabled: JQuery;
-    $clickToZoomEnabledCheckbox: JQuery;
-    $clickToZoomEnabledLabel: JQuery;
-
-
-
     $pagingEnabled: JQuery;
     $pagingEnabledCheckbox: JQuery;
     $pagingEnabledLabel: JQuery;

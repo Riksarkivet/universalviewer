@@ -984,7 +984,7 @@ export class Extension extends BaseExtension implements ISeadragonExtension {
             if (this.helper.isRightToLeft()) {
                 index = this.tryDecrementIndex(indices[0], 5);
             } else {
-                index = this.tryDecrementIndex(indices.last(), 5);
+                index = this.tryDecrementIndex(indices[indices.length - 1], 5);
             }
 
         } else {
@@ -1004,7 +1004,7 @@ export class Extension extends BaseExtension implements ISeadragonExtension {
             if (this.helper.isRightToLeft()) {
                 index = this.tryIncrementIndex(indices[0], 5);
             } else {
-                index = this.tryIncrementIndex(indices.last(), 5);
+                index = this.tryIncrementIndex(indices[indices.length - 1], 5);
             }
 
         } else {

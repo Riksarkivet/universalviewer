@@ -80,7 +80,7 @@ export class MoreInfoRightPanel extends RightPanel {
     }
 
     riksarkivetSetupCopySourceRef() {
-        $.subscribe(RiksarkivetCommands.COPY_SOURCE_REFERENCE, (e) => {
+        $.subscribe(RiksarkivetCommands.COPY_SOURCE_REFERENCE, (e: any) => {
             var label = this.content.sourceReference;
             var $copyBtn = $('.items .item .label:contains(' + label + ') .copyText');
             $copyBtn.trigger('click');

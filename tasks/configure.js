@@ -118,7 +118,7 @@ module.exports = function (grunt) {
             //    locale.default = true;
             //}
 
-            if (_.contains(enabledLocales, locale.name))
+            if (_.includes(enabledLocales, locale.name))
                 config.localisation.locales.push(locale);
         });
 

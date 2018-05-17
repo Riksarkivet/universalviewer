@@ -5,6 +5,6 @@ interface JQuery {
 interface rangesliderOptions {
     polyfill?: boolean,
     onInit?: () => void,
-    onSlide?: (position, value) => void,
-    onSlideEnd?: (position, value) => void,
+    onSlide?: (position: any, value: any) => void,
+    onSlideEnd?: (position: any, value: any) => void,
 }

@@ -10,9 +10,9 @@ class RiksarkivetPrint {
     printSourceBottomMarginsInPixels: number;
     printSourceTextHeightInPixels: number;
     printSourceText: string;
-    imageUri: string;
+    imageUri: string|null;
     riksarkivet: Riksarkivet;
-    $img;
+    $img: JQuery;
 
 
     constructor() {
@@ -28,36 +28,37 @@ class RiksarkivetPrint {
         this.riksarkivet = new Riksarkivet();
     }
 
-    public printImage(imageUri: string, title: string, canvas: Manifesto.ICanvas) {
+    public printImage(imageUri: string|null, title: string|null, canvas: Manifesto.ICanvas) {
         var that = this;
 
         var bildid = this.riksarkivet.GetBildIdFromCanvas(canvas);
         this.printSourceText = title + ' - ' + bildid + ' (Riksarkivet)';
         this.imageUri = imageUri;
 
-        var img = new Image();
+        var img: HTMLImageElement = new Image();
         img.crossOrigin = "use-credentials";
         img.id = this.printImageId;
         //The callback function is declared as an ordinary js-function in order to access the image element with "this". The current object is accessed with "that".
         img.onload = function () {
-            if (!this.complete || typeof this.naturalWidth === "undefined" || this.naturalWidth === 0) {
+            var $imgElement: HTMLImageElement = <HTMLImageElement> this;
+            if (!$imgElement.complete || typeof $imgElement.naturalWidth === "undefined" || $imgElement.naturalWidth === 0) {
                 alert('broken image!');
             }
-            var imageWidth = this.width + that.printSourceLeftMarginsInPixels;
-            var imageHeight = this.height + that.printSourceTextHeightInPixels + that.printSourceTopMarginsInPixels + that.printSourceBottomMarginsInPixels;
-            var containerDivHeight = imageHeight + that.printSourceTextHeightInPixels;
-            var whRatio = parseFloat(imageWidth) / parseFloat(imageHeight);
+            var imageWidth = $imgElement.width + that.printSourceLeftMarginsInPixels;
+            var imageHeight = $imgElement.height + that.printSourceTextHeightInPixels + that.printSourceTopMarginsInPixels + that.printSourceBottomMarginsInPixels;
+            //var containerDivHeight = imageHeight + that.printSourceTextHeightInPixels;
+            var whRatio = imageWidth / imageHeight;
             var widthPercentageLandscape = that.calculateWidthPercentageForLandscape(whRatio);
             var widthPercentagePortrait = that.calculateWidthPercentageForPortrait(whRatio);
             that.printIframe(widthPercentageLandscape, widthPercentagePortrait);
         };
 
-        img.src = imageUri;
+        img.src = <string>imageUri;
         this.$img = $(img);
 
     };
 
-    private getPrintStyles(widthPercentageLandscape, widthPercentagePortrait) {
+    private getPrintStyles(widthPercentageLandscape: number, widthPercentagePortrait: number) {
         var fullWidthLandscape = 100;
         var fullWidthPortrait = 100;
         var sourceTextLandscapeStyle = this.printSourceTextIdWithHash + ' { width: ' + fullWidthLandscape + '%; height: ' + this.printSourceTextHeightInPixels + 'px; vertical-align:top; margin-left: ' + this.printSourceLeftMarginsInPixels + 'px; max-width: 90% } ';
@@ -133,7 +134,7 @@ class RiksarkivetPrint {
         jFrame.contentWindow.document.close();
     }
 
-    private createIframeElement(strFrameId, strFrameName) {
+    private createIframeElement(strFrameId: string, strFrameName: string) {
         var ifrm = document.createElement('iframe');
         ifrm.id = strFrameId;
         ifrm.name = strFrameName;
@@ -164,7 +165,7 @@ class RiksarkivetPrint {
         return htmlArray.join("");
     }
 
-    private calculateWidthPercentageForLandscape(WHRatio): number {
+    private calculateWidthPercentageForLandscape(WHRatio: number): number {
         //The height/width ratio for A4 is 297/210 but it has to be adjusted in landscape mode for some reason.
         //We use 1.5. If you increase this value the page will be shrinked even more.
         var breakpointRatio = 297 / 210;
@@ -189,7 +190,7 @@ class RiksarkivetPrint {
 
     }
 
-    private calculateWidthPercentageForPortrait(WHRatio): number {
+    private calculateWidthPercentageForPortrait(WHRatio: number): number {
         //If you need to shrink the page even more encrease the value of the breakpointRatio.
         var whRatioA4 = 210 / 297;
         var breakpointRatio = whRatioA4;

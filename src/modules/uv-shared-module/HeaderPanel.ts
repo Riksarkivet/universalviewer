@@ -5,9 +5,9 @@ import {Information} from "../uv-shared-module/Information";
 import {InformationAction} from "../uv-shared-module/InformationAction";
 import {InformationArgs} from "../uv-shared-module/InformationArgs";
 import {InformationFactory} from "../uv-shared-module/InformationFactory";
-import CroppedImageDimensions = require("../../extensions/uv-seadragon-extension/CroppedImageDimensions");
 import RiksarkivetPrint = require("../../modules/uv-shared-module/RiksarkivetPrint");
-import ISeadragonExtension = require("../../Extensions/uv-seadragon-extension/ISeadragonExtension");
+import {ISeadragonExtension} from "../../extensions/uv-seadragon-extension/ISeadragonExtension";
+import {CroppedImageDimensions} from "../../extensions/uv-seadragon-extension/CroppedImageDimensions";
 
 
 export class HeaderPanel extends BaseView {
@@ -83,7 +83,7 @@ export class HeaderPanel extends BaseView {
             checkMobile = true;
         }
         var checkOnlyUVViewer = false;
-        if (url.contains("Folk_") || url.contains("Sdhk_") || url.contains("BRFV_") || url.contains("Brev_")) {
+        if (url.indexOf("Folk_") !== -1 || url.indexOf("Sdhk_") !== -1 || url.indexOf("BRFV_") !== -1 || url.indexOf("Brev_") !== -1) {
             checkOnlyUVViewer = true;
         }
         if (!checkMobile && !checkOnlyUVViewer) {
@@ -153,7 +153,7 @@ export class HeaderPanel extends BaseView {
                 //TODO Ungefär samma funktion finns i DownloadDialaogue. kan den användas istället?
                 imageUri = canvas.getCanonicalImageUri(canvas.getWidth());
                 var uri_parts: string [] = imageUri.split('/');
-                var rotation: number = (<ISeadragonExtension>this.extension).getViewerRotation();
+                var rotation: number | null = (<ISeadragonExtension>this.extension).getViewerRotation();
                 uri_parts[ uri_parts.length - 2 ] = String(rotation);
                 imageUri = uri_parts.join('/');                
             }
@@ -181,9 +181,12 @@ export class HeaderPanel extends BaseView {
     }
 
     private isImageZoomed(canvas: Manifesto.ICanvas, viewer: any): boolean {
-        var dimensions: CroppedImageDimensions = (<ISeadragonExtension>this.extension).getCroppedImageDimensions(canvas, viewer);
-        var currentWidth: number = dimensions.size.width;
-        var currentHeight: number = dimensions.size.height;
+        var dimensions: CroppedImageDimensions | null = (<ISeadragonExtension>this.extension).getCroppedImageDimensions(canvas, viewer);
+        if (!CroppedImageDimensions) {
+            return false;
+        }
+        var currentWidth: number = (<CroppedImageDimensions>dimensions).size.width;
+        var currentHeight: number = (<CroppedImageDimensions>dimensions).size.height;
         var wholeWidth: number = canvas.getWidth();
         var wholeHeight: number = canvas.getHeight();
 
@@ -191,10 +194,10 @@ export class HeaderPanel extends BaseView {
         var percentageHeight: number = (currentHeight / wholeHeight) * 100;
 
         var disabledPercentage: number = 90;
-        if (this.extension.config.modules.downloadDialogue &&
-            this.extension.config.modules.downloadDialogue.options &&
-            this.extension.config.modules.downloadDialogue.options.currentViewDisabledPercentage) {
-            disabledPercentage = this.extension.config.modules.downloadDialogue.options.currentViewDisabledPercentage;
+        if (this.extension.data.config.modules.downloadDialogue &&
+            this.extension.data.config.modules.downloadDialogue.options &&
+            this.extension.data.config.modules.downloadDialogue.options.currentViewDisabledPercentage) {
+            disabledPercentage = this.extension.data.config.modules.downloadDialogue.options.currentViewDisabledPercentage;
         }
 
         // if over disabledPercentage of the size of whole image then not zoomed
@@ -303,25 +306,26 @@ export class HeaderPanel extends BaseView {
     }
 
     updateFullScreenButton(): void {
-        if (!Utils.Documents.supportsFullscreen() || !Utils.Bools.getBool(this.options.fullscreenEnabled, true)) {
+        if (!Utils.Bools.getBool(this.options.fullscreenEnabled, true) || !Utils.Documents.supportsFullscreen()) {
             this.$fullScreenBtn.hide();
+            return;
         }
 
-        if (this.extension.isLightbox) {
+        if (this.extension.data.isLightbox) {
             this.$fullScreenBtn.addClass('lightbox');
         }
 
         if (this.extension.isFullScreen()) {
             this.$fullScreenBtn.swapClass('fullScreen', 'exitFullscreen');
-            //this.$fullScreenBtn.text(this.content.exitFullScreen);
+            this.$fullScreenBtn.find('i').swapClass('uv-icon-fullscreen', 'uv-icon-exit-fullscreen');
             this.$fullScreenBtn.attr('title', this.content.exitFullScreen);
         } else {
             this.$fullScreenBtn.swapClass('exitFullscreen', 'fullScreen');
-            //this.$fullScreenBtn.text(this.content.fullScreen);
+            this.$fullScreenBtn.find('i').swapClass('uv-icon-exit-fullscreen', 'uv-icon-fullscreen');
             this.$fullScreenBtn.attr('title', this.content.fullScreen);
         }
     }
-    
+
     updateOldImageViewerLink(): void {
         if (this.extension.isFullScreen()) {
             this.$linkOldImageViewer.hide();
@@ -330,7 +334,7 @@ export class HeaderPanel extends BaseView {
         }
     }
 
-    updateButton($button, buttonEnabled) {
+    updateButton($button: JQuery, buttonEnabled: string) {
         var configEnabled = Utils.Bools.getBool(this.options[buttonEnabled], true);
 
         if (configEnabled) {
