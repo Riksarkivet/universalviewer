@@ -210,34 +210,10 @@ module.exports = function (grunt) {
                         expand: true,
                         filter: 'isFile',
                         src: [ 
-                            'themes/uv-sv-SE-theme/img/*',
-                            'themes/uv-sv-SE-theme/img/uv-contentleftpanel-module/*',
-                            'themes/uv-sv-SE-theme/img/uv-moreinforightpanel-module/*',
-                            'themes/uv-sv-SE-theme/img/uv-pagingheaderpanel-module/*',
-                            'themes/uv-sv-SE-theme/img/uv-seadragoncenterpanel-module/*',
-                            'themes/uv-sv-SE-theme/img/uv-searchfooterpanel-module/*',
-                            'themes/uv-sv-SE-theme/img/uv-shared-module/*',
-                            'themes/uv-sv-SE-theme/img/uv-treeviewleftpanel-module/*',
-                            'themes/uv-sv-SE-theme/css/uv-seadragon-extension/theme.css',
-                            'lib/app.js',
-                            'lib/base64.min.js',
-                            'lib/easyXDM.min.js', 
-                            'lib/easyxdm.swf', 
-                            'lib/embed.js', 
-                            'lib/json2.min.js',
-                            'lib/iiif-tree-component.js',
-                            'lib/iiif-metadata-component.js',
-                            'lib/iiif-gallery-component.js',
-                            'lib/openseadragon.js',
-                            'lib/openseadragon.min.js',
-                            'lib/openseadragon-filtering.js',
-                            'lib/require.js', 
-                            'lib/uv-seadragon-extension.en-GB.config.json',
-                            'lib/uv-seadragon-extension.sv-SE.config.json',
-                            'lib/uv-seadragon-extension-dependencies.js',
-                            'lib/bundle.min.js',
-                            'lib/rangeslider.js',
-                            'lib/rangeslider.css'
+                            './*',
+                            'img/*',
+                            'themes/uv-sv-SE-theme/**/*',
+                            'lib/**/*'
                         ],
                         dest: config.directories.soktjanst
                     }
@@ -448,39 +424,40 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build-soktjanst', '', function () {
 
-        refresh();
+        readPackageJson();
+        var tsType = (grunt.option('dist')) ? 'ts:dist' : 'ts:dev';
+        var execType = (grunt.option('dist')) ? 'exec:distbuild' : 'exec:devbuild';
+
         grunt.task.run(
-            'clean:bundle',
-            'concat:bundle',
-            'uglify:bundle',
-            'typescript:dist',
+            'clean:libs',
+            'clean:themes',
+            'sync',
+            'copy:bundle',
+            'concat:offline',
+            tsType,
             'clean:extension',
             'configure:apply',
             'clean:build',
             'copy:schema',
+            execType,
             'copy:build',
-            'exec:build',
-            'replace:html',
-            'replace:js',
             'theme:create',
             'theme:dist',
-            'replace:moduleimages',
-            'replace:themeimages',
-            'replace:versions',
-            'dist',
+            'replace:moduleassets',
+            'replace:themeassets',
             'copy:soktjanst'
         );
     });
 
     grunt.registerTask('copy-soktjanst', '', function () {
-        refresh();
+        readPackageJson();
         grunt.task.run(
             'copy:soktjanst'
         );
     });
 
     grunt.registerTask('clean-soktjanst', '', function () {
-        refresh();
+        readPackageJson();
         grunt.task.run(
             'clean:soktjanst'
         );
