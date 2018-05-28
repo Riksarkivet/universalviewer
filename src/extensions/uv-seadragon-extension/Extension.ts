@@ -24,7 +24,7 @@ import { SeadragonCenterPanel } from "../../modules/uv-seadragoncenterpanel-modu
 import { SettingsDialogue } from "./SettingsDialogue";
 import { ShareDialogue } from "./ShareDialogue";
 import { Shell } from "../../modules/uv-shared-module/Shell";
-import AdjustDialogue = require("./AdjustDialogue");
+import { AdjustDialogue } from "./AdjustDialogue";
 import IThumb = Manifold.IThumb;
 import ITreeNode = Manifold.ITreeNode;
 import AnnotationGroup = Manifold.AnnotationGroup;
