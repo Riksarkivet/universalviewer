@@ -16,7 +16,7 @@ import {Shell} from "./Shell";
 import {SynchronousRequire} from "../../SynchronousRequire";
 import IThumb = Manifold.IThumb;
 import { UVUtils } from "./Utils";
-import {Riksarkivet} from "../../modules/uv-shared-module/Riksarkivet";
+import Riksarkivet = require("../../modules/uv-shared-module/Riksarkivet");
 
 export class BaseExtension implements IExtension {
 

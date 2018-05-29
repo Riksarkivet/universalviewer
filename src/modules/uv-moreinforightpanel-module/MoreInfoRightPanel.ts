@@ -88,4 +88,4 @@ export class MoreInfoRightPanel extends RightPanel {
     }
 }
 
-import {RiksarkivetCommands} from "../uv-shared-module/RiksarkivetCommands";
+import RiksarkivetCommands = require("../uv-shared-module/RiksarkivetCommands");

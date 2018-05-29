@@ -1,6 +1,6 @@
-import {AdjustDialogue as BaseAdjustDialogue} from "../../modules/uv-dialogues-module/AdjustDialogue";
+import BaseAdjustDialogue = require("../../modules/uv-dialogues-module/AdjustDialogue");
 
-export class AdjustDialogue extends BaseAdjustDialogue {
+class AdjustDialogue extends BaseAdjustDialogue {
 
     constructor($element: JQuery) {
         super($element);
@@ -16,3 +16,5 @@ export class AdjustDialogue extends BaseAdjustDialogue {
     //     super.open();
     // }
 }
+
+export = AdjustDialogue;

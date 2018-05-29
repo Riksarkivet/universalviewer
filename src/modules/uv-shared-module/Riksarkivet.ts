@@ -1,6 +1,6 @@
-import {RiksarkivetCommands} from "./RiksarkivetCommands";
+import RiksarkivetCommands = require("./RiksarkivetCommands");
 
-export class Riksarkivet {
+class Riksarkivet {
     public GetBildIdFromCanvas(canvas: Manifesto.ICanvas) {
         var bildid = canvas.getImages()[0].getResource().getServices()[0].id;
         var datasource = bildid.substr(bildid.lastIndexOf("/") + 1).split('!')[0];
@@ -20,3 +20,5 @@ export class Riksarkivet {
         return null;
     }
 }
+
+export = Riksarkivet;

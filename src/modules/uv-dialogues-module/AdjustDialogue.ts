@@ -2,7 +2,7 @@ import {Dialogue} from "../uv-shared-module/Dialogue";
 import {BaseEvents} from "../uv-shared-module/BaseEvents";
 import {Shell} from "../uv-shared-module/Shell";
 
-export class AdjustDialogue extends Dialogue {
+class AdjustDialogue extends Dialogue {
 
     isSliding = false;
     
@@ -144,3 +144,5 @@ export class AdjustDialogue extends Dialogue {
         super.resize();
     }
 }
+
+export = AdjustDialogue;

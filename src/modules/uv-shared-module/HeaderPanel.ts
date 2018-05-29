@@ -5,7 +5,7 @@ import {Information} from "../uv-shared-module/Information";
 import {InformationAction} from "../uv-shared-module/InformationAction";
 import {InformationArgs} from "../uv-shared-module/InformationArgs";
 import {InformationFactory} from "../uv-shared-module/InformationFactory";
-import {RiksarkivetPrint} from "../../modules/uv-shared-module/RiksarkivetPrint";
+import RiksarkivetPrint = require("../../modules/uv-shared-module/RiksarkivetPrint");
 import {ISeadragonExtension} from "../../extensions/uv-seadragon-extension/ISeadragonExtension";
 import {CroppedImageDimensions} from "../../extensions/uv-seadragon-extension/CroppedImageDimensions";
 

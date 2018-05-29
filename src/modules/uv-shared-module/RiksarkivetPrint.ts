@@ -1,6 +1,5 @@
-import {Riksarkivet} from "./Riksarkivet";
-
-export class RiksarkivetPrint {
+import Riksarkivet = require("./Riksarkivet");
+class RiksarkivetPrint {
     UVContainerIdWithHash: string;
     printSourceTextId: string;
     printSourceTextIdWithHash: string;
@@ -216,3 +215,5 @@ export class RiksarkivetPrint {
 
     }
 }
+
+export = RiksarkivetPrint;
