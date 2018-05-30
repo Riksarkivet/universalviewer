@@ -12,7 +12,8 @@ module.exports = {
                 'iiif-gallery-component/dist/iiif-gallery-component.js',
                 'iiif-metadata-component/dist/iiif-metadata-component.js',
                 'iiif-tree-component/dist/iiif-tree-component.js',
-                'openseadragon/build/openseadragon/openseadragon.min.js'
+                'openseadragon/build/openseadragon/openseadragon.min.js',
+                'openseadragon-filtering/openseadragon-filtering.js'
             ],
             dest: config.directories.uvSeadragonExtension + '/lib'
         }
