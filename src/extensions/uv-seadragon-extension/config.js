@@ -13,7 +13,8 @@ module.exports = {
                 'iiif-metadata-component/dist/iiif-metadata-component.js',
                 'iiif-tree-component/dist/iiif-tree-component.js',
                 'openseadragon/build/openseadragon/openseadragon.min.js',
-                'openseadragon-filtering/openseadragon-filtering.js'
+                'openseadragon-filtering/openseadragon-filtering.js',
+                'uv-custom/dist/ra-uv-custom.js'
             ],
             dest: config.directories.uvSeadragonExtension + '/lib'
         }

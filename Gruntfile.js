@@ -235,19 +235,12 @@ module.exports = function (grunt) {
             RACustom: {
                 files: [
                     {
-                        cwd: config.directories.bower,
+                        cwd: config.directories.npm,
                         expand: true,
                         flatten: true,
                         src: ['rangeslider.js/dist/rangeslider.js', 'rangeslider.js/dist/rangeslider.css'],
                         dest: config.directories.lib
-                    },
-                    {
-                        cwd: config.directories.bower,
-                        expand: true,
-                        flatten: true,
-                        src: ['openseadragon-filtering/openseadragon-filtering.js'],
-                        dest: config.directories.uvSeadragonExtension + '/lib'
-                    }                    
+                    }
                 ]
             },
             npmComponents: {
@@ -429,22 +422,7 @@ module.exports = function (grunt) {
         var execType = (grunt.option('dist')) ? 'exec:distbuild' : 'exec:devbuild';
 
         grunt.task.run(
-            'clean:libs',
-            'clean:themes',
-            'sync',
-            'copy:bundle',
-            'concat:offline',
-            tsType,
-            'clean:extension',
-            'configure:apply',
-            'clean:build',
-            'copy:schema',
-            execType,
-            'copy:build',
-            'theme:create',
-            'theme:dist',
-            'replace:moduleassets',
-            'replace:themeassets',
+            'build',
             'copy:soktjanst'
         );
     });

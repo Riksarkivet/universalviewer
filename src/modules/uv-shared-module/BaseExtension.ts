@@ -1094,9 +1094,7 @@ export class BaseExtension implements IExtension {
     }
 
     SetUrlAfter(searchvalue: string, value: string): void {
-        if (!this.data.embedded) {
-            RaUvCustom.SetUrlAfter(searchvalue, value, parent.document);
-        }
+        RaUvCustom.SetUrlAfter(searchvalue, value, parent.document);
     }
 
     viewCanvas(canvasIndex: number): void {
