@@ -81,15 +81,19 @@ export class PagingHeaderPanel extends HeaderPanel {
         `);
         this.$prevOptions.append(this.$firstButton);
 
+        this.$prevFiveButton = $(`
+          <button class="btn imageBtn prev-five" tabindex="0" title="${this.content.prevFivePages}">
+            <i class="uv-icon-prev-five" aria-hidden="true"></i><span>${this.content.prevFivePages}</span>
+          </button>
+        `);
+        this.$prevOptions.append(this.$prevFiveButton);
+
         this.$prevButton = $(`
           <button class="btn imageBtn prev" tabindex="0" title="${this.content.previous}">
             <i class="uv-icon-prev" aria-hidden="true"></i><span>${this.content.previous}</span>
           </button>
         `);
         this.$prevOptions.append(this.$prevButton);
-
-        this.$prevFiveButton = $('<a class="imageBtn prev-five" tabindex="0"><span /></a>');
-        this.$prevOptions.append(this.$prevFiveButton);
 
         this.$modeOptions = $('<div class="mode"></div>');
         this.$centerOptions.append(this.$modeOptions);
@@ -184,6 +188,13 @@ export class PagingHeaderPanel extends HeaderPanel {
         `);
         this.$nextOptions.append(this.$nextButton);
 
+        this.$nextFiveButton = $(`
+          <button class="btn imageBtn next-five" tabindex="0" title="${this.content.nextFivePages}">
+            <i class="uv-icon-next-five" aria-hidden="true"></i><span>${this.content.nextFivePages}</span>
+          </button>
+        `);
+        this.$nextOptions.append(this.$nextFiveButton);
+
         this.$lastButton = $(`
           <button class="btn imageBtn last" tabindex="0" title="${this.content.last}">
             <i class="uv-icon-last" aria-hidden="true"></i><span>${this.content.last}</span>
@@ -191,9 +202,6 @@ export class PagingHeaderPanel extends HeaderPanel {
         `);
         this.$nextOptions.append(this.$lastButton);
 
-        this.$nextFiveButton = $('<a class="imageBtn next-five" tabindex="0"><span /></a>');
-        this.$nextOptions.append(this.$nextFiveButton);
-        
         if(!Utils.Device.isTouch()){
             this.$centerOptions.find(".imageBtn").addClass("no-touch");
         }
