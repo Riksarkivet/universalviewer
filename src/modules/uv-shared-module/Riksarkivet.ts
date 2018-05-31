@@ -2,9 +2,15 @@ import {RiksarkivetCommands} from "./RiksarkivetCommands";
 
 export class Riksarkivet {
     public GetBildIdFromCanvas(canvas: Manifesto.ICanvas) {
-        var bildid = canvas.getImages()[0].getResource().getServices()[0].id;
+        var firstImage = canvas.getImages()[0];
+        var imageResource: Manifesto.Resource | null = firstImage ? firstImage.getResource() : null;
+        var resourceService = imageResource ? imageResource.getServices() : null;
+        if (resourceService == null) {
+            return null;
+        }
+        var bildid = resourceService[0].id;
         var datasource = bildid.substr(bildid.lastIndexOf("/") + 1).split('!')[0];
-        if (datasource == "arkis") {
+        if (datasource === "arkis") {
             datasource = "";
         }
         else {

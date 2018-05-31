@@ -1105,8 +1105,10 @@ export class BaseExtension implements IExtension {
         }
 
         var canvas: Manifesto.ICanvas = this.helper.getCanvasByIndex(canvasIndex);
-        var bildid = this.riksarkivet.GetBildIdFromCanvas(canvas);
-        this.SetUrlAfter("/", bildid);
+        var bildid: string | null = this.riksarkivet.GetBildIdFromCanvas(canvas);
+        if (bildid !== null) {
+            this.SetUrlAfter("/", bildid);
+        }
 
         $.publish(BaseEvents.OPEN_EXTERNAL_RESOURCE);
     }
