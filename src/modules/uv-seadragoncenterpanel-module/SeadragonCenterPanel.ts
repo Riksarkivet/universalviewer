@@ -185,7 +185,7 @@ export class SeadragonCenterPanel extends CenterPanel {
             autoHideControls: Utils.Bools.getBool(this.config.options.autoHideControls, true),
             prefixUrl: this.extension.data.root + '/img/',
             minScrollDeltaTime: 10,
-            zoomPerClick: 1.5,
+            zoomPerClick: 1.1,
             gestureSettingsMouse: {
                 clickToZoom: Utils.Bools.getBool(this.extension.data.config.options.clickToZoomEnabled, true)
             },
