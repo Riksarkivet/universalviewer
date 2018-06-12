@@ -86,7 +86,9 @@ export class HeaderPanel extends BaseView {
         if (url.indexOf("Folk_") !== -1 || url.indexOf("Sdhk_") !== -1 || url.indexOf("BRFV_") !== -1 || url.indexOf("Brev_") !== -1) {
             checkOnlyUVViewer = true;
         }
-        if (!checkMobile && !checkOnlyUVViewer) {
+
+        var oldViewerLinkEnabled = Utils.Bools.getBool(this.options["oldViewerLinkEnabled"], true);
+        if (!checkMobile && !checkOnlyUVViewer && oldViewerLinkEnabled) {
             this.$linkOldImageViewer = $('<a class="linkOldImageViewer" target="_top" tabindex="2" title="' + this.content.backOldImageViewer + '" href="' + url + '?viewer=DjVu">' + this.content.backOldImageViewer + '</a>');
             this.$rightOptions.append(this.$linkOldImageViewer);
         }
