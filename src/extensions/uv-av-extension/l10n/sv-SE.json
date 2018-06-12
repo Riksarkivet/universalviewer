@@ -1,0 +1,174 @@
+{
+  "localisation": {
+    "label": "Svenska"
+  },
+  "content": {
+    "authCORSError": "Din webbläsare stödjer inte CORS, vänligen uppgradera för att se detta innehåll.",
+    "authorisationFailedMessage": "Din inloggning misslyckades. Var snäll och försök igen.",
+    "canvasIndexOutOfRange": "Bildnummer utanför intervall.",
+    "forbiddenResourceMessage": "Du har inte behörighet att se den här bilden.",
+    "termsOfUse": "Användarvillkor"
+  },
+  "modules": {
+    "authDialogue": {
+      "content": {
+        "cancel": "Avbryt",
+        "confirm": "Bekräfta"
+      }
+    },
+    "clickThroughDialogue": {
+      "content": {
+        "viewTerms": "Läs villkor"
+      }
+    },
+    "contentLeftPanel": {
+      "content": {
+        "collapse": "Minimera innehåll",
+        "collapseFull": "Minimera galleri",
+        "date": "datum",
+        "expand": "Öppna innehåll",
+        "expandFull": "Öppna Galleri",
+        "index": "Index",
+        "manifestRanges": "Manifest Ranges",
+        "searchResult": "{0} sökresultat",
+        "searchResults": "{0} sökresultat",
+        "sortBy": "Sortera efter:",
+        "thumbnails": "Tumnaglar",
+        "title": "Innehåll",
+        "volume": "volym"
+      }
+    },
+    "dialogue": {
+      "content": {
+        "close": "Stäng"
+      }
+    },
+    "downloadDialogue": {
+      "content": {
+        "currentViewAsJpg": "Aktuell vy (jpg)",
+        "currentViewAsJpgExplanation": "Öppnas i nytt fönster",
+        "download": "Ladda ner",
+        "downloadSelection": "Ladda ner valt område",
+        "downloadSelectionExplanation": "Öppnar dialog där du kan välja de sidor som ska laddas ner.",
+        "editSettings": "Ändra inställningar",
+        "entireDocument": "Hela dokumentet ({0})",
+        "entireFileAsOriginal": "Hela filen ({0})",
+        "noneAvailable": "Inga nerladdningsinställningar är tillgängliga.",
+        "pagingNote": "Stäng av dubbelsidig vy för ytterligare alternativ.",
+        "preview": "Förhandsgranska",
+        "title": "Ladda ner",
+        "wholeImageHighRes": "Hela bilden hög upplösning ({2})",
+        "wholeImageHighResExplanation": "Öppnas i nytt fönster.",
+        "wholeImagesHighRes": "Hela bilder ({0})",
+        "wholeImagesHighResExplanation": "Öppnas i två nya fönster.",
+        "wholeImageLowResAsJpg": "Hela bilden låg upplösning (jpg)",
+        "wholeImageLowResAsJpgExplanation": "Öppnas i nytt fönster"
+      }
+    },
+    "footerPanel": {
+      "content": {
+        "bookmark": "Lägg till som bokmärke",
+        "download": "Ladda ner",
+        "embed": "Inbädda",
+        "exitFullScreen": "Lämna fullskärmsläge",
+        "feedback": "Feedback",
+        "fullScreen": "Fullskärmsläge",
+        "moreInfo": "Mer information",
+        "open": "Öppna",
+        "share": "Dela"
+      }
+    },
+    "genericDialogue": {
+      "content": {
+        "emptyValue": "ange ett värde.",
+        "invalidNumber": "Ange ett giltigt nummer.",
+        "noMatches": "Inga träffar hittades.",
+        "ok": "OK",
+        "pageNotFound": "Detta objekt innehåller inte angivet sidnummer. Prova att ändra numreringstyp till 'bild'.",
+        "refresh": "Uppdatera"
+      }
+    },
+    "headerPanel": {
+      "content": {
+        "settings": "Inställningar"
+      }
+    },
+    "helpDialogue": {
+      "content": {
+        "text": "placeholder text",
+        "title": "Hjälp"
+      }
+    },
+    "loginDialogue": {
+      "content": {
+        "login": "Logga in",
+        "logout": "Logga ut",
+        "cancel": "Avbryt"
+      }
+    },
+    "moreInfoRightPanel": {
+      "content": {
+        "attribution": "Erkännande",
+        "collapse": "Minimera information",
+        "collapseFull": "Minimera galleri",
+        "description": "Beskrivning",
+        "expand": "Öppna information",
+        "expandFull": "Öppna galleri",
+        "holdingText": "Your module goes here!",
+        "less": "mindre",
+        "license": "Licens",
+        "logo": "Logo",
+        "more": "mer",
+        "noData": "Ingen information finns att visa",
+        "page": "Om bild",
+        "title": "Information",
+        "manifestHeader": "Om källan",
+        "canvasHeader": "Om bilden",
+        "copyToClipboard": "Kopiera till urklipp",
+        "copiedToClipboard": "Kopierat till urklipp",
+        "sourceReference": "Källhänvisning"
+      }
+    },
+    "avCenterPanel": {
+      "content": {
+        "currentTime": "Aktuell tid",
+        "delimiter": " - ",
+        "duration": "Speltid",
+        "mute": "Tyst",
+        "next": "Nästa",
+        "pause": "Paus",
+        "play": "Spela",
+        "previous": "Föregående"
+      }
+    },
+    "restrictedDialogue": {
+      "content": {
+        "cancel": "Avbryt"
+      }
+    },
+    "settingsDialogue": {
+      "content": {
+        "locale": "Språk",
+        "navigatorEnabled": "Visa minivy",
+        "clickToZoomEnabled": "Zooma med musklick",
+        "pagingEnabled": "Visa dubbelsidig vy",
+        "preserveViewport": "Behåll zoomläge",
+        "title": "Inställningar",
+        "website": "<a href='https://github.com/riksarkivet/universalviewer'>mer info</a>"
+      }
+    },
+    "shareDialogue": {
+      "content": {
+        "customSize": "Anpassad",
+        "embed": "Inbädda",
+        "embedInstructions": "För att inbädda objektet i din webbsida, klipp och klistra koden nedanför.",
+        "height": "Höjd",
+        "iiif": "IIIF-manifest",
+        "share": "Dela",
+        "shareInstructions": "För att dela objektet, kopiera URLen nedanför.",
+        "size": "Storlek:",
+        "width": "Bredd"
+      }
+    }
+  }
+}
