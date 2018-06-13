@@ -22,7 +22,7 @@ export class LeftPanel extends BaseExpandPanel {
         });
     }
 
-    init(): void{
+    init(): void {
         super.init();
 
         if (window.matchMedia && window.matchMedia("(max-width: 768px)").matches)
@@ -36,14 +36,14 @@ export class LeftPanel extends BaseExpandPanel {
     }
 
     getTargetWidth(): number {
-        if (this.isFullyExpanded || !this.isExpanded){
+        if (this.isFullyExpanded || !this.isExpanded) {
             return this.options.panelExpandedWidth;
         } else {
             return this.options.panelCollapsedWidth;
         }
     }
 
-    getFullTargetWidth(): number{
+    getFullTargetWidth(): number {
         return this.$element.parent().width();
     }
 
@@ -61,7 +61,7 @@ export class LeftPanel extends BaseExpandPanel {
     resize(): void {
         super.resize();
 
-        if (this.isFullyExpanded){
+        if (this.isFullyExpanded) {
             this.$element.width(this.$element.parent().width());
         }
     }

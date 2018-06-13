@@ -39,6 +39,11 @@ export default class UVComponent extends _Components.BaseComponent implements IU
             name: 'uv-seadragon-extension'
         };
 
+        this._extensions[manifesto.ResourceType.image().toString()] = {
+            type: OpenSeadragonExtension,
+            name: 'uv-seadragon-extension'
+        };
+
         this._extensions[manifesto.ResourceType.movingimage().toString()] = {
             type: MediaElementExtension,
             name: 'uv-mediaelement-extension'
@@ -72,13 +77,13 @@ export default class UVComponent extends _Components.BaseComponent implements IU
         };
 
         this._extensions[manifesto.MediaType.mp4().toString()] = {
-            type: MediaElementExtension,
-            name: 'uv-mediaelement-extension'
+            type: AVExtension,
+            name: 'uv-av-extension'
         };
 
         this._extensions[manifesto.MediaType.webm().toString()] = {
-            type: MediaElementExtension,
-            name: 'uv-mediaelement-extension'
+            type: AVExtension,
+            name: 'uv-av-extension'
         };
 
         this._extensions[manifesto.MediaType.threejs().toString()] = {
@@ -87,6 +92,26 @@ export default class UVComponent extends _Components.BaseComponent implements IU
         };
 
         this._extensions['av'] = {
+            type: AVExtension,
+            name: 'uv-av-extension'
+        };
+
+        this._extensions['video'] = {
+            type: AVExtension,
+            name: 'uv-av-extension'
+        };
+
+        this._extensions['audio/mp4'] = {
+            type: AVExtension,
+            name: 'uv-av-extension'
+        };
+
+        this._extensions['application/vnd.apple.mpegurl'] = {
+            type: AVExtension,
+            name: 'uv-av-extension'
+        };
+
+        this._extensions['application/dash+xml'] = {
             type: AVExtension,
             name: 'uv-av-extension'
         };
@@ -236,11 +261,11 @@ export default class UVComponent extends _Components.BaseComponent implements IU
             let extension: IExtension | null = null;
 
             // if the canvas has a duration, use the uv-av-extension
-            const duration: number | null = canvas.getDuration();
+            // const duration: number | null = canvas.getDuration();
 
-            if (typeof(duration) !== 'undefined') {
-                extension = that._extensions["av"];
-            } else {
+            // if (typeof(duration) !== 'undefined') {
+            //     extension = that._extensions["av"];
+            // } else {
                 // canvasType will always be "canvas" in IIIF presentation 3.0
                 // to determine the correct extension to use, we need to inspect canvas.content.items[0].format
                 // which is an iana media type: http://www.iana.org/assignments/media-types/media-types.xhtml
@@ -250,7 +275,7 @@ export default class UVComponent extends _Components.BaseComponent implements IU
                     const annotation: Manifesto.IAnnotation = content[0];
                     const body: Manifesto.IAnnotationBody[] = annotation.getBody();
 
-                    if (body) {
+                    if (body && body.length) {
                         const format: Manifesto.MediaType | null = body[0].getFormat();
 
                         if (format) {
@@ -263,6 +288,12 @@ export default class UVComponent extends _Components.BaseComponent implements IU
                                 if (type) {
                                     extension = that._extensions[type.toString()];
                                 }
+                            }
+                        } else {
+                            const type: Manifesto.ResourceType | null = body[0].getType();
+
+                            if (type) {
+                                extension = that._extensions[type.toString()];
                             }
                         }
                     }
@@ -281,7 +312,7 @@ export default class UVComponent extends _Components.BaseComponent implements IU
                         extension = that._extensions[format];
                     }
                 }
-            }
+            //}
 
             // if there still isn't a matching extension, use the default extension.
             if (!extension) {
