@@ -75,7 +75,10 @@ export class HeaderPanel extends BaseView {
         //Link to old image viewer
         var url = parent.document.URL;
 
-        if (url.indexOf("?") > -1) {
+        if (url.indexOf("#?") > -1) {
+            url = url.substr(0, url.indexOf("#?"));
+        }
+        else if (url.indexOf("?") > -1) {
             url = url.substr(0, url.indexOf("?"));
         }
         var checkMobile = false;
