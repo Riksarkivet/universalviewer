@@ -156,7 +156,6 @@ export class SeadragonCenterPanel extends CenterPanel {
 
     createUI(): void {
 
-        var prefixUrl = this.extension.data.root + '/img/';
         this.$spinner = $('<div class="spinner"></div>');
         this.$content.append(this.$spinner);
 
@@ -257,14 +256,15 @@ export class SeadragonCenterPanel extends CenterPanel {
         this.$rotateButton.addClass('rotate viewportNavButton');
         
         if (this.config.options.showAdjustControl && Modernizr.canvas) {
-            this.$adjustButton = $('<a class="adjust" title="' + this.content.adjust + '" tabindex="0" style="background-image:url(' + prefixUrl + 'contrast.png)"><span/></a>');
-            this.$adjustButton.attr('tabindex', 15);
-            this.$adjustButton.insertAfter(this.$rotateButton);
-        
+            this.$adjustButton = this.$rotateButton.clone();
+            this.$adjustButton.prop('title', this.content.adjust);
+            this.$adjustButton.swapClass('rotate', 'adjust');
             this.$adjustButton.onPressed(() => {
                 $.publish(BaseEvents.SHOW_ADJUST_DIALOGUE);
             });        
-        }  
+            this.$adjustButton.insertAfter(this.$rotateButton);
+        }
+
         this.$viewportNavButtonsContainer = this.$viewer.find('.openseadragon-container > div:not(.openseadragon-canvas):first');
         this.$viewportNavButtons = this.$viewportNavButtonsContainer.find('.viewportNavButton');
 

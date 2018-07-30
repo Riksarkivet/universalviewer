@@ -92,26 +92,26 @@ export class HeaderPanel extends BaseView {
 
         var oldViewerLinkEnabled = Utils.Bools.getBool(this.options["oldViewerLinkEnabled"], true);
         if (!checkMobile && !checkOnlyUVViewer && oldViewerLinkEnabled) {
-            this.$linkOldImageViewer = $('<a class="linkOldImageViewer" target="_top" tabindex="2" title="' + this.content.backOldImageViewer + '" href="' + url + '?viewer=DjVu">' + this.content.backOldImageViewer + '</a>');
+            this.$linkOldImageViewer = $('<a class="linkOldImageViewer" target="_top" title="'+ this.content.backOldImageViewer + '" href="' + url + '?viewer=DjVu">' + this.content.backOldImageViewer + '</a>');
             this.$rightOptions.append(this.$linkOldImageViewer);
         }
         //END Link to old image viewer
 
         this.$settingsButton = $(`
-          <button class="btn imageBtn settings" tabindex="0" title="${this.content.settings}">
+          <button class="btn imageBtn settings" title="${this.content.settings}">
             <i class="uv-icon-settings" aria-hidden="true"></i>${this.content.settings}
           </button>
         `);
         this.$settingsButton.attr('title', this.content.settings);
         this.$rightOptions.append(this.$settingsButton);        
 
-        this.$downloadButton = $('<a class="download" tabindex="4" title="' + this.content.download + '"><span /></a>');
+        this.$downloadButton = this.createHeaderButton("download", this.content.download);
         this.$rightOptions.append(this.$downloadButton);
         
-        this.$printButton = $('<a class="print" tabindex="5" title="' + this.content.print + '"><span /></a>');
+        this.$printButton = this.createHeaderButton("print", this.content.print);
         this.$rightOptions.append(this.$printButton);
         
-        this.$fullScreenBtn = $('<a href="#" class="fullScreen" tabindex="6" title="' + this.content.fullScreen + '"><span /></a>');
+        this.$fullScreenBtn = this.createHeaderButton("fullScreen", this.content.fullScreen);
         this.$rightOptions.append(this.$fullScreenBtn);
         
         if(!Utils.Device.isTouch()){
@@ -183,6 +183,15 @@ export class HeaderPanel extends BaseView {
 
         this.updateLocaleToggle();
         this.updateSettingsButton();
+    }
+
+    private createHeaderButton(cssClass: string, text: string): JQuery {
+        var $btn = $(`
+          <button class="btn imageBtn ${cssClass}" title="${text}">
+            <i class="uv-icon-${cssClass}" aria-hidden="true"></i>${text}
+          </button>
+        `);
+        return $btn;
     }
 
     private isImageZoomed(canvas: Manifesto.ICanvas, viewer: any): boolean {
