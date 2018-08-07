@@ -120,10 +120,10 @@
         "logo": "Logo",
         "more": "mer",
         "noData": "Ingen information finns att visa",
-        "page": "Om bild",
+        "page": "Om filen",
         "title": "Information",
         "manifestHeader": "Om källan",
-        "canvasHeader": "Om bilden",
+        "canvasHeader": "Om filen",
         "copyToClipboard": "Kopiera till urklipp",
         "copiedToClipboard": "Kopierat till urklipp",
         "sourceReference": "Källhänvisning"
