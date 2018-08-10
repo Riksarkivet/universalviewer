@@ -82,8 +82,8 @@ export class PagingHeaderPanel extends HeaderPanel {
         this.$prevOptions.append(this.$firstButton);
 
         this.$prevFiveButton = $(`
-          <button class="btn imageBtn prev-five" tabindex="0" title="${this.content.prevFivePages}">
-            <i class="uv-icon-prev-five" aria-hidden="true"></i><span>${this.content.prevFivePages}</span>
+          <button class="btn imageBtn prev-five" tabindex="0" title="${this.content.previousFivePages}">
+            <i class="uv-icon-prev-five" aria-hidden="true"></i><span>${this.content.previousFivePages}</span>
           </button>
         `);
         this.$prevOptions.append(this.$prevFiveButton);

@@ -125,10 +125,10 @@
                 "logo": "Logotyp",
                 "more": "mer",
                 "noData": "Ingen information att visa",
-                "page": "Sida",
+                "page": "Om filen",
                 "title": "Information",
                 "manifestHeader": "Om källan",
-                "canvasHeader": "Om bilden",
+                "canvasHeader": "Om filen",
                 "copyToClipboard": "Kopiera till urklipp",
                 "copiedToClipboard": "Kopierade till urklipp",
                 "sourceReference": "Källhänvisning"
@@ -146,7 +146,7 @@
                 "close": "Stäng",
                 "emptyValue": "Ange ett värde",
                 "first": "Första",
-                "firstImage": "Första bild",
+                "firstImage": "Första bilden",
                 "firstPage": "Första sidan",
                 "folio": "Folio",
                 "gallery": "Galleri",
@@ -157,6 +157,7 @@
                 "lastImage": "Sista bilden",
                 "lastPage": "Sista sidan",
                 "next": "Nästa",
+                "nextFivePages": "Gå fram 5 sidor",
                 "nextImage": "Nästa bild",
                 "nextPage": "Nästa sida",
                 "of": "av {0}",
@@ -164,20 +165,19 @@
                 "page": "Sida",
                 "pageSearchLabel": "Sök med sidnummer",
                 "previous": "Föregående",
+                "previousFivePages": "Gå tillbaka 5 sidor",
                 "previousImage": "Föregående bild",
                 "previousPage": "Föregående sida",
                 "settings": "Inställningar",
-                "twoUp": "Dubbelsidig vy",
-                "nextFivePages": "Gå fram 5 sidor",
-                "previousFivePages": "Gå tillbaka 5 sidor"
+                "twoUp": "Dubbelsidig vy"
             }
         },
         "headerPanel": {
             "content": {
               "settings": "Inställningar",
               "download": "Ladda ner",
-              "exitFullScreen": "Lämna fullskärmsläge",
-              "fullScreen": "Fullskärmsläge",
+              "exitFullScreen": "Avsluta helskärmsläge",
+              "fullScreen": "Helskärmsläge",
               "print": "Skriv ut",
               "backOldImageViewer": "Gamla bildvisningen"
             }
@@ -200,7 +200,7 @@
                 "currentTime": "Aktuell tid",
                 "delimiter": " - ",
                 "duration": "Speltid",
-                "mute": "Tyst",
+                "mute": "Ljud av/på",
                 "next": "Nästa",
                 "pause": "Paus",
                 "play": "Spela",
