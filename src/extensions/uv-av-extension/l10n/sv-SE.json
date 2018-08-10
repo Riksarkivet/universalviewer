@@ -5,7 +5,7 @@
     "content": {
         "authCORSError": "Din webbläsare stöder inte CORS. Uppgradera den för att kunna se detta innehåll.",
         "authorisationFailedMessage": "Din inloggning misslyckades. Vänligen försök igen.",
-        "canvasIndexOutOfRange": "Canvas-index ogiltigt.",
+        "canvasIndexOutOfRange": "Bildnummer utanför intervall.",
         "fallbackDegradedLabel": "Logga in",
         "fallbackDegradedMessage": "Logga in för att se bilden i bästa kvalitet.",
         "forbiddenResourceMessage": "Du har inte behörighet att se den här bilden",
@@ -47,7 +47,7 @@
         },
         "downloadDialogue": {
             "content": {
-                "currentViewAsJpg": "Aktuell vy {0} x {1}px (jpg)",
+                "currentViewAsJpg": "Aktuell vy (jpg)",
                 "currentViewAsJpgExplanation": "Öppnas i nytt fönster",
                 "download": "Ladda ner",
                 "downloadSelection": "Ladda ner valt område",
@@ -59,11 +59,11 @@
                 "pagingNote": "Stäng dubbelsidig vy för fler alternativ",
                 "preview": "Förhandsgranska",
                 "title": "Ladda ner",
-                "wholeImageHighRes": "Hela bilden {0} x {1}px ({2})",
+                "wholeImageHighRes": "Hela bilden hög upplösning ({2})",
                 "wholeImageHighResExplanation": "Öppnas i nytt fönster.",
                 "wholeImagesHighRes": "Hela bilder ({0})",
                 "wholeImagesHighResExplanation": "Öppnas i två nya fönster.",
-                "wholeImageLowResAsJpg": "Hela bilden {0} x {1}px (jpg)",
+                "wholeImageLowResAsJpg": "Hela bilden låg upplösning (jpg)",
                 "wholeImageLowResAsJpgExplanation": "Öppnas i nytt fönster."
             }
         },
@@ -126,8 +126,8 @@
                 "more": "mer",
                 "noData": "Ingen information att visa",
                 "page": "Sida",
-                "title": "Mer information",
-                "manifestHeader": "Om objektet",
+                "title": "Information",
+                "manifestHeader": "Om källan",
                 "canvasHeader": "Om bilden",
                 "copyToClipboard": "Kopiera till urklipp",
                 "copiedToClipboard": "Kopierade till urklipp",
