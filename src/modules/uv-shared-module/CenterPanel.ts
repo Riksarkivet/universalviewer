@@ -120,7 +120,7 @@ export class CenterPanel extends BaseView {
 
         let titleHeight: number;
 
-        if (this.options && this.options.titleEnabled === false) {
+        if (this.options && this.options.titleEnabled === false || !this.$title.is(':visible')) {
             titleHeight = 0;
         } else if (this.$title.css("position") === "absolute") {
             titleHeight = 0;
