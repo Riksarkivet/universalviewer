@@ -70,6 +70,7 @@ export class MoreInfoRightPanel extends RightPanel {
             limitToRange: Utils.Bools.getBool(this.config.options.limitToRange, false),
             manifestDisplayOrder: this.config.options.manifestDisplayOrder,
             manifestExclude: this.config.options.manifestExclude,
+            metadataGroupOrder: this.config.options.metadataGroupOrder,
             range: this._getCurrentRange(),
             rtlLanguageCodes: this.config.options.rtlLanguageCodes,
             sanitizer: (html) => {
