@@ -188,7 +188,7 @@
         "controlsFadeDelay": 250,
         "controlsFadeLength": 250,
         "defaultZoomLevel": 0,
-        "disableContextMenu": true,
+        "disableContextMenu": false,
         "immediateRender": false,
         "maxZoomPixelRatio": 1.25,
         "navigatorPosition": "BOTTOM_RIGHT",
