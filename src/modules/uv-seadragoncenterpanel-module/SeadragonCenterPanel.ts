@@ -270,8 +270,10 @@ export class SeadragonCenterPanel extends CenterPanel {
 
         this.$canvas = $(this.viewer.canvas);
 
-        // disable right click on canvas
-        this.$canvas.on('contextmenu', () => { return false; });
+       // disable right click on canvas        
+        if (Utils.Bools.getBool(this.config.options.disableContextMenu, true)) {
+            this.$canvas.on('contextmenu', () => { return false; });
+        }
 
         this.$navigator = this.$viewer.find(".navigator");
         this.setNavigatorVisible();
